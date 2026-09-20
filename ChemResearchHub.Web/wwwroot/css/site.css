@@ -2769,3 +2769,339 @@ textarea.form-control {
         text-align: center;
     }
 }
+
+/* =========================================================
+   Project UX
+   ========================================================= */
+
+.project-form-page,
+.project-details-page {
+    padding: 28px 0;
+}
+
+.project-form-header,
+.project-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.project-form-kicker {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.project-form-header h1,
+.project-details-header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.project-form-header p,
+.project-details-header p {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.project-form-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.project-form-card {
+    max-width: 900px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.project-form-section + .project-form-section {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid #eef2f7;
+}
+
+.project-form-section-title {
+    margin-bottom: 18px;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.project-form-field {
+    margin-bottom: 20px;
+}
+
+    .project-form-field:last-child {
+        margin-bottom: 0;
+    }
+
+.project-form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.project-form-input {
+    width: 100%;
+    border: 1px solid #dbe2ea;
+    border-radius: 10px;
+    padding: 11px 13px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+    .project-form-input:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+.project-form-textarea {
+    resize: vertical;
+    min-height: 150px;
+    line-height: 1.8;
+}
+
+.project-form-error {
+    display: block;
+    margin-top: 6px;
+    color: #dc2626;
+    font-size: 12px;
+}
+
+.project-validation-summary {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+    .project-validation-summary:empty {
+        display: none;
+    }
+
+.project-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid #eef2f7;
+}
+
+/* Active toggle */
+
+.project-active-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    cursor: pointer;
+    background: #fafafa;
+}
+
+.project-active-toggle-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.project-active-toggle-title {
+    color: #111827;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.project-active-toggle-description {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.project-active-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.project-active-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    flex: 0 0 48px;
+    border-radius: 999px;
+    background: #cbd5e1;
+    transition: background .15s ease;
+}
+
+    .project-active-switch::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        right: 25px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .18);
+        transition: right .15s ease;
+    }
+
+.project-active-checkbox:checked + .project-active-switch {
+    background: #22c55e;
+}
+
+    .project-active-checkbox:checked + .project-active-switch::after {
+        right: 3px;
+    }
+
+/* Details */
+
+.project-details-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 20px;
+}
+
+.project-details-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.project-details-card-title {
+    margin-bottom: 18px;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.project-details-description {
+    color: #475569;
+    font-size: 14px;
+    line-height: 2;
+    white-space: pre-line;
+}
+
+.project-details-status-row {
+    margin-bottom: 22px;
+}
+
+.project-details-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+    .project-details-meta > div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding-top: 13px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .project-details-meta span {
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .project-details-meta strong {
+        color: #334155;
+        font-size: 13px;
+    }
+
+.crh-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.crh-alert-success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #bbf7d0;
+}
+
+.crh-alert-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #10b981;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+@media (max-width: 768px) {
+    .project-form-page,
+    .project-details-page {
+        padding: 20px 0;
+    }
+
+    .project-form-header,
+    .project-details-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+        .project-form-header h1,
+        .project-details-header h1 {
+            font-size: 24px;
+        }
+
+    .project-form-header-actions {
+        width: 100%;
+    }
+
+    .project-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-form-card {
+        padding: 20px;
+    }
+
+    .project-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .project-form-actions .crh-btn,
+        .project-form-header-actions .crh-btn {
+            justify-content: center;
+            text-align: center;
+        }
+}

@@ -99,12 +99,11 @@ public class BoardsController : Controller
 
         if (boards.Count == 0)
         {
-            ViewBag.Project = project;
-
-            return View(
-                new KanbanViewModel
+            return RedirectToAction(
+                nameof(Create),
+                new
                 {
-                    Board = null!
+                    projectId = projectId
                 });
         }
 

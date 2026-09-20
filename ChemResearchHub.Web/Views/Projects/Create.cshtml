@@ -1,74 +1,106 @@
 @model ChemResearchHub.Web.Models.Projects.CreateProjectViewModel
 
 @{
-    ViewData["Title"] = "Create Project";
+    ViewData["Title"] = "ایجاد پروژه";
 }
 
-<div class="container py-4">
+<div class="project-form-page">
 
-    <div class="mb-4">
-        <h1 class="h3 mb-1">Create Research Project</h1>
-        <p class="text-muted mb-0">
-            Add a new chemistry research project.
-        </p>
+    <div class="project-form-header">
+
+        <div>
+            <div class="project-form-kicker">
+                پروژه پژوهشی
+            </div>
+
+            <h1>
+                ایجاد پروژه جدید
+            </h1>
+
+            <p>
+                اطلاعات پایه پروژه پژوهشی را وارد کنید.
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Index"
+               class="crh-btn crh-btn-soft">
+                بازگشت به پروژه‌ها
+            </a>
+        </div>
+
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <div class="project-form-card">
 
-            <form asp-action="Create" method="post">
+        <form asp-action="Create"
+              method="post">
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="project-validation-summary">
+            </div>
+
+            <div class="project-form-section">
+
+                <div class="project-form-section-title">
+                    اطلاعات پروژه
                 </div>
 
-                <div class="mb-3">
+                <div class="project-form-field">
+
                     <label asp-for="Name"
-                           class="form-label">
+                           class="project-form-label">
                     </label>
 
                     <input asp-for="Name"
-                           class="form-control"
-                           placeholder="Enter project name" />
+                           class="project-form-input"
+                           autocomplete="off"
+                           placeholder="مثلاً توسعه روش تحلیل NMR" />
 
                     <span asp-validation-for="Name"
-                          class="text-danger">
+                          class="project-form-error">
                     </span>
+
                 </div>
 
-                <div class="mb-3">
+                <div class="project-form-field">
+
                     <label asp-for="Description"
-                           class="form-label">
+                           class="project-form-label">
                     </label>
 
                     <textarea asp-for="Description"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Describe the research project">
+                              class="project-form-input project-form-textarea"
+                              rows="6"
+                              placeholder="توضیح مختصر درباره هدف و محدوده پروژه...">
                     </textarea>
 
                     <span asp-validation-for="Description"
-                          class="text-danger">
+                          class="project-form-error">
                     </span>
-                </div>
-
-                <div class="d-flex gap-2">
-
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Create Project
-                    </button>
-
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Cancel
-                    </a>
 
                 </div>
 
-            </form>
+            </div>
 
-        </div>
+            <div class="project-form-actions">
+
+                <button type="submit"
+                        class="crh-btn crh-btn-primary">
+                    ایجاد پروژه
+                </button>
+
+                <a asp-action="Index"
+                   class="crh-btn crh-btn-soft">
+                    انصراف
+                </a>
+
+            </div>
+
+        </form>
+
     </div>
 
 </div>

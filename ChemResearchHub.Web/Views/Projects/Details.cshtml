@@ -1,0 +1,128 @@
+﻿@model ChemResearchHub.Web.Models.Projects.ProjectDetailsViewModel
+
+@{
+    ViewData["Title"] = "جزئیات پروژه";
+}
+
+<div class="project-details-page">
+
+    <div class="project-details-header">
+
+        <div>
+
+            <div class="project-form-kicker">
+                پروژه #@Model.Id
+            </div>
+
+            <h1>
+                @Model.Name
+            </h1>
+
+            <p>
+                نمای کلی اطلاعات پروژه پژوهشی
+            </p>
+
+        </div>
+
+        <div class="project-form-header-actions">
+
+            <a asp-controller="Boards"
+               asp-action="Index"
+               asp-route-projectId="@Model.Id"
+               class="crh-btn crh-btn-primary">
+                ورود به بورد
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="crh-btn crh-btn-soft">
+                ویرایش
+            </a>
+
+            <a asp-action="Index"
+               class="crh-btn crh-btn-soft">
+                بازگشت
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="project-details-grid">
+
+        <div class="project-details-main">
+
+            <div class="project-details-card">
+
+                <div class="project-details-card-title">
+                    درباره پروژه
+                </div>
+
+                <div class="project-details-description">
+
+                    @if (string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <span class="project-description-empty">
+                            توضیحی برای این پروژه ثبت نشده است.
+                        </span>
+                    }
+                    else
+                    {
+                        @Model.Description
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="project-details-side">
+
+            <div class="project-details-card">
+
+                <div class="project-details-card-title">
+                    وضعیت پروژه
+                </div>
+
+                <div class="project-details-status-row">
+
+                    @if (Model.IsActive)
+                    {
+                        <span class="project-status project-status-active">
+                            فعال
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="project-status project-status-inactive">
+                            غیرفعال
+                        </span>
+                    }
+
+                </div>
+
+                <div class="project-details-meta">
+
+                    <div>
+                        <span>شناسه</span>
+                        <strong>#@Model.Id</strong>
+                    </div>
+
+                    <div>
+                        <span>وضعیت</span>
+
+                        <strong>
+                            @(Model.IsActive ? "Active" : "Inactive")
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

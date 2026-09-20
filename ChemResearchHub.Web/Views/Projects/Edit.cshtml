@@ -1,83 +1,145 @@
 @model ChemResearchHub.Web.Models.Projects.EditProjectViewModel
 
 @{
-    ViewData["Title"] = "Edit Project";
+    ViewData["Title"] = "ویرایش پروژه";
 }
 
-<div class="container py-4">
+<div class="project-form-page">
 
-    <div class="mb-4">
-        <h1 class="h3 mb-1">Edit Research Project</h1>
-        <p class="text-muted mb-0">
-            Update project information and status.
-        </p>
+    <div class="project-form-header">
+
+        <div>
+            <div class="project-form-kicker">
+                پروژه #@Model.Id
+            </div>
+
+            <h1>
+                ویرایش پروژه
+            </h1>
+
+            <p>
+                اطلاعات و وضعیت پروژه پژوهشی را مدیریت کنید.
+            </p>
+        </div>
+
+        <div class="project-form-header-actions">
+
+            <a asp-action="Details"
+               asp-route-id="@Model.Id"
+               class="crh-btn crh-btn-soft">
+                مشاهده پروژه
+            </a>
+
+            <a asp-action="Index"
+               class="crh-btn crh-btn-soft">
+                بازگشت
+            </a>
+
+        </div>
+
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <div class="project-form-card">
 
-            <form asp-action="Edit" method="post">
+        <form asp-action="Edit"
+              method="post">
 
-                <input asp-for="Id" type="hidden" />
+            @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+            <input asp-for="Id"
+                   type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="project-validation-summary">
+            </div>
+
+            <div class="project-form-section">
+
+                <div class="project-form-section-title">
+                    اطلاعات پروژه
                 </div>
 
-                <div class="mb-3">
+                <div class="project-form-field">
+
                     <label asp-for="Name"
-                           class="form-label">
+                           class="project-form-label">
                     </label>
 
                     <input asp-for="Name"
-                           class="form-control" />
+                           class="project-form-input"
+                           autocomplete="off" />
 
                     <span asp-validation-for="Name"
-                          class="text-danger">
+                          class="project-form-error">
                     </span>
+
                 </div>
 
-                <div class="mb-3">
+                <div class="project-form-field">
+
                     <label asp-for="Description"
-                           class="form-label">
+                           class="project-form-label">
                     </label>
 
                     <textarea asp-for="Description"
-                              class="form-control"
-                              rows="5">
+                              class="project-form-input project-form-textarea"
+                              rows="6">
                     </textarea>
 
                     <span asp-validation-for="Description"
-                          class="text-danger">
+                          class="project-form-error">
                     </span>
+
                 </div>
 
-                <div class="form-check mb-4">
+            </div>
+
+            <div class="project-form-section">
+
+                <div class="project-form-section-title">
+                    وضعیت پروژه
+                </div>
+
+                <label class="project-active-toggle">
+
+                    <span class="project-active-toggle-content">
+
+                        <span class="project-active-toggle-title">
+                            پروژه فعال باشد
+                        </span>
+
+                        <span class="project-active-toggle-description">
+                            پروژه غیرفعال از جریان کاری فعال خارج می‌شود، اما اطلاعات آن حفظ خواهد شد.
+                        </span>
+
+                    </span>
+
                     <input asp-for="IsActive"
-                           class="form-check-input" />
+                           class="project-active-checkbox" />
 
-                    <label asp-for="IsActive"
-                           class="form-check-label">
-                    </label>
-                </div>
+                    <span class="project-active-switch">
+                    </span>
 
-                <div class="d-flex gap-2">
+                </label>
 
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Save Changes
-                    </button>
+            </div>
 
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Cancel
-                    </a>
+            <div class="project-form-actions">
 
-                </div>
+                <button type="submit"
+                        class="crh-btn crh-btn-primary">
+                    ذخیره تغییرات
+                </button>
 
-            </form>
+                <a asp-action="Index"
+                   class="crh-btn crh-btn-soft">
+                    انصراف
+                </a>
 
-        </div>
+            </div>
+
+        </form>
+
     </div>
 
 </div>

@@ -14,6 +14,7 @@ public class ProjectsController : Controller
         _projectService = projectService;
     }
 
+    [HttpGet]
     public async Task<IActionResult> Index(
         CancellationToken cancellationToken)
     {
@@ -27,7 +28,8 @@ public class ProjectsController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        return View();
+        return View(
+            new CreateProjectViewModel());
     }
 
     [HttpPost]
@@ -41,12 +43,62 @@ public class ProjectsController : Controller
             return View(model);
         }
 
-        await _projectService.CreateAsync(
-            model.Name,
-            model.Description,
-            cancellationToken);
+        try
+        {
+            await _projectService.CreateAsync(
+                model.Name.Trim(),
+                model.Description?.Trim(),
+                cancellationToken);
 
-        return RedirectToAction(nameof(Index));
+            TempData["SuccessMessage"] =
+                "پروژه پژوهشی با موفقیت ایجاد شد.";
+
+            return RedirectToAction(
+                nameof(Index));
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                ex.Message);
+
+            return View(model);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                ex.Message);
+
+            return View(model);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var project =
+            await _projectService.GetByIdAsync(
+                id,
+                cancellationToken);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+
+        var model =
+            new ProjectDetailsViewModel
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Description = project.Description,
+                IsActive = project.IsActive
+            };
+
+        return View(model);
     }
 
     [HttpGet]
@@ -64,13 +116,14 @@ public class ProjectsController : Controller
             return NotFound();
         }
 
-        var model = new EditProjectViewModel
-        {
-            Id = project.Id,
-            Name = project.Name,
-            Description = project.Description,
-            IsActive = project.IsActive
-        };
+        var model =
+            new EditProjectViewModel
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Description = project.Description,
+                IsActive = project.IsActive
+            };
 
         return View(model);
     }
@@ -86,23 +139,46 @@ public class ProjectsController : Controller
             return View(model);
         }
 
-        var updated =
-            await _projectService.UpdateAsync(
+        try
+        {
+            var updated =
+                await _projectService.UpdateAsync(
+                    model.Id,
+                    model.Name.Trim(),
+                    model.Description?.Trim(),
+                    cancellationToken);
+
+            if (!updated)
+            {
+                return NotFound();
+            }
+
+            await _projectService.SetActiveAsync(
                 model.Id,
-                model.Name,
-                model.Description,
+                model.IsActive,
                 cancellationToken);
 
-        if (!updated)
-        {
-            return NotFound();
+            TempData["SuccessMessage"] =
+                "اطلاعات پروژه با موفقیت به‌روزرسانی شد.";
+
+            return RedirectToAction(
+                nameof(Index));
         }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                ex.Message);
 
-        await _projectService.SetActiveAsync(
-            model.Id,
-            model.IsActive,
-            cancellationToken);
+            return View(model);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                ex.Message);
 
-        return RedirectToAction(nameof(Index));
+            return View(model);
+        }
     }
 }
