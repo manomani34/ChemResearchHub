@@ -1,0 +1,109 @@
+﻿@model ChemResearchHub.Web.Models.Attachments.CreateAttachmentViewModel
+
+@{
+    ViewData["Title"] = "Add Attachment";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+
+        <div class="text-muted mb-1">
+            Research Work Item
+        </div>
+
+        <h1 class="h3 mb-1">
+            Add Attachment
+        </h1>
+
+        <p class="text-muted mb-0">
+            Upload a research file related to this work item.
+        </p>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form asp-action="Create"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <input asp-for="WorkItemId" type="hidden" />
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="BoardId" type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="File"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="File"
+                           type="file"
+                           class="form-control"
+                           accept=".pdf,.csv,.xlsx,.docx,.txt,.png,.jpg,.jpeg" />
+
+                    <div class="form-text">
+                        PDF, CSV, XLSX, DOCX, TXT, PNG and JPG.
+                        Maximum size: 20 MB.
+                    </div>
+
+                    <span asp-validation-for="File"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <label asp-for="Description"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Describe the file and why it is attached to this work item.">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Upload Attachment
+                    </button>
+
+                    <a asp-controller="WorkItems"
+                       asp-action="Details"
+                       asp-route-id="@Model.WorkItemId"
+                       asp-route-projectId="@Model.ProjectId"
+                       asp-route-boardId="@Model.BoardId"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

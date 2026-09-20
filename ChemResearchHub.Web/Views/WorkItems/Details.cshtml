@@ -1,0 +1,1187 @@
+﻿@model ChemResearchHub.Web.Models.WorkItems.WorkItemDetailsViewModel
+
+@{
+    ViewData["Title"] = "Work Item Details";
+}
+
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
+        <div>
+            <div class="text-muted mb-1">
+                Research Work Item
+            </div>
+
+            <h1 class="h3 mb-1">
+                @Model.Title
+            </h1>
+
+            <p class="text-muted mb-0">
+                Work Item #@Model.Id
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.Id"
+               asp-route-projectId="@Model.ProjectId"
+               asp-route-boardId="@Model.BoardId"
+               class="btn btn-primary">
+                Edit
+            </a>
+
+            <a asp-controller="Boards"
+               asp-action="Index"
+               asp-route-projectId="@Model.ProjectId"
+               asp-route-boardId="@Model.BoardId"
+               class="btn btn-outline-secondary">
+                Back to Board
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- ========================================= -->
+        <!-- Main Content -->
+        <!-- ========================================= -->
+        <div class="col-lg-8">
+
+            <!-- Description -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light">
+                    <strong>Description</strong>
+                </div>
+
+                <div class="card-body">
+
+                    @if (string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <p class="text-muted mb-0">
+                            No description has been provided.
+                        </p>
+                    }
+                    else
+                    {
+                        <div style="white-space: pre-line;">
+                            @Model.Description
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- ========================================= -->
+            <!-- Experiments -->
+            <!-- ========================================= -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+
+                    <strong>
+                        Experiments
+                    </strong>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <span class="badge bg-secondary">
+                            @Model.Experiments.Count
+                        </span>
+
+                        <a asp-controller="Experiments"
+                           asp-action="Create"
+                           asp-route-workItemId="@Model.Id"
+                           asp-route-projectId="@Model.ProjectId"
+                           asp-route-boardId="@Model.BoardId"
+                           class="btn btn-sm btn-primary">
+                            + Add Experiment
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.Experiments.Count == 0)
+                    {
+                        <div class="text-center py-4">
+
+                            <h5 class="mb-2">
+                                No experiments
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                No experiments have been registered for this work item yet.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="accordion"
+                             id="experimentsAccordion">
+
+                            @foreach (var experiment in Model.Experiments)
+                            {
+                                var collapseId =
+                                $"experiment-{experiment.Id}";
+
+                                var headingId =
+                                $"experiment-heading-{experiment.Id}";
+
+                                var samples =
+                                Model.SamplesByExperimentId.TryGetValue(
+                                experiment.Id,
+                                out var experimentSamples)
+                                ? experimentSamples
+                                : Array.Empty<
+                                ChemResearchHub.Application.Samples.Dtos.SampleDto>();
+
+                                <div class="accordion-item">
+
+                                    <!-- Experiment Header -->
+                                    <h2 class="accordion-header"
+                                        id="@headingId">
+
+                                        <button class="accordion-button collapsed"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId"
+                                                aria-expanded="false"
+                                                aria-controls="@collapseId">
+
+                                            <div class="w-100 me-3">
+
+                                                <div class="fw-semibold">
+                                                    @experiment.Title
+                                                </div>
+
+                                                @if (experiment.StartedAt.HasValue)
+                                                {
+                                                    <div class="small text-muted mt-1">
+                                                        Started:
+                                                        @experiment.StartedAt.Value.ToString("yyyy-MM-dd HH:mm")
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                        </button>
+
+                                    </h2>
+
+                                    <!-- Experiment Body -->
+                                    <div id="@collapseId"
+                                         class="accordion-collapse collapse"
+                                         aria-labelledby="@headingId"
+                                         data-bs-parent="#experimentsAccordion">
+
+                                        <div class="accordion-body">
+
+                                            <!-- ========================================= -->
+                                            <!-- Experiment Information -->
+                                            <!-- ========================================= -->
+                                            <dl class="row mb-0">
+
+                                                <dt class="col-sm-4">
+                                                    Description
+                                                </dt>
+
+                                                <dd class="col-sm-8">
+
+                                                    @if (string.IsNullOrWhiteSpace(
+                                                                                                experiment.Description))
+                                                    {
+                                                        <span class="text-muted">
+                                                            Not provided
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="white-space: pre-line;">
+                                                            @experiment.Description
+                                                        </div>
+                                                    }
+
+                                                </dd>
+
+                                                <dt class="col-sm-4">
+                                                    Protocol
+                                                </dt>
+
+                                                <dd class="col-sm-8">
+
+                                                    @if (string.IsNullOrWhiteSpace(
+                                                                                                experiment.Protocol))
+                                                    {
+                                                        <span class="text-muted">
+                                                            Not provided
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="white-space: pre-line;">
+                                                            @experiment.Protocol
+                                                        </div>
+                                                    }
+
+                                                </dd>
+
+                                                <dt class="col-sm-4">
+                                                    Started
+                                                </dt>
+
+                                                <dd class="col-sm-8">
+
+                                                    @if (experiment.StartedAt.HasValue)
+                                                    {
+                                                        @experiment.StartedAt.Value.ToString(
+                                                        "yyyy-MM-dd HH:mm")
+                                                                                        }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">
+                                                            Not provided
+                                                        </span>
+                                                    }
+
+                                                </dd>
+
+                                                <dt class="col-sm-4">
+                                                    Completed
+                                                </dt>
+
+                                                <dd class="col-sm-8">
+
+                                                    @if (experiment.CompletedAt.HasValue)
+                                                    {
+                                                        @experiment.CompletedAt.Value.ToString(
+                                                        "yyyy-MM-dd HH:mm")
+                                                                                        }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">
+                                                            Not completed
+                                                        </span>
+                                                    }
+
+                                                </dd>
+
+                                                <dt class="col-sm-4">
+                                                    Notes
+                                                </dt>
+
+                                                <dd class="col-sm-8">
+
+                                                    @if (string.IsNullOrWhiteSpace(
+                                                                                                experiment.Notes))
+                                                    {
+                                                        <span class="text-muted">
+                                                            No notes
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="white-space: pre-line;">
+                                                            @experiment.Notes
+                                                        </div>
+                                                    }
+
+                                                </dd>
+
+                                            </dl>
+
+                                            <!-- ========================================= -->
+                                            <!-- Samples -->
+                                            <!-- ========================================= -->
+                                            <div class="mt-4 pt-3 border-top">
+
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                                    <strong>
+                                                        Samples
+                                                    </strong>
+
+                                                    <div class="d-flex align-items-center gap-2">
+
+                                                        <span class="badge bg-secondary">
+                                                            @samples.Count
+                                                        </span>
+
+                                                        <a asp-controller="Samples"
+                                                           asp-action="Create"
+                                                           asp-route-experimentId="@experiment.Id"
+                                                           asp-route-workItemId="@Model.Id"
+                                                           asp-route-projectId="@Model.ProjectId"
+                                                           asp-route-boardId="@Model.BoardId"
+                                                           class="btn btn-sm btn-primary">
+                                                            + Add Sample
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                                @if (samples.Count == 0)
+                                                {
+                                                    <div class="text-muted small">
+                                                        No samples have been registered for this experiment yet.
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var sample in samples)
+                                                    {
+                                                        var results =
+                                                        Model.ResultsBySampleId.TryGetValue(
+                                                        sample.Id,
+                                                        out var sampleResults)
+                                                        ? sampleResults
+                                                        : Array.Empty<
+                                                        ChemResearchHub.Application.Results.Dtos.ResultDto>();
+
+                                                        <div class="border rounded p-3 mb-3">
+
+                                                            <!-- Sample Header -->
+                                                            <div class="d-flex justify-content-between align-items-start mb-3">
+
+                                                                <div>
+
+                                                                    <div class="fw-semibold">
+                                                                        @sample.SampleCode
+                                                                    </div>
+
+                                                                    @if (!string.IsNullOrWhiteSpace(sample.Name))
+                                                                    {
+                                                                        <div class="small text-muted">
+                                                                            @sample.Name
+                                                                        </div>
+                                                                    }
+
+                                                            </div>
+
+                                                            <a asp-controller="Samples"
+                                                               asp-action="Edit"
+                                                               asp-route-id="@sample.Id"
+                                                               asp-route-experimentId="@experiment.Id"
+                                                               asp-route-workItemId="@Model.Id"
+                                                               asp-route-projectId="@Model.ProjectId"
+                                                               asp-route-boardId="@Model.BoardId"
+                                                               class="btn btn-sm btn-outline-primary">
+                                                                Edit
+                                                            </a>
+
+                                                        </div>
+
+                                                        <!-- Sample Information -->
+                                                        <div class="table-responsive">
+
+                                                            <table class="table table-sm table-borderless mb-3">
+
+                                                                <tbody>
+
+                                                                    <tr>
+
+                                                                        <th class="text-muted"
+                                                                            style="width: 20%;">
+                                                                            Type
+                                                                        </th>
+
+                                                                        <td>
+                                                                            @(string.IsNullOrWhiteSpace(sample.SampleType)
+                                                                                                                                            ? "-"
+                                                                                                                                            : sample.SampleType)
+                                                                                                                                                            </td>
+
+                                                                        <th class="text-muted"
+                                                                            style="width: 20%;">
+                                                                            Matrix
+                                                                        </th>
+
+                                                                        <td>
+                                                                            @(string.IsNullOrWhiteSpace(sample.Matrix)
+                                                                                                                                            ? "-"
+                                                                                                                                            : sample.Matrix)
+                                                            </td>
+
+                                                                        </tr>
+
+                                                                        <tr>
+
+                                                                            <th class="text-muted">
+                                                                                Collected
+                                                                            </th>
+
+                                                                            <td>
+
+                                                                @if (sample.CollectedAt.HasValue)
+                                                                                {
+                                                                                    @sample.CollectedAt.Value.ToString(
+                                                                                    "yyyy-MM-dd")
+                                                                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span class="text-muted">
+                                                                                        -
+                                                                                    </span>
+                                                                                }
+
+                                                                        </td>
+
+                                                                        <th class="text-muted">
+                                                                            External Ref.
+                                                                        </th>
+
+                                                                        <td>
+                                                                            @(string.IsNullOrWhiteSpace(
+                                                                                                                                            sample.ExternalReference)
+                                                                                                                                            ? "-"
+                                                                                                                                            : sample.ExternalReference)
+                                                            </td>
+
+                                                                        </tr>
+
+                                                                    </tbody>
+
+                                                                </table>
+
+                                                            </div>
+
+                                                            <!-- ================================= -->
+                                                            <!-- Results -->
+                                                            <!-- ================================= -->
+                                                            <div class="mt-3 pt-3 border-top">
+
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                                                                    <strong>
+                                                                        Results
+                                                                    </strong>
+
+                                                                    <div class="d-flex align-items-center gap-2">
+
+                                                                        <span class="badge bg-secondary">
+                                                                            @results.Count
+                                                                        </span>
+
+                                                                        <a asp-controller="Results"
+                                                                           asp-action="Create"
+                                                                           asp-route-sampleId="@sample.Id"
+                                                                           asp-route-experimentId="@experiment.Id"
+                                                                           asp-route-workItemId="@Model.Id"
+                                                                           asp-route-projectId="@Model.ProjectId"
+                                                                           asp-route-boardId="@Model.BoardId"
+                                                                           class="btn btn-sm btn-primary">
+                                                                            + Add Result
+                                                                        </a>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                @if (results.Count == 0)
+                                                                {
+                                                                    <div class="text-muted small">
+                                                                        No results have been registered for this sample yet.
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="table-responsive">
+
+                                                                        <table class="table table-sm table-hover align-middle mb-0">
+
+                                                                            <thead class="table-light">
+
+                                                                                <tr>
+
+                                                                                    <th>
+                                                                                        Metric
+                                                                                    </th>
+
+                                                                                    <th>
+                                                                                        Value
+                                                                                    </th>
+
+                                                                                    <th>
+                                                                                        Unit
+                                                                                    </th>
+
+                                                                                    <th>
+                                                                                        Status
+                                                                                    </th>
+
+                                                                                    <th class="text-end">
+                                                                                        Actions
+                                                                                    </th>
+
+                                                                                </tr>
+
+                                                                            </thead>
+
+                                                                            <tbody>
+
+                                                                                @foreach (var result in results)
+                                                                                {
+                                                                                    <tr>
+
+                                                                                        <td>
+                                                                                            <strong>
+                                                                                                @result.MetricName
+                                                                                            </strong>
+                                                                                        </td>
+
+                                                                                        <td>
+
+                                                                                            @if (result.NumericValue.HasValue)
+                                                                                            {
+                                                                                                @result.NumericValue.Value
+                                                                                            }
+                                                                                            else if (!string.IsNullOrWhiteSpace(
+                                                                                            result.TextValue))
+                                                                                            {
+                                                                                                @result.TextValue
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="text-muted">
+                                                                                                    -
+                                                                                                </span>
+                                                                                            }
+
+                                                                                    </td>
+
+                                                                                    <td>
+                                                                                        @(string.IsNullOrWhiteSpace(result.Unit)
+                                                                                                                                                            ? "-"
+                                                                                                                                                            : result.Unit)
+                                                                </td>
+
+                                                                                        <td>
+
+                                                                    @if (result.Status == "Pass")
+                                                                                            {
+                                                                                                <span class="badge bg-success">
+                                                                                                    Pass
+                                                                                                </span>
+                                                                                            }
+                                                                                            else if (result.Status == "Fail")
+                                                                                            {
+                                                                                                <span class="badge bg-danger">
+                                                                                                    Fail
+                                                                                                </span>
+                                                                                            }
+                                                                                            else if (result.Status == "Inconclusive")
+                                                                                            {
+                                                                                                <span class="badge bg-warning text-dark">
+                                                                                                    Inconclusive
+                                                                                                </span>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="badge bg-secondary">
+                                                                                                    Pending
+                                                                                                </span>
+                                                                                            }
+
+                                                                                        </td>
+
+                                                                                        <td class="text-end">
+
+                                                                                            <a asp-controller="Results"
+                                                                                               asp-action="Edit"
+                                                                                               asp-route-id="@result.Id"
+                                                                                               asp-route-sampleId="@sample.Id"
+                                                                                               asp-route-experimentId="@experiment.Id"
+                                                                                               asp-route-workItemId="@Model.Id"
+                                                                                               asp-route-projectId="@Model.ProjectId"
+                                                                                               asp-route-boardId="@Model.BoardId"
+                                                                                               class="btn btn-sm btn-outline-primary">
+                                                                                                Edit
+                                                                                            </a>
+
+                                                                                        </td>
+
+                                                                                    </tr>
+
+                                                                                    @if (!string.IsNullOrWhiteSpace(
+                                                                                                                                                result.Evidence))
+                                                                                    {
+                                                                                        <tr>
+
+                                                                                            <td colspan="5">
+
+                                                                                                <div class="small text-muted">
+
+                                                                                                    <strong>
+                                                                                                        Evidence:
+                                                                                                    </strong>
+
+                                                                                                    <span style="white-space: pre-line;">
+                                                                                                        @result.Evidence
+                                                                                                    </span>
+
+                                                                                                </div>
+
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                    }
+                                                                                }
+
+                                                                            </tbody>
+
+                                                                        </table>
+
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+                                                    }
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- Attachments -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+
+                    <strong>
+                        Attachments
+                    </strong>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <span class="badge bg-secondary">
+                            @Model.Attachments.Count
+                        </span>
+
+                        <a asp-controller="Attachments"
+                           asp-action="Create"
+                           asp-route-workItemId="@Model.Id"
+                           asp-route-projectId="@Model.ProjectId"
+                           asp-route-boardId="@Model.BoardId"
+                           class="btn btn-sm btn-primary">
+                            + Add Attachment
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.Attachments.Count == 0)
+                    {
+                        <div class="text-muted small">
+                            No attachments have been uploaded for this work item yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+
+                            <table class="table table-sm table-hover align-middle mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+                                        <th>
+                                            File
+                                        </th>
+
+                                        <th>
+                                            Size
+                                        </th>
+
+                                        <th>
+                                            Description
+                                        </th>
+
+                                        <th>
+                                            Uploaded
+                                        </th>
+
+                                        <th class="text-end">
+                                            Actions
+                                        </th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var attachment in Model.Attachments)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    @attachment.OriginalFileName
+                                                </strong>
+                                            </td>
+
+                                            <td>
+                                                @(attachment.FileSize / 1024d / 1024d >= 1
+                                                                                        ? $"{attachment.FileSize / 1024d / 1024d:F2} MB"
+                                                                                        : $"{attachment.FileSize / 1024d:F1} KB")
+                                                                                                                             </td>
+
+                                            <td>
+                                                @(string.IsNullOrWhiteSpace(
+                                                                                        attachment.Description)
+                                                                                        ? "-"
+                                                                                        : attachment.Description)
+                                    </td>
+
+                                            <td>
+                                                @attachment.CreatedAt.ToLocalTime()
+                                                .ToString("yyyy-MM-dd HH:mm")
+                                            </td>
+
+                                            <td class="text-end">
+
+                                                <a asp-controller="Attachments"
+                                                   asp-action="Download"
+                                                   asp-route-id="@attachment.Id"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    Download
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+                                                                }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- Decision Logs -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+
+                    <strong>
+                        Decision Log
+                    </strong>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <span class="badge bg-secondary">
+                            @Model.DecisionLogs.Count
+                        </span>
+
+                        <a asp-controller="DecisionLogs"
+                           asp-action="Create"
+                           asp-route-workItemId="@Model.Id"
+                           asp-route-projectId="@Model.ProjectId"
+                           asp-route-boardId="@Model.BoardId"
+                           class="btn btn-sm btn-primary">
+                            + Add Decision
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.DecisionLogs.Count == 0)
+                    {
+                        <div class="text-muted small">
+                            No decisions have been recorded for this work item yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="accordion"
+                             id="decisionLogsAccordion">
+
+                            @foreach (var log in Model.DecisionLogs)
+                            {
+                                var collapseId =
+                                $"decision-{log.Id}";
+
+                                var headingId =
+                                $"decision-heading-{log.Id}";
+
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header"
+                                        id="@headingId">
+
+                                        <button class="accordion-button collapsed"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId"
+                                                aria-expanded="false"
+                                                aria-controls="@collapseId">
+
+                                            <div class="w-100 me-3">
+
+                                                <div class="d-flex justify-content-between">
+
+                                                    <strong>
+                                                        @log.DecisionType
+                                                    </strong>
+
+                                                    <span class="small text-muted">
+                                                        @log.CreatedAt.ToLocalTime()
+                                                        .ToString("yyyy-MM-dd HH:mm")
+                                                    </span>
+
+                                                </div>
+
+                                                <div class="small mt-1">
+                                                    @log.Decision
+                                                </div>
+
+                                            </div>
+
+                                        </button>
+
+                                    </h2>
+
+                                    <div id="@collapseId"
+                                         class="accordion-collapse collapse"
+                                         aria-labelledby="@headingId"
+                                         data-bs-parent="#decisionLogsAccordion">
+
+                                        <div class="accordion-body">
+
+                                            <dl class="row mb-0">
+
+                                                <dt class="col-sm-3">
+                                                    Decision
+                                                </dt>
+
+                                                <dd class="col-sm-9">
+                                                    <div style="white-space: pre-line;">
+                                                        @log.Decision
+                                                    </div>
+                                                </dd>
+
+                                                <dt class="col-sm-3">
+                                                    Rationale
+                                                </dt>
+
+                                                <dd class="col-sm-9">
+
+                                                    @if (string.IsNullOrWhiteSpace(log.Rationale))
+                                                    {
+                                                        <span class="text-muted">
+                                                            Not provided
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="white-space: pre-line;">
+                                                            @log.Rationale
+                                                        </div>
+                                                    }
+
+                                                </dd>
+
+                                                <dt class="col-sm-3">
+                                                    Evidence
+                                                </dt>
+
+                                                <dd class="col-sm-9">
+
+                                                    @if (string.IsNullOrWhiteSpace(log.Evidence))
+                                                    {
+                                                        <span class="text-muted">
+                                                            Not provided
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="white-space: pre-line;">
+                                                            @log.Evidence
+                                                        </div>
+                                                    }
+
+                                                </dd>
+
+                                                <dt class="col-sm-3">
+                                                    Recorded At
+                                                </dt>
+
+                                                <dd class="col-sm-9">
+                                                    @log.CreatedAt.ToLocalTime()
+                                                    .ToString("yyyy-MM-dd HH:mm:ss")
+                                                </dd>
+
+                                            </dl>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- ========================================= -->
+            <!-- Research Data -->
+            <!-- ========================================= -->
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-light">
+                    <strong>Research Data</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="border rounded p-4 text-center bg-light">
+
+                        <h5 class="mb-2">
+                            Research Data
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Attachments and Decision Logs
+                            will be added in the next phases.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================= -->
+        <!-- Sidebar -->
+        <!-- ========================================= -->
+        <div class="col-lg-4">
+
+            <!-- Work Item Information -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light">
+                    <strong>Work Item Information</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row mb-0">
+
+                        <dt class="col-sm-5">
+                            Type
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @Model.Type
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Priority
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @Model.Priority
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Column
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @Model.ColumnName
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Status
+                        </dt>
+
+                        <dd class="col-sm-7">
+
+                            @if (Model.IsCompleted)
+                            {
+                                <span class="badge bg-success">
+                                    Completed
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">
+                                    Open
+                                </span>
+                            }
+
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Assigned To
+                        </dt>
+
+                        <dd class="col-sm-7">
+
+                            @if (string.IsNullOrWhiteSpace(
+                                                        Model.AssignedToUserName))
+                            {
+                                <span class="text-muted">
+                                    Unassigned
+                                </span>
+                            }
+                            else
+                            {
+                                <strong>
+                                    @Model.AssignedToUserName
+                                </strong>
+                            }
+
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Due Date
+                        </dt>
+
+                        <dd class="col-sm-7">
+
+                            @if (Model.DueDate.HasValue)
+                            {
+                                @Model.DueDate.Value.ToString("yyyy-MM-dd")
+                            }
+                            else
+                            {
+                                <span class="text-muted">
+                                    No due date
+                                </span>
+                            }
+
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Sort Order
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @Model.SortOrder
+                        </dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+            <!-- Roadmap -->
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-light">
+                    <strong>Research Extensions</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold">
+                            ✓ Experiment
+                        </div>
+
+                        <div class="small text-muted">
+                            Available
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold">
+                            ✓ Sample
+                        </div>
+
+                        <div class="small text-muted">
+                            Available
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold">
+                            ✓ Result
+                        </div>
+
+                        <div class="small text-muted">
+                            Available
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold">
+                            ✓ Attachment
+                        </div>
+
+                        <div class="small text-muted">
+                            Available
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <div class="fw-semibold">
+                            ✓ Decision Log
+                        </div>
+
+                        <div class="small text-muted">
+                            Available
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

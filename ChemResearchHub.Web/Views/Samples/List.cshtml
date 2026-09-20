@@ -1,0 +1,176 @@
+﻿@model ChemResearchHub.Web.Models.Samples.SamplesListViewModel
+
+@{
+    ViewData["Title"] = "نمونه‌ها";
+}
+
+<div class="samples-page">
+
+    <div class="samples-header">
+
+        <div>
+            <h1>نمونه‌ها</h1>
+
+            <p>
+                فهرست نمونه‌های ثبت‌شده در آزمایش‌های پژوهشی
+            </p>
+        </div>
+
+        <div class="samples-count">
+            @Model.Items.Count نمونه
+        </div>
+
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="samples-empty">
+
+            <div class="samples-empty-icon">
+                🧫
+            </div>
+
+            <h3>
+                هنوز نمونه‌ای ثبت نشده است
+            </h3>
+
+            <p>
+                نمونه‌ها از داخل بخش آزمایش‌های مربوط به کارهای پژوهشی ایجاد می‌شوند.
+            </p>
+
+            <a asp-controller="Experiments"
+               asp-action="List"
+               class="crh-btn crh-btn-primary">
+                مشاهده آزمایش‌ها
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="samples-table-card">
+
+            <div class="table-responsive">
+
+                <table class="table crh-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>کد نمونه</th>
+                            <th>نام نمونه</th>
+                            <th>نوع</th>
+                            <th>Matrix</th>
+                            <th>آزمایش</th>
+                            <th>کار پژوهشی</th>
+                            <th>تاریخ جمع‌آوری</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="crh-id">
+                                        @item.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="sample-code">
+                                        @item.SampleCode
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Name))
+                                    {
+                                        <div class="crh-primary-text">
+                                            @item.Name
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.SampleType))
+                                    {
+                                        <span class="sample-type-badge">
+                                            @item.SampleType
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Matrix))
+                                    {
+                                        @item.Matrix
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.ExperimentTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        آزمایش #@item.ExperimentId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.WorkItemTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        کار #@item.WorkItemId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (item.CollectedAt.HasValue)
+                                    {
+                                        @item.CollectedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>

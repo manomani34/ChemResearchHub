@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - ChemResearchHub
+    </title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/ChemResearchHub.Web.styles.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <!-- =========================
+             SIDEBAR
+             ========================= -->
+        <aside id="appSidebar"
+               class="app-sidebar offcanvas offcanvas-end"
+               tabindex="-1"
+               aria-labelledby="appSidebarLabel">
+
+            <div class="sidebar-inner">
+
+                <div class="sidebar-brand">
+
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index"
+                       class="sidebar-brand-link">
+
+                        <div class="sidebar-brand-icon">
+                            🧪
+                        </div>
+
+                        <div>
+                            <div class="sidebar-brand-title">
+                                ChemResearchHub
+                            </div>
+
+                            <div class="sidebar-brand-subtitle">
+                                سامانه پژوهشی
+                            </div>
+                        </div>
+
+                    </a>
+
+                    <button type="button"
+                            class="btn-close d-lg-none"
+                            data-bs-dismiss="offcanvas"
+                            aria-label="بستن">
+                    </button>
+
+                </div>
+
+                <nav class="sidebar-nav"
+                     dir="rtl">
+
+                    <div class="sidebar-section-title">
+                        اصلی
+                    </div>
+
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            🏠
+                        </span>
+
+                        <span>
+                            داشبورد
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="Projects"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            📁
+                        </span>
+
+                        <span>
+                            پروژه‌ها
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="Boards"
+                       asp-action="List"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            📋
+                        </span>
+
+                        <span>
+                            بوردهای پژوهشی
+                        </span>
+
+                    </a>
+
+
+                    <div class="sidebar-section-title mt-4">
+                        پژوهش
+                    </div>
+
+                    <a asp-area=""
+                       asp-controller="WorkItems"
+                       asp-action="Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            ✅
+                        </span>
+
+                        <span>
+                            کارهای پژوهشی
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="Experiments"
+                       asp-action="List"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            🧪
+                        </span>
+
+                        <span>
+                            آزمایش‌ها
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="Samples"
+                       asp-action="List"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            🧫
+                        </span>
+
+                        <span>
+                            نمونه‌ها
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="Results"
+                       asp-action="List"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            📊
+                        </span>
+
+                        <span>
+                            نتایج
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="Attachments"
+                       asp-action="List"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            📎
+                        </span>
+
+                        <span>
+                            پیوست‌ها
+                        </span>
+
+                    </a>
+
+                    <a asp-area=""
+                       asp-controller="DecisionLogs"
+                       asp-action="List"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            📋
+                        </span>
+
+                        <span>
+                            تصمیمات
+                        </span>
+
+                    </a>
+
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="sidebar-section-title mt-4">
+                            مدیریت
+                        </div>
+
+                        <a asp-area=""
+                           asp-controller="Users"
+                           asp-action="Index"
+                           class="sidebar-link">
+
+                            <span class="sidebar-link-icon">
+                                👥
+                            </span>
+
+                            <span>
+                                مدیریت اعضای تیم
+                            </span>
+
+                        </a>
+                    }
+
+
+                    <div class="sidebar-section-title mt-4">
+                        حساب کاربری
+                    </div>
+
+                    <a asp-area="Identity"
+                       asp-page="/Account/Manage/Index"
+                       class="sidebar-link">
+
+                        <span class="sidebar-link-icon">
+                            👤
+                        </span>
+
+                        <span>
+                            حساب من
+                        </span>
+
+                    </a>
+
+                </nav>
+
+
+                <div class="sidebar-footer">
+
+                    <div class="sidebar-user-card"
+                         dir="rtl">
+
+                        <div class="sidebar-user-icon">
+                            👤
+                        </div>
+
+                        <div class="sidebar-user-info">
+
+                            <div class="sidebar-user-name">
+                                @(User.Identity?.Name ?? "کاربر")
+                            </div>
+
+                            <div class="sidebar-user-role">
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    @:مدیر سیستم
+                                }
+                                else if (User.IsInRole("Reviewer"))
+                                {
+                                    @:بازبین
+                                }
+                                else
+                                {
+                                    @:پژوهشگر
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="sidebar-logout">
+
+                        <partial name="_LoginPartial" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================
+             MAIN
+             ========================= -->
+        <div class="app-main">
+
+            <header class="app-topbar">
+
+                <div class="app-topbar-left">
+
+                    <button class="btn sidebar-mobile-toggle d-lg-none"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#appSidebar"
+                            aria-controls="appSidebar"
+                            aria-label="باز کردن منو">
+
+                        ☰
+
+                    </button>
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="mobile-brand d-lg-none">
+
+                        ChemResearchHub
+
+                    </a>
+
+                </div>
+
+
+                <div class="app-topbar-right">
+
+                    <div class="app-topbar-title">
+
+                        @ViewData["Title"]
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <main role="main"
+                  class="app-content">
+
+                @RenderBody()
+
+            </main>
+
+
+            <footer class="app-footer">
+
+                <div>
+                    © 2026 ChemResearchHub
+                </div>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Privacy">
+
+                    Privacy
+
+                </a>
+
+            </footer>
+
+        </div>
+
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync(
+    "Scripts",
+        required: false)
+
+</body>
+
+</html>

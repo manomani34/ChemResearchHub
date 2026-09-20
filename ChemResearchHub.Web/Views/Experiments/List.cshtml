@@ -1,0 +1,147 @@
+﻿@model ChemResearchHub.Web.Models.Experiments.ExperimentsListViewModel
+
+@{
+    ViewData["Title"] = "آزمایش‌ها";
+}
+
+<div class="experiments-page">
+
+    <div class="experiments-header">
+
+        <div>
+            <h1>آزمایش‌ها</h1>
+
+            <p>
+                فهرست آزمایش‌های ثبت‌شده در پروژه‌های پژوهشی
+            </p>
+        </div>
+
+        <div class="experiments-count">
+            @Model.Items.Count آزمایش
+        </div>
+
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="experiments-empty">
+
+            <div class="experiments-empty-icon">
+                🧪
+            </div>
+
+            <h3>هنوز آزمایشی ثبت نشده است</h3>
+
+            <p>
+                آزمایش‌ها از داخل بخش کارهای پژوهشی ایجاد می‌شوند.
+            </p>
+
+            <a asp-controller="WorkItems"
+               asp-action="Index"
+               class="crh-btn crh-btn-primary">
+                مشاهده کارهای پژوهشی
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="experiments-table-card">
+
+            <div class="table-responsive">
+
+                <table class="table crh-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>عنوان آزمایش</th>
+                            <th>کار پژوهشی</th>
+                            <th>شروع</th>
+                            <th>پایان</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="crh-id">
+                                        @item.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.Title
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.WorkItemTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        کار #@item.WorkItemId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (item.StartedAt.HasValue)
+                                    {
+                                        @item.StartedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.CompletedAt.HasValue)
+                                    {
+                                        @item.CompletedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.IsCompleted)
+                                    {
+                                        <span class="crh-status crh-status-success">
+                                            تکمیل‌شده
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-status crh-status-warning">
+                                            در حال انجام
+                                        </span>
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>

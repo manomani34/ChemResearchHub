@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ChemResearchHub.Application/ChemResearchHub.Application.csproj" />
+  <Project Path="ChemResearchHub.Domain/ChemResearchHub.Domain.csproj" />
+  <Project Path="ChemResearchHub.Infrastructure/ChemResearchHub.Infrastructure.csproj" />
+  <Project Path="ChemResearchHub.Web/ChemResearchHub.Web.csproj" />
+</Solution>

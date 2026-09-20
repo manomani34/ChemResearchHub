@@ -1,0 +1,407 @@
+﻿@model ChemResearchHub.Web.Models.WorkItems.WorkItemsIndexViewModel
+
+@{
+    ViewData["Title"] = "کارهای پژوهشی";
+}
+
+<div class="workitems-page"
+     dir="rtl">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="workitems-header">
+
+        <div>
+
+            <div class="workitems-eyebrow">
+                پژوهش
+            </div>
+
+            <h1 class="workitems-title">
+                کارهای پژوهشی
+            </h1>
+
+            <p class="workitems-description">
+                مشاهده، جستجو و پیگیری Work Itemهای ثبت‌شده در سامانه
+            </p>
+
+        </div>
+
+        <div class="workitems-count-card">
+
+            <div class="workitems-count-label">
+                تعداد نمایش
+            </div>
+
+            <div class="workitems-count-value">
+                @Model.Items.Count
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTERS
+         ===================================================== -->
+
+    <div class="workitems-filter-card">
+
+        <form method="get"
+              asp-controller="WorkItems"
+              asp-action="Index">
+
+            <div class="workitems-filter-grid">
+
+                <!-- Search -->
+
+                <div class="workitems-filter-field">
+
+                    <label for="search">
+                        جستجو
+                    </label>
+
+                    <input type="text"
+                           id="search"
+                           name="search"
+                           value="@Model.Search"
+                           class="form-control"
+                           placeholder="عنوان یا توضیحات..." />
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="workitems-filter-field">
+
+                    <label for="status">
+                        وضعیت
+                    </label>
+
+                    <select id="status"
+                            name="status"
+                            class="form-select">
+
+                        <option value="all"
+                                selected="@(Model.Status == "all")">
+
+                            همه
+
+                        </option>
+
+                        <option value="open"
+                                selected="@(Model.Status == "open")">
+
+                            باز
+
+                        </option>
+
+                        <option value="completed"
+                                selected="@(Model.Status == "completed")">
+
+                            تکمیل‌شده
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Assignee -->
+
+                <div class="workitems-filter-field">
+
+                    <label for="assignedToUserId">
+                        مسئول
+                    </label>
+
+                    <select id="assignedToUserId"
+                            name="assignedToUserId"
+                            class="form-select">
+
+                        <option value="">
+                            همه
+                        </option>
+
+                        @foreach (var user in Model.Assignees)
+                        {
+                            <option value="@user.Id"
+                                    selected="@(Model.AssignedToUserId == user.Id)">
+
+                                @user.FullName
+
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="workitems-filter-actions">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        🔎 جستجو
+
+                    </button>
+
+                    <a asp-controller="WorkItems"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        پاک کردن فیلتر
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         LIST
+         ===================================================== -->
+
+    <div class="workitems-list-card">
+
+        <div class="workitems-list-header">
+
+            <div>
+                فهرست کارها
+            </div>
+
+            <div class="workitems-list-result">
+
+                @Model.Items.Count مورد
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Items.Count == 0)
+        {
+            <div class="workitems-empty">
+
+                <div class="workitems-empty-icon">
+                    📭
+                </div>
+
+                <div class="workitems-empty-title">
+                    کاری پیدا نشد
+                </div>
+
+                <div class="workitems-empty-description">
+                    با تغییر فیلترها یا عبارت جستجو دوباره تلاش کنید.
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="workitems-table-wrapper">
+
+                <table class="table workitems-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                عنوان
+                            </th>
+
+                            <th>
+                                پروژه
+                            </th>
+
+                            <th>
+                                نوع
+                            </th>
+
+                            <th>
+                                اولویت
+                            </th>
+
+                            <th>
+                                مسئول
+                            </th>
+
+                            <th>
+                                موعد
+                            </th>
+
+                            <th>
+                                وضعیت
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <!-- Title -->
+
+                                <td>
+
+                                    <div class="workitem-table-title">
+                                        @item.Title
+                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <div class="workitem-table-description">
+                                            @item.Description
+                                        </div>
+                                    }
+
+                                </td>
+
+
+                                <!-- Project -->
+
+                                <td>
+
+                                    <span class="workitem-project-badge">
+                                        پروژه #@item.ProjectId
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Type -->
+
+                                <td>
+
+                                    <span class="workitem-type-badge">
+                                        @item.Type
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Priority -->
+
+                                <td>
+
+                                    @{
+                                        var priorityClass =
+                                        item.Priority >= 8
+                                        ? "priority-high"
+                                        : item.Priority >= 5
+                                        ? "priority-medium"
+                                        : "priority-low";
+
+                                        var priorityText =
+                                        item.Priority >= 8
+                                        ? "بالا"
+                                        : item.Priority >= 5
+                                        ? "متوسط"
+                                        : "پایین";
+                                    }
+
+                                    <span class="workitem-priority @priorityClass">
+
+                                        @priorityText
+
+                                    </span>
+
+                                    <div class="workitem-priority-number">
+                                        @item.Priority
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Assigned User -->
+
+                                <td>
+
+                                    @if (string.IsNullOrWhiteSpace(item.AssignedToUserName))
+                                    {
+                                        <span class="workitem-unassigned">
+                                            بدون مسئول
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="workitem-assignee">
+                                            👤 @item.AssignedToUserName
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Due Date -->
+
+                                <td>
+
+                                    @if (item.DueDate.HasValue)
+                                    {
+                                        <span class="workitem-due-date">
+
+                                            @item.DueDate.Value.ToString("yyyy-MM-dd")
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="workitem-unassigned">
+                                            بدون موعد
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Status -->
+
+                                <td>
+
+                                    @if (item.IsCompleted)
+                                    {
+                                        <span class="workitem-status workitem-status-completed">
+                                            ✓ تکمیل‌شده
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="workitem-status workitem-status-open">
+                                            ● باز
+                                        </span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>

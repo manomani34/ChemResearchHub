@@ -1,0 +1,135 @@
+﻿@model IReadOnlyList<ChemResearchHub.Application.Projects.Dtos.ProjectDto>
+
+@{
+    ViewData["Title"] = "پروژه‌های پژوهشی";
+}
+
+<div class="projects-page">
+
+    <div class="projects-header">
+
+        <div>
+            <div class="projects-header-title">
+                پروژه‌های پژوهشی
+            </div>
+
+            <div class="projects-header-subtitle">
+                مدیریت پروژه‌های تحقیقاتی و مشاهده فضای پژوهش
+            </div>
+        </div>
+
+        <div>
+            <a asp-action="Create"
+               class="crh-btn crh-btn-primary">
+                + پروژه جدید
+            </a>
+        </div>
+
+    </div>
+
+
+    @if (Model.Count == 0)
+    {
+        <div class="projects-empty">
+
+            <div class="projects-empty-icon">
+                🧪
+            </div>
+
+            <div class="projects-empty-title">
+                هنوز پروژه‌ای ثبت نشده است
+            </div>
+
+            <div class="projects-empty-text">
+                برای شروع، اولین پروژه پژوهشی خود را ایجاد کنید.
+            </div>
+
+            <a asp-action="Create"
+               class="crh-btn crh-btn-primary">
+                ایجاد اولین پروژه
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="projects-grid">
+
+            @foreach (var project in Model)
+            {
+                <div class="project-card">
+
+                    <div class="project-card-header">
+
+                        <div class="project-card-icon">
+                            🧪
+                        </div>
+
+                        <div class="project-status
+                                     @(project.IsActive
+                                                             ? "project-status-active"
+                                                             : "project-status-inactive")">
+
+                            @(project.IsActive
+                                                ? "فعال"
+                                                : "غیرفعال")
+
+                </div>
+
+                    </div>
+
+
+                    <div class="project-card-title">
+                        @project.Name
+                    </div>
+
+
+                    <div class="project-card-description">
+
+                @if (string.IsNullOrWhiteSpace(
+                                project.Description))
+                        {
+                            <span class="project-description-empty">
+                                توضیحی برای این پروژه ثبت نشده است.
+                            </span>
+                        }
+                        else
+                        {
+                            @project.Description
+                        }
+
+                    </div>
+
+
+                    <div class="project-card-footer">
+
+                        <div class="project-card-id">
+                            پروژه #@project.Id
+                        </div>
+
+                        <div class="project-card-actions">
+
+                            <a asp-controller="Boards"
+                               asp-action="Index"
+                               asp-route-projectId="@project.Id"
+                               class="crh-btn crh-btn-soft">
+                                بورد
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@project.Id"
+                               class="crh-btn crh-btn-soft">
+                                ویرایش
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

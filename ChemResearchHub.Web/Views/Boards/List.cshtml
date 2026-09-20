@@ -1,0 +1,111 @@
+﻿@model ChemResearchHub.Web.Models.Boards.BoardsListViewModel
+
+@{
+    ViewData["Title"] = "بوردهای پژوهشی";
+}
+
+<div class="boards-page">
+
+    <div class="boards-header">
+        <div>
+            <div class="boards-header-title">
+                بوردهای پژوهشی
+            </div>
+
+            <div class="boards-header-subtitle">
+                مدیریت بوردها و ورود به فضای Kanban
+            </div>
+        </div>
+    </div>
+
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="boards-empty">
+            <div class="boards-empty-icon">
+                📋
+            </div>
+
+            <div class="boards-empty-title">
+                هنوز بوردی ایجاد نشده است
+            </div>
+
+            <div class="boards-empty-text">
+                ابتدا یک پروژه ایجاد کنید و سپس برای آن بورد پژوهشی بسازید.
+            </div>
+
+            <a asp-controller="Projects"
+               asp-action="Index"
+               class="crh-btn crh-btn-primary">
+                مشاهده پروژه‌ها
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="boards-grid">
+
+            @foreach (var item in Model.Items)
+            {
+                <div class="board-card">
+
+                    <div class="board-card-top">
+                        <div class="board-card-icon">
+                            📋
+                        </div>
+
+                        <div class="board-card-project">
+                            @item.ProjectName
+                        </div>
+                    </div>
+
+
+                    <div class="board-card-title">
+                        @item.Name
+                    </div>
+
+
+                    <div class="board-card-meta">
+
+                        <div class="board-card-meta-item">
+                            <span class="board-card-meta-label">
+                                ستون‌ها
+                            </span>
+
+                            <span class="board-card-meta-value">
+                                @item.ColumnCount
+                            </span>
+                        </div>
+
+                        <div class="board-card-meta-item">
+                            <span class="board-card-meta-label">
+                                شناسه
+                            </span>
+
+                            <span class="board-card-meta-value">
+                                #@item.Id
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="board-card-actions">
+
+                        <a asp-controller="Boards"
+                           asp-action="Index"
+                           asp-route-projectId="@item.ProjectId"
+                           asp-route-boardId="@item.Id"
+                           class="crh-btn crh-btn-primary">
+                            ورود به بورد
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

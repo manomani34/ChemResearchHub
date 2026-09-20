@@ -1,0 +1,195 @@
+﻿@model ChemResearchHub.Web.Models.Attachments.AttachmentsListViewModel
+
+@{
+    ViewData["Title"] = "پیوست‌ها";
+}
+
+<div class="attachments-page">
+
+    <div class="attachments-header">
+
+        <div>
+            <h1>پیوست‌ها</h1>
+
+            <p>
+                فایل‌های مرتبط با کارهای پژوهشی
+            </p>
+        </div>
+
+        <div class="attachments-count">
+            @Model.Items.Count فایل
+        </div>
+
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="attachments-empty">
+
+            <div class="attachments-empty-icon">
+                📎
+            </div>
+
+            <h3>
+                هنوز فایلی ثبت نشده است
+            </h3>
+
+            <p>
+                فایل‌ها از داخل بخش کارهای پژوهشی به سامانه اضافه می‌شوند.
+            </p>
+
+            <a asp-controller="WorkItems"
+               asp-action="Index"
+               class="crh-btn crh-btn-primary">
+                مشاهده کارهای پژوهشی
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="attachments-table-card">
+
+            <div class="table-responsive">
+
+                <table class="table crh-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>فایل</th>
+                            <th>کار پژوهشی</th>
+                            <th>نوع فایل</th>
+                            <th>حجم</th>
+                            <th>توضیحات</th>
+                            <th>تاریخ آپلود</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="crh-id">
+                                        @item.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="attachment-file">
+                                        <span class="attachment-file-icon">
+                                            📄
+                                        </span>
+
+                                        <div>
+                                            <div class="crh-primary-text">
+                                                @item.OriginalFileName
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(item.ContentType))
+                                            {
+                                                <div class="crh-secondary-text">
+                                                    @item.ContentType
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.WorkItemTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        کار #@item.WorkItemId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @{
+                                        var extension =
+                                        System.IO.Path.GetExtension(
+                                        item.OriginalFileName);
+
+                                        if (string.IsNullOrWhiteSpace(extension))
+                                        {
+                                            extension = "—";
+                                        }
+                                    }
+
+                                    <span class="attachment-extension">
+                                        @extension
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @{
+                                        string fileSizeText;
+
+                                        if (item.FileSize < 1024)
+                                        {
+                                            fileSizeText =
+                                            $"{item.FileSize:N0} B";
+                                        }
+                                        else if (item.FileSize < 1024 * 1024)
+                                        {
+                                            fileSizeText =
+                                            $"{item.FileSize / 1024d:0.##} KB";
+                                        }
+                                        else
+                                        {
+                                            fileSizeText =
+                                            $"{item.FileSize / (1024d * 1024d):0.##} MB";
+                                        }
+                                    }
+
+                                    @fileSizeText
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <span class="attachment-description"
+                                              title="@item.Description">
+                                            @item.Description
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                                </td>
+
+                                <td>
+                                    <a asp-controller="Attachments"
+                                       asp-action="Download"
+                                       asp-route-id="@item.Id"
+                                       class="crh-btn crh-btn-soft attachment-download-btn">
+                                        دانلود
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>

@@ -1,0 +1,558 @@
+@model ChemResearchHub.Web.Models.Boards.KanbanViewModel
+
+@{
+    ViewData["Title"] = "Research Board";
+
+    var project =
+        (ChemResearchHub.Application.Projects.Dtos.ProjectDto)ViewBag.Project;
+
+    var boards =
+        (IReadOnlyList<ChemResearchHub.Application.Boards.Dtos.BoardDto>)ViewBag.Boards;
+}
+
+<style>
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .kanban-column {
+        min-width: 0;
+    }
+
+    .kanban-drop-zone {
+        min-height: 220px;
+        transition: background-color 0.15s ease;
+        border-radius: 0.5rem;
+    }
+
+        .kanban-drop-zone.drag-over {
+            background-color: #e9f2ff;
+            outline: 2px dashed #86b7fe;
+            outline-offset: -4px;
+        }
+
+    .kanban-card {
+        cursor: grab;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        .kanban-card.dragging {
+            opacity: 0.45;
+            transform: rotate(1deg);
+        }
+
+        .kanban-card.completed {
+            opacity: 0.75;
+        }
+
+            .kanban-card.completed .card-title {
+                text-decoration: line-through;
+            }
+
+    @@media (max-width: 1400px) {
+        .kanban-board {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 1100px) {
+        .kanban-board {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 800px) {
+        .kanban-board {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .kanban-board {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <div class="text-muted mb-1">
+                Research Project
+            </div>
+
+            <h1 class="h3 mb-1">
+                @project.Name
+            </h1>
+
+            <p class="text-muted mb-0">
+                @Model.Board.Name
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Create"
+               asp-route-projectId="@project.Id"
+               class="btn btn-primary">
+                New Board
+            </a>
+        </div>
+
+    </div>
+
+    @if (boards.Count > 1)
+    {
+        <div class="mb-4">
+
+            <div class="btn-group"
+                 role="group">
+
+                @foreach (var board in boards)
+                {
+                    <a asp-action="Index"
+                       asp-route-projectId="@project.Id"
+                       asp-route-boardId="@board.Id"
+                       class="btn @(board.Id == Model.Board.Id
+                                                             ? "btn-primary"
+                                                             : "btn-outline-primary")">
+
+                @board.Name
+
+                    </a>
+                        }
+
+            </div>
+
+        </div>
+    }
+
+    <div class="kanban-board">
+
+        @foreach (var column in Model.Board.Columns.OrderBy(x => x.Order))
+        {
+            var workItems =
+            Model.WorkItemsByColumn.TryGetValue(
+            column.Id,
+            out var items)
+            ? items
+            : Array.Empty<
+            ChemResearchHub.Application.WorkItems.Dtos.WorkItemDto>();
+
+            <div class="kanban-column">
+
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-light">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <strong>
+                                @column.Name
+                            </strong>
+
+                            <span class="badge bg-secondary">
+                                @workItems.Count
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="d-grid mb-3">
+
+                            <a asp-controller="WorkItems"
+                               asp-action="Create"
+                               asp-route-projectId="@project.Id"
+                               asp-route-boardId="@Model.Board.Id"
+                               asp-route-boardColumnId="@column.Id"
+                               class="btn btn-sm btn-outline-primary">
+
+                                + Add Work Item
+
+                            </a>
+
+                        </div>
+
+                        <div class="kanban-drop-zone"
+                             data-column-id="@column.Id">
+
+                            @if (workItems.Count == 0)
+                            {
+                                <div class="text-center text-muted py-5">
+
+                                    <div class="mb-2">
+                                        No work items
+                                    </div>
+
+                                    <small>
+                                        Drag a card here or add a new item.
+                                    </small>
+
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var item in workItems)
+                                {
+                                    <div class="card mb-3 border shadow-sm kanban-card @(item.IsCompleted ? "completed" : "")"
+                                         draggable="true"
+                                         data-work-item-id="@item.Id">
+
+                                        <div class="card-body">
+
+                                            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+
+                                                <div class="flex-grow-1">
+
+                                                    <div class="d-flex align-items-center gap-2">
+
+                                                        <h6 class="card-title mb-0">
+                                                            <a asp-controller="WorkItems"
+                                                               asp-action="Details"
+                                                               asp-route-id="@item.Id"
+                                                               asp-route-projectId="@project.Id"
+                                                               asp-route-boardId="@Model.Board.Id"
+                                                               class="text-decoration-none">
+                                                                @item.Title
+                                                            </a>
+                                                        </h6>
+
+                                                        @if (item.IsCompleted)
+                                                        {
+                                                            <span class="badge bg-success">
+                                                                Completed
+                                                            </span>
+                                                        }
+
+                                                    </div>
+
+                                                </div>
+
+                                                <span class="badge bg-light text-dark">
+                                                    @item.Type
+                                                </span>
+
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                                            {
+                                                <p class="card-text text-muted small mb-2">
+                                                    @item.Description
+                                                </p>
+                                            }
+
+                                            <div class="small text-muted mb-3">
+
+                                                <div>
+                                                    Priority: @item.Priority
+                                                </div>
+
+                                                @if (item.DueDate.HasValue)
+                                                {
+                                                    <div>
+                                                        Due:
+                                                        @item.DueDate.Value.ToString("yyyy-MM-dd")
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(item.AssignedToUserName))
+                                            {
+                                                <div class="small mb-3">
+
+                                                    <span class="text-muted">
+                                                        Assigned to:
+                                                    </span>
+
+                                                    <strong>
+                                                        @item.AssignedToUserName
+                                                    </strong>
+
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="small text-muted mb-3">
+                                                    Unassigned
+                                                </div>
+                                            }
+
+                                            <div class="d-grid gap-2">
+
+                                                <a asp-controller="WorkItems"
+                                                   asp-action="Details"
+                                                   asp-route-id="@item.Id"
+                                                   asp-route-projectId="@project.Id"
+                                                   asp-route-boardId="@Model.Board.Id"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Details
+                                                </a>
+
+                                                <a asp-controller="WorkItems"
+                                                   asp-action="Edit"
+                                                   asp-route-id="@item.Id"
+                                                   asp-route-projectId="@project.Id"
+                                                   asp-route-boardId="@Model.Board.Id"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    Edit
+                                                </a>
+
+                                                @if (item.IsCompleted)
+                                                {
+                                                    <form asp-controller="WorkItems"
+                                                          asp-action="Reopen"
+                                                          method="post">
+
+                                                        <input type="hidden"
+                                                               name="id"
+                                                               value="@item.Id" />
+
+                                                        <input type="hidden"
+                                                               name="boardId"
+                                                               value="@Model.Board.Id" />
+
+                                                        <input type="hidden"
+                                                               name="projectId"
+                                                               value="@project.Id" />
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-warning w-100">
+                                                            Reopen
+                                                        </button>
+
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-controller="WorkItems"
+                                                          asp-action="Complete"
+                                                          method="post">
+
+                                                        <input type="hidden"
+                                                               name="id"
+                                                               value="@item.Id" />
+
+                                                        <input type="hidden"
+                                                               name="boardId"
+                                                               value="@Model.Board.Id" />
+
+                                                        <input type="hidden"
+                                                               name="projectId"
+                                                               value="@project.Id" />
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-success w-100">
+                                                            Complete
+                                                        </button>
+
+                                                    </form>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<form id="kanbanMoveForm"
+      asp-controller="WorkItems"
+      asp-action="Move"
+      method="post"
+      class="d-none">
+
+    <input type="hidden"
+           id="moveWorkItemId"
+           name="id" />
+
+    <input type="hidden"
+           name="boardId"
+           value="@Model.Board.Id" />
+
+    <input type="hidden"
+           name="projectId"
+           value="@project.Id" />
+
+    <input type="hidden"
+           id="moveBoardColumnId"
+           name="boardColumnId" />
+
+    <input type="hidden"
+           id="moveSortOrder"
+           name="sortOrder"
+           value="0" />
+
+    @Html.AntiForgeryToken()
+
+</form>
+
+@section Scripts {
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            let draggedCard = null;
+
+            const cards =
+                document.querySelectorAll(".kanban-card");
+
+            const dropZones =
+                document.querySelectorAll(".kanban-drop-zone");
+
+            const moveForm =
+                document.getElementById("kanbanMoveForm");
+
+            const moveWorkItemId =
+                document.getElementById("moveWorkItemId");
+
+            const moveBoardColumnId =
+                document.getElementById("moveBoardColumnId");
+
+            const moveSortOrder =
+                document.getElementById("moveSortOrder");
+
+            cards.forEach(function (card) {
+
+                card.addEventListener("dragstart", function (event) {
+
+                    draggedCard = card;
+
+                    card.classList.add("dragging");
+
+                    event.dataTransfer.effectAllowed = "move";
+
+                    event.dataTransfer.setData(
+                        "text/plain",
+                        card.dataset.workItemId);
+                });
+
+                card.addEventListener("dragend", function () {
+
+                    card.classList.remove("dragging");
+
+                    draggedCard = null;
+
+                    dropZones.forEach(function (zone) {
+                        zone.classList.remove("drag-over");
+                    });
+                });
+            });
+
+            function calculateSortOrder(
+                zone,
+                mouseY) {
+
+                const zoneCards =
+                    Array.from(
+                        zone.querySelectorAll(".kanban-card"));
+
+                let sortOrder = 0;
+
+                for (const card of zoneCards) {
+
+                    if (draggedCard &&
+                        card === draggedCard) {
+                        continue;
+                    }
+
+                    const rect =
+                        card.getBoundingClientRect();
+
+                    const cardMiddle =
+                        rect.top + (rect.height / 2);
+
+                    if (mouseY > cardMiddle) {
+                        sortOrder++;
+                    }
+                }
+
+                return sortOrder;
+            }
+
+            dropZones.forEach(function (zone) {
+
+                zone.addEventListener("dragover", function (event) {
+
+                    event.preventDefault();
+
+                    event.dataTransfer.dropEffect = "move";
+
+                    zone.classList.add("drag-over");
+                });
+
+                zone.addEventListener("dragleave", function (event) {
+
+                    if (!zone.contains(event.relatedTarget)) {
+                        zone.classList.remove("drag-over");
+                    }
+                });
+
+                zone.addEventListener("drop", function (event) {
+
+                    event.preventDefault();
+
+                    zone.classList.remove("drag-over");
+
+                    const workItemId =
+                        event.dataTransfer.getData("text/plain");
+
+                    const targetColumnId =
+                        zone.dataset.columnId;
+
+                    if (!workItemId ||
+                        !targetColumnId ||
+                        !moveForm) {
+                        return;
+                    }
+
+                    const sortOrder =
+                        calculateSortOrder(
+                            zone,
+                            event.clientY);
+
+                    moveWorkItemId.value =
+                        workItemId;
+
+                    moveBoardColumnId.value =
+                        targetColumnId;
+
+                    moveSortOrder.value =
+                        sortOrder;
+
+                    moveForm.submit();
+                });
+            });
+        });
+    </script>
+
+}

@@ -1,0 +1,670 @@
+﻿@model ChemResearchHub.Web.Models.Home.HomeDashboardViewModel
+
+@{
+    ViewData["Title"] = "داشبورد";
+}
+
+<div class="dashboard-page"
+     dir="rtl">
+
+    <!-- =========================================================
+         WELCOME
+         ========================================================= -->
+
+    <div class="dashboard-hero">
+
+        <div class="dashboard-hero-content">
+
+            <div class="dashboard-eyebrow">
+                داشبورد پژوهشی
+            </div>
+
+            <h1 class="dashboard-title">
+                سلام،
+                @Model.DisplayName
+            </h1>
+
+            <p class="dashboard-description">
+                نمای کلی از وضعیت پروژه‌ها، کارهای پژوهشی
+                و داده‌های ثبت‌شده در ChemResearchHub
+            </p>
+
+        </div>
+
+        <div class="dashboard-date">
+
+            <div class="dashboard-date-label">
+                امروز
+            </div>
+
+            <div class="dashboard-date-value">
+                @Model.DateText
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MAIN METRICS
+         ========================================================= -->
+
+    <div class="dashboard-grid dashboard-grid-4">
+
+        <!-- Projects -->
+
+        <a asp-controller="Projects"
+           asp-action="Index"
+           class="dashboard-stat-card dashboard-stat-card-link">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        پروژه‌ها
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.ProjectCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    📁
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer">
+                مشاهده پروژه‌ها
+                <span>←</span>
+            </div>
+
+        </a>
+
+
+        <!-- Work Items -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        کل کارها
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.WorkItemCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    ✅
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                کارهای پژوهشی
+            </div>
+
+        </div>
+
+
+        <!-- Experiments -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        آزمایش‌ها
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.ExperimentCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    🧪
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                آزمایش‌های ثبت‌شده
+            </div>
+
+        </div>
+
+
+        <!-- Samples -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        نمونه‌ها
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.SampleCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    🧫
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                نمونه‌های ثبت‌شده
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SECOND METRICS
+         ========================================================= -->
+
+    <div class="dashboard-grid dashboard-grid-4 dashboard-grid-spaced">
+
+        <!-- Results -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        نتایج
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.ResultCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    📊
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                نتایج ثبت‌شده
+            </div>
+
+        </div>
+
+
+        <!-- Attachments -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        پیوست‌ها
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.AttachmentCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    📎
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                فایل‌های پیوست‌شده
+            </div>
+
+        </div>
+
+
+        <!-- Decisions -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        تصمیمات ثبت‌شده
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.DecisionLogCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    📋
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                سوابق تصمیم‌گیری
+            </div>
+
+        </div>
+
+
+        <!-- Active Experiments -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-top">
+
+                <div>
+
+                    <div class="dashboard-stat-label">
+                        آزمایش‌های فعال
+                    </div>
+
+                    <div class="dashboard-stat-value">
+                        @Model.ActiveExperimentCount
+                    </div>
+
+                </div>
+
+                <div class="dashboard-stat-icon">
+                    🔬
+                </div>
+
+            </div>
+
+            <div class="dashboard-stat-footer muted">
+                آزمایش‌های در حال اجرا
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         QUICK ACTIONS
+         ========================================================= -->
+
+    <div class="dashboard-panel dashboard-actions-panel">
+
+        <div class="dashboard-panel-header">
+
+            <div>
+
+                <h2>
+                    دسترسی سریع
+                </h2>
+
+                <p>
+                    دسترسی به بخش‌های اصلی سامانه
+                </p>
+
+            </div>
+
+            <span class="dashboard-panel-icon">
+                ⚡
+            </span>
+
+        </div>
+
+
+        <div class="dashboard-actions-grid">
+
+            <!-- Projects -->
+
+            <a asp-controller="Projects"
+               asp-action="Index"
+               class="dashboard-action-card">
+
+                <div class="dashboard-action-icon">
+                    📁
+                </div>
+
+                <div class="dashboard-action-content">
+
+                    <div class="dashboard-action-title">
+                        پروژه‌ها
+                    </div>
+
+                    <div class="dashboard-action-description">
+                        مشاهده و مدیریت پروژه‌های پژوهشی
+                    </div>
+
+                </div>
+
+                <div class="dashboard-action-arrow">
+                    ←
+                </div>
+
+            </a>
+
+
+            <!-- Research Work -->
+
+            <a asp-controller="Projects"
+               asp-action="Index"
+               class="dashboard-action-card">
+
+                <div class="dashboard-action-icon">
+                    ✅
+                </div>
+
+                <div class="dashboard-action-content">
+
+                    <div class="dashboard-action-title">
+                        کارهای پژوهشی
+                    </div>
+
+                    <div class="dashboard-action-description">
+                        پیگیری Work Itemهای پروژه‌ها
+                    </div>
+
+                </div>
+
+                <div class="dashboard-action-arrow">
+                    ←
+                </div>
+
+            </a>
+
+
+            <!-- Decisions -->
+
+            <a asp-controller="Projects"
+               asp-action="Index"
+               class="dashboard-action-card">
+
+                <div class="dashboard-action-icon">
+                    📋
+                </div>
+
+                <div class="dashboard-action-content">
+
+                    <div class="dashboard-action-title">
+                        تصمیمات پژوهشی
+                    </div>
+
+                    <div class="dashboard-action-description">
+                        مرور تصمیم‌ها و سوابق پژوهشی
+                    </div>
+
+                </div>
+
+                <div class="dashboard-action-arrow">
+                    ←
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MIDDLE SECTION
+         ========================================================= -->
+
+    <div class="dashboard-grid dashboard-grid-2 dashboard-middle-grid">
+
+
+        <!-- =====================================================
+             MY WORK
+             ===================================================== -->
+
+        <div class="dashboard-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div>
+
+                    <h2>
+                        کارهای من
+                    </h2>
+
+                    <p>
+                        وضعیت Work Itemهای اختصاص‌یافته به شما
+                    </p>
+
+                </div>
+
+                <span class="dashboard-panel-icon">
+                    ✅
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-work-summary">
+
+                <div class="dashboard-work-item">
+
+                    <div class="dashboard-work-value">
+                        @Model.MyOpenWorkItemCount
+                    </div>
+
+                    <div class="dashboard-work-label">
+                        کار باز من
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-work-divider"></div>
+
+
+                <div class="dashboard-work-item">
+
+                    <div class="dashboard-work-value">
+                        @Model.OpenWorkItemCount
+                    </div>
+
+                    <div class="dashboard-work-label">
+                        کار باز در کل سامانه
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             USER ACCOUNT
+             ===================================================== -->
+
+        <div class="dashboard-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div>
+
+                    <h2>
+                        حساب کاربری
+                    </h2>
+
+                    <p>
+                        نقش و سطح دسترسی شما
+                    </p>
+
+                </div>
+
+                <span class="dashboard-panel-icon">
+                    👤
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-role-card">
+
+                <div class="dashboard-role-label">
+                    نقش فعلی
+                </div>
+
+                <div class="dashboard-role-name">
+                    @Model.RoleName
+                </div>
+
+                <div class="dashboard-role-description">
+
+                    @if (Model.RoleName == "Admin")
+                    {
+                        @:دسترسی مدیریتی و مدیریت اعضای تیم
+                    }
+                    else if (Model.RoleName == "Reviewer")
+                    {
+                        @:دسترسی بازبینی و فعالیت‌های پژوهشی
+                    }
+                    else
+                    {
+                        @:دسترسی پژوهشی و انجام Work Itemها
+                    }
+
+                </div>
+
+            </div>
+
+
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Users"
+                   asp-action="Index"
+                   class="dashboard-inline-action">
+
+                    <span>
+                        👥
+                    </span>
+
+                    <span>
+                        مدیریت اعضای تیم
+                    </span>
+
+                    <span class="dashboard-inline-action-arrow">
+                        ←
+                    </span>
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         RECENT DECISIONS
+         ========================================================= -->
+
+    <div class="dashboard-panel dashboard-recent-panel">
+
+        <div class="dashboard-panel-header">
+
+            <div>
+
+                <h2>
+                    آخرین تصمیمات پژوهشی
+                </h2>
+
+                <p>
+                    آخرین Decision Logهای ثبت‌شده در سامانه
+                </p>
+
+            </div>
+
+            <span class="dashboard-panel-icon">
+                📋
+            </span>
+
+        </div>
+
+
+        @if (Model.RecentDecisions.Count == 0)
+        {
+            <div class="dashboard-empty">
+
+                <div class="dashboard-empty-icon">
+                    📭
+                </div>
+
+                <div class="dashboard-empty-title">
+                    هنوز تصمیمی ثبت نشده است.
+                </div>
+
+                <div class="dashboard-empty-description">
+                    پس از ثبت اولین Decision Log، سوابق این بخش نمایش داده می‌شوند.
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-decisions">
+
+                @foreach (var decision in Model.RecentDecisions)
+                {
+                    <div class="dashboard-decision">
+
+                        <div class="dashboard-decision-type">
+                            @decision.DecisionType
+                        </div>
+
+                        <div class="dashboard-decision-content">
+
+                            <div class="dashboard-decision-title">
+                                @decision.Decision
+                            </div>
+
+                            <div class="dashboard-decision-date">
+
+                                @decision.CreatedAt
+                                .ToLocalTime()
+                                .ToString("yyyy-MM-dd HH:mm")
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>
+

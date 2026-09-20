@@ -1,0 +1,196 @@
+﻿@model ChemResearchHub.Web.Models.WorkItems.CreateWorkItemViewModel
+
+@{
+    var project =
+        (ChemResearchHub.Application.Projects.Dtos.ProjectDto)ViewBag.Project;
+
+    var board =
+        (ChemResearchHub.Application.Boards.Dtos.BoardDto)ViewBag.Board;
+
+    var column =
+        (ChemResearchHub.Application.Boards.Dtos.BoardColumnDto)ViewBag.Column;
+
+    var users =
+        (IReadOnlyList<ChemResearchHub.Application.Users.Dtos.UserDto>)ViewBag.Users;
+
+    ViewData["Title"] = "Create Work Item";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <div class="text-muted mb-1">
+            Project
+        </div>
+
+        <h1 class="h3 mb-1">
+            @project.Name
+        </h1>
+
+        <p class="text-muted mb-1">
+            Board: @board.Name
+        </p>
+
+        <p class="mb-0">
+            Column:
+            <strong>@column.Name</strong>
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Create" method="post">
+
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="BoardId" type="hidden" />
+                <input asp-for="BoardColumnId" type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Title"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="For example: Analyze NMR spectrum" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Describe the research task, experiment, or analysis...">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Type"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="Type"
+                                asp-items="Html.GetEnumSelectList<ChemResearchHub.Domain.Enums.WorkItemType>()"
+                                class="form-select">
+                        </select>
+
+                        <span asp-validation-for="Type"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Priority"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Priority"
+                               type="number"
+                               class="form-control"
+                               min="0"
+                               max="10" />
+
+                        <span asp-validation-for="Priority"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="AssignedToUserId"
+                           class="form-label">
+                        Assigned To
+                    </label>
+
+                    <select asp-for="AssignedToUserId"
+                            class="form-select">
+
+                        <option value="">
+                            -- Unassigned --
+                        </option>
+
+                        @foreach (var user in users)
+                        {
+                            var displayName =
+                            string.IsNullOrWhiteSpace(user.FullName)
+                            ? user.Email
+                            : user.FullName;
+
+                            <option value="@user.Id">
+                                @displayName
+                            </option>
+                        }
+
+                    </select>
+
+                    <div class="form-text">
+                        Select the researcher responsible for this work item.
+                    </div>
+
+                    <span asp-validation-for="AssignedToUserId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="DueDate"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="DueDate"
+                           class="form-control"
+                           type="date" />
+
+                    <span asp-validation-for="DueDate"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Create Work Item
+                    </button>
+
+                    <a asp-controller="Boards"
+                       asp-action="Index"
+                       asp-route-projectId="@Model.ProjectId"
+                       asp-route-boardId="@Model.BoardId"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

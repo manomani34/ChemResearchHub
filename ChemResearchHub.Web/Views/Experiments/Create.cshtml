@@ -1,0 +1,179 @@
+﻿@model ChemResearchHub.Web.Models.Experiments.CreateExperimentViewModel
+
+@{
+    ViewData["Title"] = "Create Experiment";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+
+        <div class="text-muted mb-1">
+            Research Work Item
+        </div>
+
+        <h1 class="h3 mb-1">
+            Create Experiment
+        </h1>
+
+        <p class="text-muted mb-0">
+            Register a new experiment for this work item.
+        </p>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form asp-action="Create"
+                  method="post">
+
+                <input asp-for="WorkItemId"
+                       type="hidden" />
+
+                <input asp-for="ProjectId"
+                       type="hidden" />
+
+                <input asp-for="BoardId"
+                       type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="Title"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="For example: NMR acquisition" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="Description"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Describe the purpose and scope of the experiment...">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="Protocol"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Protocol"
+                              class="form-control"
+                              rows="7"
+                              placeholder="Enter the experimental protocol, method, instrument settings, or procedure...">
+                    </textarea>
+
+                    <span asp-validation-for="Protocol"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="StartedAt"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="StartedAt"
+                               type="datetime-local"
+                               class="form-control" />
+
+                        <span asp-validation-for="StartedAt"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="CompletedAt"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="CompletedAt"
+                               type="datetime-local"
+                               class="form-control" />
+
+                        <span asp-validation-for="CompletedAt"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <label asp-for="Notes"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Notes"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Additional observations, issues, or research notes...">
+                    </textarea>
+
+                    <span asp-validation-for="Notes"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Create Experiment
+                    </button>
+
+                    <a asp-controller="WorkItems"
+                       asp-action="Details"
+                       asp-route-id="@Model.WorkItemId"
+                       asp-route-projectId="@Model.ProjectId"
+                       asp-route-boardId="@Model.BoardId"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

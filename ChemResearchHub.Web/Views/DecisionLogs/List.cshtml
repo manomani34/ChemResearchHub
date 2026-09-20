@@ -1,0 +1,191 @@
+﻿@model ChemResearchHub.Web.Models.DecisionLogs.DecisionLogsListViewModel
+
+@{
+    ViewData["Title"] = "تصمیمات";
+}
+
+<div class="decision-logs-page">
+
+    <div class="decision-logs-header">
+
+        <div>
+            <h1>تصمیمات پژوهشی</h1>
+
+            <p>
+                سابقه تصمیمات علمی، اعتبارسنجی، بازبینی و تأیید پروژه‌ها
+            </p>
+        </div>
+
+        <div class="decision-logs-count">
+            @Model.Items.Count تصمیم
+        </div>
+
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="decision-logs-empty">
+
+            <div class="decision-logs-empty-icon">
+                📋
+            </div>
+
+            <h3>
+                هنوز تصمیمی ثبت نشده است
+            </h3>
+
+            <p>
+                تصمیمات پژوهشی از داخل بخش کارهای پژوهشی ثبت می‌شوند.
+            </p>
+
+            <a asp-controller="WorkItems"
+               asp-action="Index"
+               class="crh-btn crh-btn-primary">
+                مشاهده کارهای پژوهشی
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="decision-logs-table-card">
+
+            <div class="table-responsive">
+
+                <table class="table crh-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>کار پژوهشی</th>
+                            <th>نوع تصمیم</th>
+                            <th>تصمیم</th>
+                            <th>دلیل / منطق</th>
+                            <th>شواهد</th>
+                            <th>ثبت‌کننده</th>
+                            <th>تاریخ</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="crh-id">
+                                        @item.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.WorkItemTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        کار #@item.WorkItemId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @{
+                                        var typeClass =
+                                        item.DecisionType?.ToLowerInvariant() switch
+                                        {
+                                            "scientific" => "decision-type-scientific",
+                                            "validation" => "decision-type-validation",
+                                            "review" => "decision-type-review",
+                                            "approval" => "decision-type-approval",
+                                            "rejection" => "decision-type-rejection",
+                                            _ => "decision-type-other"
+                                        };
+
+                                        var typeText =
+                                        item.DecisionType?.ToLowerInvariant() switch
+                                        {
+                                            "scientific" => "علمی",
+                                            "validation" => "اعتبارسنجی",
+                                            "review" => "بازبینی",
+                                            "approval" => "تأیید",
+                                            "rejection" => "رد",
+                                            _ => "سایر"
+                                        };
+                                    }
+
+                                    <span class="decision-type @typeClass">
+                                        @typeText
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="decision-main-text">
+                                        @item.Decision
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Rationale))
+                                    {
+                                        <div class="decision-text-preview"
+                                             title="@item.Rationale">
+                                            @item.Rationale
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Evidence))
+                                    {
+                                        <div class="decision-text-preview"
+                                             title="@item.Evidence">
+                                            @item.Evidence
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.CreatedByUserId))
+                                    {
+                                        <span class="decision-user-id">
+                                            @item.CreatedByUserId
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>

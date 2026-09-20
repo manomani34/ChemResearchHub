@@ -1,0 +1,419 @@
+﻿@page
+@model LoginModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "ورود به سامانه";
+}
+
+<!DOCTYPE html>
+
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+    <title>@ViewData["Title"] - ChemResearchHub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.16), transparent 32%), radial-gradient(circle at bottom left, rgba(255,255,255,0.10), transparent 28%), linear-gradient(135deg, #0f172a 0%, #1d4ed8 45%, #2563eb 100%);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 36px 34px 30px;
+            box-shadow: 0 25px 70px rgba(15, 23, 42, 0.28);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .brand-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
+        }
+
+        .brand-title {
+            margin: 0;
+            color: #111827;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            margin: 10px 0 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .validation-summary {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+            .validation-summary:empty {
+                display: none;
+            }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+            color: #6b7280;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 52px;
+            border: 1px solid #d1d5db;
+            border-radius: 14px;
+            background: #f9fafb;
+            color: #111827;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 14px;
+            padding: 0 46px 0 46px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+            .form-control::placeholder {
+                color: #9ca3af;
+            }
+
+            .form-control:focus {
+                border-color: #2563eb;
+                background: #ffffff;
+                box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+            }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+            .password-toggle:hover {
+                background: #f3f4f6;
+                color: #2563eb;
+            }
+
+        .field-validation-error {
+            display: block;
+            margin-top: 6px;
+            color: #dc2626;
+            font-size: 12px;
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4px 0 22px;
+        }
+
+        .remember-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #4b5563;
+            font-size: 13px;
+        }
+
+        .remember-checkbox {
+            width: 17px;
+            height: 17px;
+            margin: 0;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 52px;
+            border: 0;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+            .login-button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
+            }
+
+            .login-button:active {
+                transform: translateY(0);
+            }
+
+        .login-footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .login-footer-title {
+            margin: 0;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .login-footer-text {
+            margin: 7px 0 0;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .system-name {
+            color: #2563eb;
+        }
+
+        @@media (max-width: 480px) {
+            body
+
+        {
+            padding: 16px;
+        }
+
+        .login-card {
+            padding: 28px 22px 24px;
+            border-radius: 20px;
+        }
+
+        .brand-title {
+            font-size: 23px;
+        }
+
+        .brand-subtitle {
+            font-size: 12px;
+        }
+
+        }
+    </style>
+    
+
+</head>
+
+<body>
+    <main class="login-wrapper">
+        <div class="login-card">
+
+            
+            <div class="brand">
+                <div class="brand-icon" aria-hidden="true">
+                    🧪
+                </div>
+
+                <h1 class="brand-title">
+                    ورود به سامانه
+                </h1>
+
+                <p class="brand-subtitle">
+                    سامانه مدیریت پژوهش و داده‌های آزمایشگاهی
+                </p>
+            </div>
+
+            <form id="account"
+                  method="post"
+                  asp-route-returnUrl="@Model.ReturnUrl">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"
+                     role="alert"></div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="form-label">
+                        نام کاربری / ایمیل
+                    </label>
+
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">👤</span>
+
+                        <input asp-for="Input.Email"
+                               class="form-control"
+                               autocomplete="username"
+                               aria-required="true"
+                               placeholder="ایمیل یا نام کاربری" />
+                    </div>
+
+                    <span asp-validation-for="Input.Email"
+                          class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Password" class="form-label">
+                        رمز عبور
+                    </label>
+
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+
+                        <input asp-for="Input.Password"
+                               id="passwordInput"
+                               class="form-control"
+                               autocomplete="current-password"
+                               aria-required="true"
+                               placeholder="رمز عبور"
+                               type="password" />
+
+                        <button type="button"
+                                id="togglePassword"
+                                class="password-toggle"
+                                aria-label="نمایش رمز عبور">
+                            👁
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="Input.Password"
+                          class="field-validation-error"></span>
+                </div>
+
+                <div class="remember-row">
+                    <label asp-for="Input.RememberMe" class="remember-label">
+                        <input class="remember-checkbox"
+                               asp-for="Input.RememberMe" />
+
+                        <span>
+                            مرا به خاطر بسپار
+                        </span>
+                    </label>
+                </div>
+
+                <button id="login-submit"
+                        type="submit"
+                        class="login-button">
+                    ورود به سامانه
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p class="login-footer-title">
+                    <span class="system-name">ChemResearchHub</span>
+                </p>
+
+                <p class="login-footer-text">
+                    سامانه مدیریت پروژه‌ها و فعالیت‌های پژوهشی
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.getElementById("passwordInput");
+            const togglePassword = document.getElementById("togglePassword");
+
+            if (!passwordInput || !togglePassword) {
+                return;
+            }
+
+            togglePassword.addEventListener("click", function () {
+                const isPassword =
+                    passwordInput.getAttribute("type") === "password";
+
+                passwordInput.setAttribute(
+                    "type",
+                    isPassword ? "text" : "password"
+                );
+
+                togglePassword.textContent =
+                    isPassword ? "🙈" : "👁";
+
+                togglePassword.setAttribute(
+                    "aria-label",
+                    isPassword
+                        ? "مخفی کردن رمز عبور"
+                        : "نمایش رمز عبور"
+                );
+            });
+        });
+    </script>
+    
+
+</body>
+</html>

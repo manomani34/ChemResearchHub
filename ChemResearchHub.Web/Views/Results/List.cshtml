@@ -1,0 +1,214 @@
+﻿@model ChemResearchHub.Web.Models.Results.ResultsListViewModel
+
+@{
+    ViewData["Title"] = "نتایج";
+}
+
+<div class="results-page">
+
+    <div class="results-header">
+
+        <div>
+            <h1>نتایج</h1>
+
+            <p>
+                فهرست نتایج ثبت‌شده برای نمونه‌های پژوهشی
+            </p>
+        </div>
+
+        <div class="results-count">
+            @Model.Items.Count نتیجه
+        </div>
+
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="results-empty">
+
+            <div class="results-empty-icon">
+                📊
+            </div>
+
+            <h3>
+                هنوز نتیجه‌ای ثبت نشده است
+            </h3>
+
+            <p>
+                نتایج از داخل نمونه‌های ثبت‌شده در بخش کارهای پژوهشی ایجاد می‌شوند.
+            </p>
+
+            <a asp-controller="Samples"
+               asp-action="List"
+               class="crh-btn crh-btn-primary">
+                مشاهده نمونه‌ها
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="results-table-card">
+
+            <div class="table-responsive">
+
+                <table class="table crh-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>نمونه</th>
+                            <th>معیار</th>
+                            <th>مقدار</th>
+                            <th>واحد</th>
+                            <th>روش</th>
+                            <th>آزمایش</th>
+                            <th>کار پژوهشی</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="crh-id">
+                                        @item.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="result-sample-code">
+                                        @item.SampleCode
+                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.SampleName))
+                                    {
+                                        <div class="crh-secondary-text">
+                                            @item.SampleName
+                                        </div>
+                                    }
+
+                                    <div class="crh-secondary-text">
+                                        نمونه #@item.SampleId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.MetricName
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @{
+                                        var displayValue =
+                                        item.NumericValue.HasValue
+                                        ? item.NumericValue.Value.ToString("0.######")
+                                        : item.TextValue;
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(displayValue))
+                                    {
+                                        <span class="result-value">
+                                            @displayValue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Unit))
+                                    {
+                                        <span class="result-unit">
+                                            @item.Unit
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Method))
+                                    {
+                                        @item.Method
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.ExperimentTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        آزمایش #@item.ExperimentId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.WorkItemTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        کار #@item.WorkItemId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @{
+                                        var statusClass =
+                                        item.Status?.ToLowerInvariant() switch
+                                        {
+                                            "pass" => "result-status-pass",
+                                            "fail" => "result-status-fail",
+                                            "inconclusive" => "result-status-inconclusive",
+                                            _ => "result-status-pending"
+                                        };
+
+                                        var statusText =
+                                        item.Status?.ToLowerInvariant() switch
+                                        {
+                                            "pass" => "موفق",
+                                            "fail" => "رد شده",
+                                            "inconclusive" => "نامشخص",
+                                            _ => "در انتظار"
+                                        };
+                                    }
+
+                                    <span class="result-status @statusClass">
+                                        @statusText
+                                    </span>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>
