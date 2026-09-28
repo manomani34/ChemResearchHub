@@ -1,11 +1,13 @@
-﻿using ChemResearchHub.Application.Boards.Repositories;
+using ChemResearchHub.Application.Boards.Repositories;
 using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Application.WorkItems.Repositories;
+using ChemResearchHub.Application.WorkItemTransitions.Repositories;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Enums;
+using ChemResearchHub.Application.AuditLogs.Interfaces;
 
 namespace ChemResearchHub.Application.WorkItems.Services;
 
@@ -14,15 +16,21 @@ public class WorkItemService : IWorkItemService
     private readonly IWorkItemRepository _workItemRepository;
     private readonly IBoardRepository _boardRepository;
     private readonly IUserService _userService;
+    private readonly IWorkItemTransitionRepository _workItemTransitionRepository;
+    private readonly IAuditLogService _auditLogService;
 
     public WorkItemService(
-        IWorkItemRepository workItemRepository,
-        IBoardRepository boardRepository,
-        IUserService userService)
+    IWorkItemRepository workItemRepository,
+    IBoardRepository boardRepository,
+    IUserService userService,
+    IWorkItemTransitionRepository workItemTransitionRepository,
+    IAuditLogService auditLogService)
     {
         _workItemRepository = workItemRepository;
         _boardRepository = boardRepository;
         _userService = userService;
+        _workItemTransitionRepository = workItemTransitionRepository;
+        _auditLogService = auditLogService;
     }
 
     public async Task<IReadOnlyList<WorkItemDto>> GetByBoardColumnIdAsync(
@@ -180,6 +188,7 @@ public class WorkItemService : IWorkItemService
         int priority,
         DateTime? dueDate,
         string? assignedToUserId,
+        string? changedByUserId,
         CancellationToken cancellationToken = default)
     {
         var board =
@@ -207,6 +216,23 @@ public class WorkItemService : IWorkItemService
             await _workItemRepository.GetByBoardColumnIdAsync(
                 boardColumnId,
                 cancellationToken);
+
+        var targetColumn =
+            board.Columns.FirstOrDefault(
+                x => x.Id == boardColumnId);
+
+        if (targetColumn is null)
+        {
+            throw new InvalidOperationException(
+                "The specified board column does not exist.");
+        }
+
+        if (targetColumn.WipLimit.HasValue &&
+            existingItems.Count >= targetColumn.WipLimit.Value)
+        {
+            throw new InvalidOperationException(
+                $"WIP limit reached for column '{targetColumn.Name}'.");
+        }
 
         var nextSortOrder = existingItems.Count;
 
@@ -236,8 +262,24 @@ public class WorkItemService : IWorkItemService
             workItem,
             cancellationToken);
 
-        await _workItemRepository.SaveChangesAsync(
+        await _workItemTransitionRepository.AddAsync(
+            new ChemResearchHub.Domain.Entities.WorkItemTransition.WorkItemTransition(
+                workItem,
+                null,
+                boardColumnId,
+                changedByUserId),
             cancellationToken);
+
+        await _workItemRepository.SaveChangesAsync(
+    cancellationToken);
+
+        await _auditLogService.AddAsync(
+            changedByUserId,
+            "Created",
+            "WorkItem",
+            workItem.Id,
+            $"Work Item '{workItem.Title}' was created.",
+            cancellationToken: cancellationToken);
 
         UserDto? assignedUser = null;
 
@@ -259,6 +301,7 @@ public class WorkItemService : IWorkItemService
         int id,
         int boardColumnId,
         int sortOrder,
+        string? changedByUserId,
         CancellationToken cancellationToken = default)
     {
         if (sortOrder < 0)
@@ -305,8 +348,47 @@ public class WorkItemService : IWorkItemService
                 .Where(x => x.Id != workItem.Id)
                 .ToList();
 
+        var targetColumn =
+            targetBoard.Columns.FirstOrDefault(
+                x => x.Id == boardColumnId);
+
+        if (targetColumn is null)
+        {
+            throw new InvalidOperationException(
+                "The specified board column does not exist.");
+        }
+
         var currentColumnId =
             workItem.BoardColumnId;
+
+        // The Done workflow column is the source of truth for completion.
+        // Moving to Done marks the Work Item completed; moving out of Done reopens it.
+        var isDoneColumn =
+            string.Equals(
+                targetColumn.Name?.Trim(),
+                "Done",
+                StringComparison.OrdinalIgnoreCase);
+
+        if (isDoneColumn)
+        {
+            workItem.Complete();
+        }
+        else
+        {
+            workItem.Reopen();
+        }
+
+        var isMovingToAnotherColumn =
+            !currentColumnId.HasValue ||
+            currentColumnId.Value != boardColumnId;
+
+        if (isMovingToAnotherColumn &&
+            targetColumn.WipLimit.HasValue &&
+            targetItems.Count >= targetColumn.WipLimit.Value)
+        {
+            throw new InvalidOperationException(
+                $"WIP limit reached for column '{targetColumn.Name}'.");
+        }
 
         IReadOnlyList<WorkItem> sourceItems =
             Array.Empty<WorkItem>();
@@ -356,8 +438,30 @@ public class WorkItemService : IWorkItemService
                 index);
         }
 
+        if (isMovingToAnotherColumn)
+        {
+            await _workItemTransitionRepository.AddAsync(
+                new ChemResearchHub.Domain.Entities.WorkItemTransition.WorkItemTransition(
+                    workItem,
+                    currentColumnId,
+                    boardColumnId,
+                    changedByUserId),
+                cancellationToken);
+        }
+
         await _workItemRepository.SaveChangesAsync(
             cancellationToken);
+
+        if (isMovingToAnotherColumn)
+        {
+            await _auditLogService.AddAsync(
+                changedByUserId,
+                "Moved",
+                "WorkItem",
+                workItem.Id,
+                $"Work Item '{workItem.Title}' moved from column {currentColumnId?.ToString() ?? "None"} to column {boardColumnId}.",
+                cancellationToken: cancellationToken);
+        }
 
         return true;
     }

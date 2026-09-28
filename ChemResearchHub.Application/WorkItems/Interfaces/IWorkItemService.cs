@@ -38,12 +38,14 @@ public interface IWorkItemService
         int priority,
         DateTime? dueDate,
         string? assignedToUserId,
+        string? changedByUserId,
         CancellationToken cancellationToken = default);
 
     Task<bool> MoveAsync(
         int id,
         int boardColumnId,
         int sortOrder,
+        string? changedByUserId,
         CancellationToken cancellationToken = default);
 
     Task<bool> CompleteAsync(

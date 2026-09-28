@@ -2,6 +2,9 @@ using ChemResearchHub.Application.Attachments.Interfaces;
 using ChemResearchHub.Application.Attachments.Repositories;
 using ChemResearchHub.Application.Attachments.Services;
 using ChemResearchHub.Application.Attachments.Storage;
+using ChemResearchHub.Application.AuditLogs.Interfaces;
+using ChemResearchHub.Application.AuditLogs.Repositories;
+using ChemResearchHub.Application.AuditLogs.Services;
 using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.Boards.Repositories;
 using ChemResearchHub.Application.Boards.Services;
@@ -14,6 +17,9 @@ using ChemResearchHub.Application.Experiments.Services;
 using ChemResearchHub.Application.Projects.Interfaces;
 using ChemResearchHub.Application.Projects.Repositories;
 using ChemResearchHub.Application.Projects.Services;
+using ChemResearchHub.Application.ResearchReviews.Interfaces;
+using ChemResearchHub.Application.ResearchReviews.Repositories;
+using ChemResearchHub.Application.ResearchReviews.Services;
 using ChemResearchHub.Application.Results.Interfaces;
 using ChemResearchHub.Application.Results.Repositories;
 using ChemResearchHub.Application.Results.Services;
@@ -23,12 +29,19 @@ using ChemResearchHub.Application.Samples.Services;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.Users.Repositories;
 using ChemResearchHub.Application.Users.Services;
+using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
+using ChemResearchHub.Application.WorkItemBlocks.Repositories;
+using ChemResearchHub.Application.WorkItemBlocks.Services;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Application.WorkItems.Repositories;
 using ChemResearchHub.Application.WorkItems.Services;
+using ChemResearchHub.Application.WorkItemTransitions.Interfaces;
+using ChemResearchHub.Application.WorkItemTransitions.Repositories;
+using ChemResearchHub.Application.WorkItemTransitions.Services;
 using ChemResearchHub.Infrastructure.Identity;
 using ChemResearchHub.Infrastructure.Persistence;
 using ChemResearchHub.Infrastructure.Persistence.Repositories;
+using ChemResearchHub.Infrastructure.Repositories;
 using ChemResearchHub.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -53,9 +66,15 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString(
-            "DefaultConnection")));
+    options
+        .UseSqlServer(
+            builder.Configuration.GetConnectionString(
+                "DefaultConnection"))
+        .EnableDetailedErrors()
+        .EnableSensitiveDataLogging()
+        .LogTo(
+            Console.WriteLine,
+            Microsoft.Extensions.Logging.LogLevel.Information));
 
 // Identity
 builder.Services
@@ -117,6 +136,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
 builder.Services.AddScoped<IWorkItemService, WorkItemService>();
 
+// Work Item Transitions
+builder.Services.AddScoped<IWorkItemTransitionRepository, WorkItemTransitionRepository>();
+builder.Services.AddScoped<IWorkItemTransitionService, WorkItemTransitionService>();
+builder.Services.AddScoped<IWorkItemFlowMetricsService, WorkItemFlowMetricsService>();
+builder.Services.AddScoped<IWorkItemFlowSummaryService, WorkItemFlowSummaryService>();
+builder.Services.AddScoped<IWorkItemBlockRepository, WorkItemBlockRepository>();
+builder.Services.AddScoped<IWorkItemBlockService, WorkItemBlockService>();
+
 // Experiments
 builder.Services.AddScoped<IExperimentRepository, ExperimentRepository>();
 builder.Services.AddScoped<IExperimentService, ExperimentService>();
@@ -132,6 +159,14 @@ builder.Services.AddScoped<IResultService, ResultService>();
 // Attachments
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+
+builder.Services.AddScoped<IResearchReviewRepository, ResearchReviewRepository>();
+builder.Services.AddScoped<IResearchReviewService, ResearchReviewService>();
+
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+
+
 builder.Services.AddScoped<IAttachmentStorage>(sp =>
 {
     var rootPath =

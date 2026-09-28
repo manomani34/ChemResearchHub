@@ -1,0 +1,12 @@
+<!--
+  این لینک را در Views/WorkItems/Details.cshtml، ترجیحاً کنار دکمه های Action قرار بده.
+  چون Phase 4 لینک Work Item را اشتباه route می کرد، این لینک مستقل و Area-based است.
+-->
+
+<a asp-area="Research"
+   asp-controller="Reviews"
+   asp-action="Index"
+   asp-route-workItemId="@Model.Id"
+   class="crh-btn crh-btn-soft">
+    Research Review
+</a>

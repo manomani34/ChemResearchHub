@@ -1,4 +1,4 @@
-using ChemResearchHub.Domain.Entities.Attachment;
+﻿using ChemResearchHub.Domain.Entities.Attachment;
 using ChemResearchHub.Domain.Entities.Board;
 using ChemResearchHub.Domain.Entities.DecisionLog;
 using ChemResearchHub.Domain.Entities.Experiment;
@@ -6,6 +6,8 @@ using ChemResearchHub.Domain.Entities.Project;
 using ChemResearchHub.Domain.Entities.Result;
 using ChemResearchHub.Domain.Entities.Sample;
 using ChemResearchHub.Domain.Entities.WorkItem;
+using ChemResearchHub.Domain.Entities.WorkItemTransition;
+using ChemResearchHub.Domain.Entities.WorkItemBlock;
 using ChemResearchHub.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +31,10 @@ public class ApplicationDbContext
     public DbSet<Project> Projects => Set<Project>();
 
     public DbSet<WorkItem> WorkItems => Set<WorkItem>();
+
+    public DbSet<WorkItemTransition> WorkItemTransitions => Set<WorkItemTransition>();
+
+    public DbSet<WorkItemBlock> WorkItemBlocks => Set<WorkItemBlock>();
 
     public DbSet<Board> Boards => Set<Board>();
 

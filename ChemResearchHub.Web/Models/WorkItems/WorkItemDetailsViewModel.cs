@@ -1,5 +1,7 @@
-﻿using ChemResearchHub.Application.Attachments.Dtos;
+using ChemResearchHub.Application.Attachments.Dtos;
 using ChemResearchHub.Application.DecisionLogs.Dtos;
+using ChemResearchHub.Application.WorkItemTransitions.Dtos;
+using ChemResearchHub.Application.WorkItemBlocks.Dtos;
 using ChemResearchHub.Application.Experiments.Dtos;
 using ChemResearchHub.Application.Results.Dtos;
 using ChemResearchHub.Application.Samples.Dtos;
@@ -58,4 +60,15 @@ public class WorkItemDetailsViewModel
 
     public IReadOnlyList<DecisionLogDto> DecisionLogs { get; set; }
     = Array.Empty<DecisionLogDto>();
+
+    public IReadOnlyList<WorkItemTransitionDto> Transitions { get; set; }
+    = Array.Empty<WorkItemTransitionDto>();
+
+    public WorkItemFlowMetricsDto FlowMetrics { get; set; }
+        = new();
+
+    public WorkItemBlockDto? CurrentBlock { get; set; }
+
+    public IReadOnlyList<WorkItemBlockDto> BlockHistory { get; set; }
+        = Array.Empty<WorkItemBlockDto>();
 }

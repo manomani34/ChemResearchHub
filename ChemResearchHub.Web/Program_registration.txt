@@ -1,0 +1,10 @@
+// Phase 6 - Audit Log
+// Add these registrations to Program.cs
+
+builder.Services.AddScoped<
+    ChemResearchHub.Application.AuditLogs.Repositories.IAuditLogRepository,
+    ChemResearchHub.Infrastructure.Repositories.AuditLogRepository>();
+
+builder.Services.AddScoped<
+    ChemResearchHub.Application.AuditLogs.Interfaces.IAuditLogService,
+    ChemResearchHub.Application.AuditLogs.Services.AuditLogService>();

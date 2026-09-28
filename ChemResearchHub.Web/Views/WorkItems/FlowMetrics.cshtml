@@ -1,0 +1,167 @@
+@model ChemResearchHub.Application.WorkItemTransitions.Dtos.WorkItemFlowSummaryDto
+
+@functions {
+    string FormatDuration(TimeSpan? value)
+    {
+        if (!value.HasValue)
+            return "-";
+
+        var duration = value.Value;
+
+        if (duration.TotalMinutes < 1)
+            return "Less than 1 minute";
+
+        if (duration.TotalHours < 1)
+            return $"{Math.Max(1, (int)duration.TotalMinutes)} min";
+
+        if (duration.TotalDays < 1)
+            return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+
+        return $"{(int)duration.TotalDays}d {duration.Hours}h";
+    }
+}
+
+@{
+    ViewData["Title"] = "Board Flow Metrics";
+    var boardName = ViewBag.BoardName as string ?? $"Board #{Model.BoardId}";
+    var fromDate = Model.PeriodStartUtc.ToLocalTime().ToString("yyyy-MM-dd");
+    var toDate = Model.PeriodEndUtc.AddDays(-1).ToLocalTime().ToString("yyyy-MM-dd");
+}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <div class="text-muted mb-1">Research Flow</div>
+            <h1 class="h3 mb-1">Board Flow Metrics</h1>
+            <p class="text-muted mb-0">
+                @boardName · Board #@Model.BoardId
+            </p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Back to Work Items
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <strong>Measurement Period</strong>
+        </div>
+        <div class="card-body">
+            <form asp-action="FlowMetrics" method="get" class="row g-3 align-items-end">
+                <input type="hidden" name="boardId" value="@Model.BoardId" />
+
+                <div class="col-md-4">
+                    <label class="form-label">From</label>
+                    <input type="date"
+                           name="from"
+                           value="@fromDate"
+                           class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">To</label>
+                    <input type="date"
+                           name="to"
+                           value="@toDate"
+                           class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">
+                        Apply Period
+                    </button>
+                </div>
+            </form>
+
+            <div class="small text-muted mt-3">
+                Throughput counts Work Items completed during this period.
+                Lead Time starts at Work Item creation; Cycle Time starts at its first workflow movement.
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted mb-1">Throughput</div>
+                    <div class="display-6 fw-semibold">@Model.Throughput</div>
+                    <div class="small text-muted">completed Work Items</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted mb-1">Average Lead Time</div>
+                    <div class="h3 mb-1">@FormatDuration(Model.AverageLeadTime)</div>
+                    <div class="small text-muted">Median: @FormatDuration(Model.MedianLeadTime)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted mb-1">Average Cycle Time</div>
+                    <div class="h3 mb-1">@FormatDuration(Model.AverageCycleTime)</div>
+                    <div class="small text-muted">Median: @FormatDuration(Model.MedianCycleTime)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <strong>Completed Work Items</strong>
+            <span class="badge bg-secondary">@Model.CompletedItems.Count</span>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.CompletedItems.Count == 0)
+            {
+                <div class="p-4 text-muted">
+                    No Work Items were completed during this period.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Work Item</th>
+                                <th>Completed</th>
+                                <th>Lead Time</th>
+                                <th>Cycle Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model.CompletedItems)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.WorkItemId">
+                                        @item.Title
+                                    </a>
+                                    <div class="small text-muted">#@item.WorkItemId</div>
+                                </td>
+                                <td>
+                                    @item.CompletedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                </td>
+                                <td>@FormatDuration(item.LeadTime)</td>
+                                <td>@FormatDuration(item.CycleTime)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>

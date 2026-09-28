@@ -1,10 +1,54 @@
-﻿@model ChemResearchHub.Web.Models.WorkItems.WorkItemDetailsViewModel
+@model ChemResearchHub.Web.Models.WorkItems.WorkItemDetailsViewModel
+
+@functions {
+    string FormatDuration(TimeSpan? value)
+    {
+        if (!value.HasValue)
+        {
+            return "-";
+        }
+
+        var duration = value.Value;
+
+        if (duration.TotalMinutes < 1)
+        {
+            return "Less than 1 minute";
+        }
+
+        if (duration.TotalHours < 1)
+        {
+            return $"{Math.Max(1, (int)duration.TotalMinutes)} min";
+        }
+
+        if (duration.TotalDays < 1)
+        {
+            return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+        }
+
+        return $"{(int)duration.TotalDays}d {duration.Hours}h";
+    }
+}
+
 
 @{
     ViewData["Title"] = "Work Item Details";
 }
 
 <div class="container py-4">
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success shadow-sm">
+            @successMessage
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger shadow-sm">
+            @errorMessage
+        </div>
+    }
+
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-start mb-4">
@@ -24,6 +68,11 @@
         </div>
 
         <div class="d-flex gap-2">
+
+            <a href="/Research/Reviews?workItemId=@Model.Id"
+               class="btn btn-success">
+                🔍 Research Review
+            </a>
 
             <a asp-action="Edit"
                asp-route-id="@Model.Id"
@@ -959,6 +1008,291 @@
 
                 </div>
 
+            </div>
+
+            <!-- ========================================= -->
+            <!-- Workflow History -->
+            <!-- ========================================= -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+
+                    <strong>Workflow History</strong>
+
+                    <span class="badge bg-secondary">
+                        @Model.Transitions.Count
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.Transitions.Count == 0)
+                    {
+                        <div class="text-muted small">
+                            No workflow transitions have been recorded for this work item yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+
+                            @foreach (var transition in Model.Transitions)
+                            {
+                                <div class="list-group-item px-0">
+
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+                                        <div>
+                                            <div class="fw-semibold">
+                                                @if (string.IsNullOrWhiteSpace(transition.FromBoardColumnName))
+                                                {
+                                                    <span>Created in</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@transition.FromBoardColumnName</span>
+                                                    <span class="text-muted mx-1">→</span>
+                                                }
+
+                                                <span>@transition.ToBoardColumnName</span>
+                                            </div>
+
+                                            <div class="small text-muted mt-1">
+                                                @(string.IsNullOrWhiteSpace(transition.ChangedByUserName)
+                                                    ? "System"
+                                                    : transition.ChangedByUserName)
+                                            </div>
+                                        </div>
+
+                                        <div class="small text-muted text-nowrap">
+                                            @transition.ChangedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- ========================================= -->
+            <!-- Flow Metrics -->
+            <!-- ========================================= -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Flow Metrics</strong>
+                        <span class="badge bg-secondary ms-2">
+                            @Model.FlowMetrics.TransitionCount transitions
+                        </span>
+                    </div>
+
+                    <a asp-action="FlowMetrics"
+                       asp-route-boardId="@Model.BoardId"
+                       class="btn btn-sm btn-outline-primary">
+                        Board Flow Metrics
+                    </a>
+                </div>
+
+                <div class="card-body">
+
+                    @if (!Model.FlowMetrics.CreatedAtUtc.HasValue)
+                    {
+                        <div class="text-muted small">
+                            Flow metrics are not available yet because no workflow transition has been recorded.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 h-100 bg-light">
+                                    <div class="small text-muted mb-1">Age</div>
+                                    <div class="fw-semibold">
+                                        @FormatDuration(Model.FlowMetrics.Age)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 h-100 bg-light">
+                                    <div class="small text-muted mb-1">Current Column Age</div>
+                                    <div class="fw-semibold">
+                                        @FormatDuration(Model.FlowMetrics.CurrentColumnAge)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 h-100 bg-light">
+                                    <div class="small text-muted mb-1">Flow Time</div>
+                                    <div class="fw-semibold">
+                                        @FormatDuration(Model.FlowMetrics.FlowTime)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100 bg-light">
+                                    <div class="small text-muted mb-1">Lead Time</div>
+                                    <div class="fw-semibold">
+                                        @FormatDuration(Model.FlowMetrics.LeadTime)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 h-100 bg-light">
+                                    <div class="small text-muted mb-1">Cycle Time</div>
+                                    <div class="fw-semibold">
+                                        @FormatDuration(Model.FlowMetrics.CycleTime)
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="small text-muted mt-3">
+                            Created: @Model.FlowMetrics.CreatedAtUtc.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                        </div>
+
+                        @if (Model.FlowMetrics.CompletedAtUtc.HasValue)
+                        {
+                            <div class="small text-muted mt-1">
+                                Completed: @Model.FlowMetrics.CompletedAtUtc.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="small text-muted mt-1">
+                                Lead Time and Cycle Time are calculated after completion.
+                            </div>
+                        }
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- Blocked Work Item -->
+            <!-- ========================================= -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <strong>Blocked Status</strong>
+
+                    @if (Model.CurrentBlock is not null)
+                    {
+                        <span class="badge bg-danger">Blocked</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Unblocked</span>
+                    }
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.CurrentBlock is not null)
+                    {
+                        <div class="alert alert-danger mb-3">
+                            <div class="fw-semibold mb-1">Block reason</div>
+                            <div style="white-space: pre-line;">@Model.CurrentBlock.Reason</div>
+
+                            <div class="small mt-2">
+                                Blocked: @Model.CurrentBlock.BlockedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                                @if (!string.IsNullOrWhiteSpace(Model.CurrentBlock.BlockedByUserName))
+                                {
+                                    <span>by @Model.CurrentBlock.BlockedByUserName</span>
+                                }
+                            </div>
+                        </div>
+
+                        <form asp-action="Unblock" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="boardId" value="@Model.BoardId" />
+                            <input type="hidden" name="projectId" value="@Model.ProjectId" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Unblock note (optional)</label>
+                                <textarea name="note" class="form-control" rows="2" maxlength="1000" placeholder="What resolved the blocker?"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">
+                                ✓ Unblock Work Item
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-3">
+                            Use this when the work item cannot continue because it is waiting for an external dependency, decision, resource, or other blocker.
+                        </p>
+
+                        <form asp-action="Block" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="boardId" value="@Model.BoardId" />
+                            <input type="hidden" name="projectId" value="@Model.ProjectId" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Block reason</label>
+                                <textarea name="reason" class="form-control" rows="3" maxlength="1000" required placeholder="Why is this work item blocked?"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger">
+                                🚧 Block Work Item
+                            </button>
+                        </form>
+                    }
+
+                    @if (Model.BlockHistory.Count > 0)
+                    {
+                        <hr class="my-4" />
+                        <div class="fw-semibold mb-3">Block History</div>
+
+                        <div class="list-group list-group-flush">
+                            @foreach (var block in Model.BlockHistory)
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <div class="fw-semibold">@block.Reason</div>
+                                            <div class="small text-muted mt-1">
+                                                Blocked: @block.BlockedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                                                @if (block.UnblockedAtUtc.HasValue)
+                                                {
+                                                    <span> · Unblocked: @block.UnblockedAtUtc.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                                }
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(block.UnblockNote))
+                                            {
+                                                <div class="small text-muted mt-1">
+                                                    Resolution: @block.UnblockNote
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <span class="badge @(block.IsActive ? "bg-danger" : "bg-secondary")">
+                                            @(block.IsActive ? "Active" : "Resolved")
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                </div>
             </div>
 
             <!-- ========================================= -->

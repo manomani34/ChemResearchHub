@@ -1,0 +1,318 @@
+@model ChemResearchHub.Web.Areas.Research.Controllers.ResearchReviewIndexViewModel
+@using ChemResearchHub.Domain.Entities.ResearchReview
+
+@{
+    ViewData["Title"] = "Research Review";
+}
+
+<div style="max-width:1100px;margin:30px auto;padding:0 18px;direction:rtl;font-family:Tahoma,Arial,sans-serif;">
+
+    <div style="display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:20px;">
+        <div>
+            <div style="font-size:14px;color:#6b7280;">Research Review</div>
+
+            <h1 style="margin:6px 0 4px;font-size:28px;">
+                بازبینی پژوهشی
+            </h1>
+
+            <div style="color:#4b5563;">
+                Work Item #@Model.WorkItemId — @Model.WorkItemTitle
+            </div>
+        </div>
+
+        <a href="javascript:history.back()"
+           style="border:1px solid #9ca3af;border-radius:8px;padding:9px 14px;text-decoration:none;color:#374151;background:#fff;">
+            بازگشت
+        </a>
+    </div>
+
+
+    @if (TempData["ReviewSuccess"] is string success)
+    {
+        <div style="background:#dcfce7;border:1px solid #86efac;color:#166534;border-radius:8px;padding:12px 14px;margin-bottom:15px;">
+            @success
+        </div>
+    }
+
+    @if (TempData["ReviewError"] is string error)
+    {
+        <div style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;border-radius:8px;padding:12px 14px;margin-bottom:15px;">
+            @error
+        </div>
+    }
+
+
+    <!-- Request Review -->
+
+    <section style="background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:20px;margin-bottom:20px;">
+
+        <h2 style="font-size:18px;margin-top:0;">
+            درخواست Review جدید
+        </h2>
+
+        <form method="post"
+              action="/Research/Reviews/request">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="workItemId"
+                   value="@Model.WorkItemId" />
+
+            <div style="margin-bottom:14px;">
+
+                <label for="reviewerUserId"
+                       style="display:block;font-weight:600;margin-bottom:7px;">
+                    Reviewer
+                </label>
+
+                <select id="reviewerUserId"
+                        name="reviewerUserId"
+                        style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:7px;">
+
+                    <option value="">
+                        انتخاب Reviewer (اختیاری)
+                    </option>
+
+                    @foreach (var reviewer in Model.Reviewers)
+                    {
+                        <option value="@reviewer.Id">
+                            @reviewer.FullName
+                            @if (!string.IsNullOrWhiteSpace(reviewer.Email))
+                            {
+                                <text> — @reviewer.Email</text>
+                            }
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+            <button type="submit"
+                    style="border:0;background:#2563eb;color:#fff;border-radius:7px;padding:10px 16px;cursor:pointer;">
+                ثبت درخواست Review
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- Review History -->
+
+    <section style="background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:20px;">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+
+            <h2 style="font-size:18px;margin:0;">
+                Review History
+            </h2>
+
+            <span style="background:#6b7280;color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;">
+                @Model.Reviews.Count
+            </span>
+
+        </div>
+
+
+        @if (Model.Reviews.Count == 0)
+        {
+            <div style="color:#6b7280;padding:15px 0;">
+                هنوز Reviewای برای این Work Item ثبت نشده است.
+            </div>
+        }
+        else
+        {
+            foreach (var review in Model.Reviews)
+            {
+                var badge = review.Status switch
+                {
+                    ResearchReviewStatus.Approved => "#15803d",
+                    ResearchReviewStatus.Rejected => "#dc2626",
+                    ResearchReviewStatus.InReview => "#2563eb",
+                    ResearchReviewStatus.Cancelled => "#6b7280",
+                    _ => "#d97706"
+                };
+
+                var statusText = review.Status switch
+                {
+                    ResearchReviewStatus.Approved => "Approved",
+                    ResearchReviewStatus.Rejected => "Rejected",
+                    ResearchReviewStatus.InReview => "In Review",
+                    ResearchReviewStatus.Cancelled => "Cancelled",
+                    _ => "Pending"
+                };
+
+
+                <div style="border-top:1px solid #e5e7eb;padding:17px 0;">
+
+                    <div style="display:flex;justify-content:space-between;gap:15px;align-items:center;">
+
+                        <div>
+
+                            <strong>
+                                Review #@review.Id
+                            </strong>
+
+                            <span style="display:inline-block;margin-right:8px;background:@badge;color:#fff;border-radius:20px;padding:3px 9px;font-size:11px;">
+                                @statusText
+                            </span>
+
+                        </div>
+
+                        <div style="font-size:12px;color:#6b7280;">
+                            @review.RequestedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                        </div>
+
+                    </div>
+
+
+                    <div style="margin-top:10px;color:#4b5563;font-size:14px;">
+
+                        درخواست‌کننده:
+                        <strong>
+                            @review.RequestedByUserName
+                        </strong>
+
+                        <span style="margin:0 8px;">
+                            •
+                        </span>
+
+                        Reviewer:
+                        <strong>
+                            @(review.ReviewerUserName ?? "تعیین نشده")
+                        </strong>
+
+                    </div>
+
+
+                    @if (!string.IsNullOrWhiteSpace(review.ReviewNote))
+                    {
+                        <div style="margin-top:10px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px;padding:10px;">
+                            @review.ReviewNote
+                        </div>
+                    }
+
+
+                    @if (review.Status is ResearchReviewStatus.Pending or ResearchReviewStatus.InReview)
+                    {
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:13px;">
+
+                            <!-- Start -->
+
+                            <form method="post"
+                                  action="/Research/Reviews/start">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="reviewId"
+                                       value="@review.Id" />
+
+                                <input type="hidden"
+                                       name="workItemId"
+                                       value="@Model.WorkItemId" />
+
+                                <button type="submit"
+                                        style="border:0;background:#2563eb;color:#fff;border-radius:7px;padding:8px 12px;cursor:pointer;">
+                                    شروع بررسی
+                                </button>
+
+                            </form>
+
+
+                            <!-- Approve -->
+
+                            <form method="post"
+                                  action="/Research/Reviews/approve">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="reviewId"
+                                       value="@review.Id" />
+
+                                <input type="hidden"
+                                       name="workItemId"
+                                       value="@Model.WorkItemId" />
+
+                                <input type="text"
+                                       name="note"
+                                       placeholder="یادداشت تایید (اختیاری)"
+                                       style="padding:8px;border:1px solid #d1d5db;border-radius:7px;min-width:230px;" />
+
+                                <button type="submit"
+                                        style="border:0;background:#15803d;color:#fff;border-radius:7px;padding:8px 12px;cursor:pointer;">
+                                    Approve
+                                </button>
+
+                            </form>
+
+
+                            <!-- Reject -->
+
+                            <form method="post"
+                                  action="/Research/Reviews/reject">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="reviewId"
+                                       value="@review.Id" />
+
+                                <input type="hidden"
+                                       name="workItemId"
+                                       value="@Model.WorkItemId" />
+
+                                <input type="text"
+                                       name="note"
+                                       required
+                                       placeholder="دلیل رد الزامی است"
+                                       style="padding:8px;border:1px solid #d1d5db;border-radius:7px;min-width:230px;" />
+
+                                <button type="submit"
+                                        style="border:0;background:#dc2626;color:#fff;border-radius:7px;padding:8px 12px;cursor:pointer;">
+                                    Reject
+                                </button>
+
+                            </form>
+
+
+                            <!-- Cancel -->
+
+                            <form method="post"
+                                  action="/Research/Reviews/cancel">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="reviewId"
+                                       value="@review.Id" />
+
+                                <input type="hidden"
+                                       name="workItemId"
+                                       value="@Model.WorkItemId" />
+
+                                <input type="text"
+                                       name="note"
+                                       placeholder="یادداشت لغو (اختیاری)"
+                                       style="padding:8px;border:1px solid #d1d5db;border-radius:7px;min-width:220px;" />
+
+                                <button type="submit"
+                                        style="border:1px solid #9ca3af;background:#fff;color:#374151;border-radius:7px;padding:8px 12px;cursor:pointer;">
+                                    لغو
+                                </button>
+
+                            </form>
+
+                        </div>
+                    }
+
+                </div>
+            }
+        }
+
+    </section>
+
+</div>

@@ -1,0 +1,116 @@
+@model IReadOnlyList<ChemResearchHub.Application.AuditLogs.Dtos.AuditLogDto>
+
+@{
+    ViewData["Title"] = "Audit Log";
+}
+
+<div class="container py-4" style="direction:rtl;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="text-muted small">System Audit</div>
+            <h1 class="h3 mb-1">Audit Log</h1>
+            <div class="text-muted">ثبت فعالیت های انجام شده در سامانه</div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" action="/Admin/AuditLogs" class="row g-3">
+
+                <div class="col-md-5">
+                    <label class="form-label">جستجو</label>
+                    <input name="search"
+                           value="@ViewBag.Search"
+                           class="form-control"
+                           placeholder="کاربر، عملیات، موجودیت یا توضیحات..." />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Entity Type</label>
+                    <input name="entityType"
+                           value="@ViewBag.EntityType"
+                           class="form-control"
+                           placeholder="WorkItem" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Action</label>
+                    <input name="action"
+                           value="@ViewBag.Action"
+                           class="form-control"
+                           placeholder="Created" />
+                </div>
+
+                <div class="col-md-1 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" type="submit">جستجو</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <strong>Activity History</strong>
+            <span class="badge bg-secondary ms-2">@Model.Count</span>
+        </div>
+
+        <div class="card-body p-0">
+
+            @if (Model.Count == 0)
+            {
+                <div class="text-muted text-center py-5">
+                    هنوز فعالیتی ثبت نشده است.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>زمان</th>
+                                <th>کاربر</th>
+                                <th>عملیات</th>
+                                <th>Entity</th>
+                                <th>شناسه</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    @log.CreatedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                                </td>
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(log.UserName)
+                                        ? "System"
+                                        : log.UserName)
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">
+                                        @log.Action
+                                    </span>
+                                </td>
+                                <td>@log.EntityType</td>
+                                <td>@(log.EntityId?.ToString() ?? "-")</td>
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(log.Description)
+                                        ? "-"
+                                        : log.Description)
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>

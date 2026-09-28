@@ -1,4 +1,4 @@
-﻿using ChemResearchHub.Application.Attachments.Interfaces;
+using ChemResearchHub.Application.Attachments.Interfaces;
 using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.DecisionLogs.Interfaces;
 using ChemResearchHub.Application.Experiments.Interfaces;
@@ -9,6 +9,9 @@ using ChemResearchHub.Application.Samples.Dtos;
 using ChemResearchHub.Application.Samples.Interfaces;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
+using ChemResearchHub.Application.WorkItemTransitions.Interfaces;
+using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
+using System.Security.Claims;
 using ChemResearchHub.Web.Models.WorkItems;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +28,10 @@ public class WorkItemsController : Controller
     private readonly IResultService _resultService;
     private readonly IAttachmentService _attachmentService;
     private readonly IDecisionLogService _decisionLogService;
+    private readonly IWorkItemTransitionService _workItemTransitionService;
+    private readonly IWorkItemFlowMetricsService _workItemFlowMetricsService;
+    private readonly IWorkItemFlowSummaryService _workItemFlowSummaryService;
+    private readonly IWorkItemBlockService _workItemBlockService;
 
     public WorkItemsController(
     IWorkItemService workItemService,
@@ -35,7 +42,11 @@ public class WorkItemsController : Controller
     ISampleService sampleService,
     IResultService resultService,
     IAttachmentService attachmentService,
-    IDecisionLogService decisionLogService)
+    IDecisionLogService decisionLogService,
+    IWorkItemTransitionService workItemTransitionService,
+    IWorkItemFlowMetricsService workItemFlowMetricsService,
+    IWorkItemFlowSummaryService workItemFlowSummaryService,
+    IWorkItemBlockService workItemBlockService)
     {
         _workItemService = workItemService;
         _boardService = boardService;
@@ -46,6 +57,10 @@ public class WorkItemsController : Controller
         _resultService = resultService;
         _attachmentService = attachmentService;
         _decisionLogService = decisionLogService;
+        _workItemTransitionService = workItemTransitionService;
+        _workItemFlowMetricsService = workItemFlowMetricsService;
+        _workItemFlowSummaryService = workItemFlowSummaryService;
+        _workItemBlockService = workItemBlockService;
     }
 
 
@@ -248,6 +263,7 @@ public class WorkItemsController : Controller
             model.Priority,
             model.DueDate,
             model.AssignedToUserId,
+            User.FindFirstValue(ClaimTypes.NameIdentifier),
             cancellationToken);
 
         return RedirectToAction(
@@ -359,6 +375,27 @@ public class WorkItemsController : Controller
         workItem.Id,
         cancellationToken);
 
+        var transitions =
+            await _workItemTransitionService.GetByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var flowMetrics =
+            await _workItemFlowMetricsService.CalculateAsync(
+                workItem.Id,
+                workItem.IsCompleted,
+                cancellationToken);
+
+        var currentBlock =
+            await _workItemBlockService.GetCurrentAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var blockHistory =
+            await _workItemBlockService.GetHistoryAsync(
+                workItem.Id,
+                cancellationToken);
+
         var model =
      new WorkItemDetailsViewModel
      {
@@ -384,9 +421,127 @@ public class WorkItemsController : Controller
          Attachments = attachments,
 
          DecisionLogs = decisionLogs,
+         Transitions = transitions,
+         FlowMetrics = flowMetrics,
+         CurrentBlock = currentBlock,
+         BlockHistory = blockHistory,
      };
 
         return View(model);
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> FlowMetrics(
+        int boardId,
+        DateTime? from,
+        DateTime? to,
+        CancellationToken cancellationToken = default)
+    {
+        if (boardId <= 0)
+            return BadRequest();
+
+        var periodEndUtc =
+            to.HasValue
+                ? DateTime.SpecifyKind(to.Value.Date.AddDays(1), DateTimeKind.Utc)
+                : DateTime.UtcNow;
+
+        var periodStartUtc =
+            from.HasValue
+                ? DateTime.SpecifyKind(from.Value.Date, DateTimeKind.Utc)
+                : periodEndUtc.Date.AddDays(-30);
+
+        if (periodEndUtc <= periodStartUtc)
+            periodStartUtc = periodEndUtc.AddDays(-30);
+
+        var board =
+            await _boardService.GetByIdAsync(
+                boardId,
+                cancellationToken);
+
+        if (board is null)
+            return NotFound();
+
+        var summary =
+            await _workItemFlowSummaryService.CalculateAsync(
+                boardId,
+                periodStartUtc,
+                periodEndUtc,
+                cancellationToken);
+
+        ViewBag.BoardName = board.Name;
+
+        return View(summary);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Block(
+        int id,
+        int boardId,
+        int projectId,
+        string reason,
+        CancellationToken cancellationToken)
+    {
+        var blocked =
+            await _workItemBlockService.BlockAsync(
+                id,
+                reason,
+                User.FindFirstValue(ClaimTypes.NameIdentifier),
+                cancellationToken);
+
+        if (!blocked)
+        {
+            TempData["ErrorMessage"] = "This work item is already blocked or could not be blocked.";
+        }
+        else
+        {
+            TempData["SuccessMessage"] = "Work item blocked successfully.";
+        }
+
+        return RedirectToAction(
+            "Details",
+            new
+            {
+                id,
+                boardId,
+                projectId
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Unblock(
+        int id,
+        int boardId,
+        int projectId,
+        string? note,
+        CancellationToken cancellationToken)
+    {
+        var unblocked =
+            await _workItemBlockService.UnblockAsync(
+                id,
+                note,
+                User.FindFirstValue(ClaimTypes.NameIdentifier),
+                cancellationToken);
+
+        if (!unblocked)
+        {
+            TempData["ErrorMessage"] = "No active block was found for this work item.";
+        }
+        else
+        {
+            TempData["SuccessMessage"] = "Work item unblocked successfully.";
+        }
+
+        return RedirectToAction(
+            "Details",
+            new
+            {
+                id,
+                boardId,
+                projectId
+            });
     }
 
     [HttpGet]
@@ -558,6 +713,7 @@ public class WorkItemsController : Controller
                 id,
                 boardColumnId,
                 sortOrder,
+                User.FindFirstValue(ClaimTypes.NameIdentifier),
                 cancellationToken);
 
         if (!moved)
