@@ -39,7 +39,7 @@ body {
     min-height: 100vh;
     background: var(--crh-background);
     color: var(--crh-text);
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: IRANSans;
 }
 
 * {
