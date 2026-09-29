@@ -1,3 +1,4 @@
+using ChemResearchHub.Application.AuditLogs.Interfaces;
 using ChemResearchHub.Application.Boards.Repositories;
 using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Interfaces;
@@ -7,7 +8,6 @@ using ChemResearchHub.Application.WorkItems.Repositories;
 using ChemResearchHub.Application.WorkItemTransitions.Repositories;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Enums;
-using ChemResearchHub.Application.AuditLogs.Interfaces;
 
 namespace ChemResearchHub.Application.WorkItems.Services;
 
@@ -20,11 +20,11 @@ public class WorkItemService : IWorkItemService
     private readonly IAuditLogService _auditLogService;
 
     public WorkItemService(
-    IWorkItemRepository workItemRepository,
-    IBoardRepository boardRepository,
-    IUserService userService,
-    IWorkItemTransitionRepository workItemTransitionRepository,
-    IAuditLogService auditLogService)
+        IWorkItemRepository workItemRepository,
+        IBoardRepository boardRepository,
+        IUserService userService,
+        IWorkItemTransitionRepository workItemTransitionRepository,
+        IAuditLogService auditLogService)
     {
         _workItemRepository = workItemRepository;
         _boardRepository = boardRepository;
@@ -57,10 +57,10 @@ public class WorkItemService : IWorkItemService
     }
 
     public async Task<IReadOnlyList<WorkItemDto>> GetAllAsync(
-    string? search = null,
-    bool? isCompleted = null,
-    string? assignedToUserId = null,
-    CancellationToken cancellationToken = default)
+        string? search = null,
+        bool? isCompleted = null,
+        string? assignedToUserId = null,
+        CancellationToken cancellationToken = default)
     {
         var workItems =
             await _workItemRepository.GetAllAsync(
@@ -68,7 +68,6 @@ public class WorkItemService : IWorkItemService
                 isCompleted,
                 assignedToUserId,
                 cancellationToken);
-
 
         var users =
             await _userService.GetActiveUsersAsync(
@@ -78,7 +77,6 @@ public class WorkItemService : IWorkItemService
             users.ToDictionary(
                 x => x.Id,
                 x => x);
-
 
         return workItems
             .Select(
@@ -127,6 +125,7 @@ public class WorkItemService : IWorkItemService
         int priority,
         DateTime? dueDate,
         string? assignedToUserId,
+        string? changedByUserId,
         CancellationToken cancellationToken = default)
     {
         var workItem =
@@ -162,6 +161,14 @@ public class WorkItemService : IWorkItemService
 
         await _workItemRepository.SaveChangesAsync(
             cancellationToken);
+
+        await _auditLogService.AddAsync(
+            changedByUserId,
+            "Updated",
+            "WorkItem",
+            workItem.Id,
+            $"Work Item '{workItem.Title}' was updated.",
+            cancellationToken: cancellationToken);
 
         UserDto? assignedUser = null;
 
@@ -234,12 +241,14 @@ public class WorkItemService : IWorkItemService
                 $"WIP limit reached for column '{targetColumn.Name}'.");
         }
 
-        var nextSortOrder = existingItems.Count;
+        var nextSortOrder =
+            existingItems.Count;
 
-        var workItem = new WorkItem(
-            projectId,
-            title,
-            type);
+        var workItem =
+            new WorkItem(
+                projectId,
+                title,
+                type);
 
         workItem.Update(
             title,
@@ -252,7 +261,8 @@ public class WorkItemService : IWorkItemService
             boardColumnId,
             nextSortOrder);
 
-        if (!string.IsNullOrWhiteSpace(assignedToUserId))
+        if (!string.IsNullOrWhiteSpace(
+                assignedToUserId))
         {
             workItem.AssignTo(
                 assignedToUserId);
@@ -271,7 +281,7 @@ public class WorkItemService : IWorkItemService
             cancellationToken);
 
         await _workItemRepository.SaveChangesAsync(
-    cancellationToken);
+            cancellationToken);
 
         await _auditLogService.AddAsync(
             changedByUserId,
@@ -362,7 +372,8 @@ public class WorkItemService : IWorkItemService
             workItem.BoardColumnId;
 
         // The Done workflow column is the source of truth for completion.
-        // Moving to Done marks the Work Item completed; moving out of Done reopens it.
+        // Moving to Done marks the Work Item completed;
+        // moving out of Done reopens it.
         var isDoneColumn =
             string.Equals(
                 targetColumn.Name?.Trim(),
@@ -433,9 +444,10 @@ public class WorkItemService : IWorkItemService
              index < sourceItems.Count;
              index++)
         {
-            sourceItems[index].MoveToColumn(
-                currentColumnId!.Value,
-                index);
+            sourceItems[index]
+                .MoveToColumn(
+                    currentColumnId!.Value,
+                    index);
         }
 
         if (isMovingToAnotherColumn)

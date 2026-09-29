@@ -19,15 +19,15 @@ public interface IWorkItemService
         int id,
         CancellationToken cancellationToken = default);
 
-    Task<WorkItemDto?> UpdateAsync(
-        int id,
-        string title,
-        string? description,
-        WorkItemType type,
-        int priority,
-        DateTime? dueDate,
-        string? assignedToUserId,
-        CancellationToken cancellationToken = default);
+    Task<WorkItemDto?> UpdateAsync(int id,
+                                 string title,
+                                 string? description,
+                                 WorkItemType type,
+                                 int priority,
+                                 DateTime? dueDate,
+                                 string? assignedToUserId,
+                                 string? changedByUserId,
+                                 CancellationToken cancellationToken = default);
 
     Task<WorkItemDto> CreateAsync(
         int projectId,
@@ -55,4 +55,5 @@ public interface IWorkItemService
     Task<bool> ReopenAsync(
         int id,
         CancellationToken cancellationToken = default);
+
 }

@@ -656,6 +656,10 @@ public class WorkItemsController : Controller
             return View(model);
         }
 
+        var changedByUserId =
+    User.FindFirstValue(
+        ClaimTypes.NameIdentifier);
+
         var updated =
             await _workItemService.UpdateAsync(
                 model.Id,
@@ -665,6 +669,7 @@ public class WorkItemsController : Controller
                 model.Priority,
                 model.DueDate,
                 model.AssignedToUserId,
+                changedByUserId,
                 cancellationToken);
 
         if (updated is null)
