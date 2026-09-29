@@ -49,11 +49,18 @@ public interface IWorkItemService
         CancellationToken cancellationToken = default);
 
     Task<bool> CompleteAsync(
-        int id,
-        CancellationToken cancellationToken = default);
+    int id,
+    string? changedByUserId,
+    CancellationToken cancellationToken = default);
 
     Task<bool> ReopenAsync(
         int id,
+        string? changedByUserId,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteAsync(
+        int id,
+        string? changedByUserId,
         CancellationToken cancellationToken = default);
 
 }

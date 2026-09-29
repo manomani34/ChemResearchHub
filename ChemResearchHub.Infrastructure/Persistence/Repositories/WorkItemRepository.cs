@@ -27,7 +27,6 @@ public class WorkItemRepository : IWorkItemRepository
             .ToListAsync(cancellationToken);
     }
 
-
     public async Task<IReadOnlyList<WorkItem>> GetAllAsync(
         string? search = null,
         bool? isCompleted = null,
@@ -38,7 +37,6 @@ public class WorkItemRepository : IWorkItemRepository
             _dbContext.WorkItems
                 .AsNoTracking()
                 .AsQueryable();
-
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -53,7 +51,6 @@ public class WorkItemRepository : IWorkItemRepository
                          x.Description.Contains(search)));
         }
 
-
         if (isCompleted.HasValue)
         {
             query =
@@ -62,7 +59,6 @@ public class WorkItemRepository : IWorkItemRepository
                         x.IsCompleted ==
                         isCompleted.Value);
         }
-
 
         if (!string.IsNullOrWhiteSpace(assignedToUserId))
         {
@@ -73,7 +69,6 @@ public class WorkItemRepository : IWorkItemRepository
                         assignedToUserId);
         }
 
-
         return await query
             .OrderBy(x => x.IsCompleted)
             .ThenBy(x => x.DueDate)
@@ -81,7 +76,6 @@ public class WorkItemRepository : IWorkItemRepository
             .ThenByDescending(x => x.Id)
             .ToListAsync(cancellationToken);
     }
-
 
     public async Task<WorkItem?> GetByIdAsync(
         int id,
@@ -93,7 +87,6 @@ public class WorkItemRepository : IWorkItemRepository
                 cancellationToken);
     }
 
-
     public async Task AddAsync(
         WorkItem workItem,
         CancellationToken cancellationToken = default)
@@ -103,6 +96,11 @@ public class WorkItemRepository : IWorkItemRepository
             cancellationToken);
     }
 
+    public void Delete(
+        WorkItem workItem)
+    {
+        _dbContext.WorkItems.Remove(workItem);
+    }
 
     public async Task SaveChangesAsync(
         CancellationToken cancellationToken = default)

@@ -33,6 +33,7 @@ public class WorkItemService : IWorkItemService
         _auditLogService = auditLogService;
     }
 
+    
     public async Task<IReadOnlyList<WorkItemDto>> GetByBoardColumnIdAsync(
         int boardColumnId,
         CancellationToken cancellationToken = default)
@@ -479,8 +480,9 @@ public class WorkItemService : IWorkItemService
     }
 
     public async Task<bool> CompleteAsync(
-        int id,
-        CancellationToken cancellationToken = default)
+    int id,
+    string? changedByUserId,
+    CancellationToken cancellationToken = default)
     {
         var workItem =
             await _workItemRepository.GetByIdAsync(
@@ -497,11 +499,20 @@ public class WorkItemService : IWorkItemService
         await _workItemRepository.SaveChangesAsync(
             cancellationToken);
 
+        await _auditLogService.AddAsync(
+            changedByUserId,
+            "Completed",
+            "WorkItem",
+            workItem.Id,
+            $"Work Item '{workItem.Title}' was completed.",
+            cancellationToken: cancellationToken);
+
         return true;
     }
 
     public async Task<bool> ReopenAsync(
         int id,
+        string? changedByUserId,
         CancellationToken cancellationToken = default)
     {
         var workItem =
@@ -518,6 +529,49 @@ public class WorkItemService : IWorkItemService
 
         await _workItemRepository.SaveChangesAsync(
             cancellationToken);
+
+        await _auditLogService.AddAsync(
+            changedByUserId,
+            "Reopened",
+            "WorkItem",
+            workItem.Id,
+            $"Work Item '{workItem.Title}' was reopened.",
+            cancellationToken: cancellationToken);
+
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(
+    int id,
+    string? changedByUserId,
+    CancellationToken cancellationToken = default)
+    {
+        var workItem =
+            await _workItemRepository.GetByIdAsync(
+                id,
+                cancellationToken);
+
+        if (workItem is null)
+        {
+            return false;
+        }
+
+        var workItemTitle =
+            workItem.Title;
+
+        _workItemRepository.Delete(
+            workItem);
+
+        await _workItemRepository.SaveChangesAsync(
+            cancellationToken);
+
+        await _auditLogService.AddAsync(
+            changedByUserId,
+            "Deleted",
+            "WorkItem",
+            id,
+            $"Work Item '{workItemTitle}' was deleted.",
+            cancellationToken: cancellationToken);
 
         return true;
     }

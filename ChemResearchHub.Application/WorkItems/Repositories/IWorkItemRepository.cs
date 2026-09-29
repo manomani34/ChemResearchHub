@@ -22,6 +22,9 @@ public interface IWorkItemRepository
         WorkItem workItem,
         CancellationToken cancellationToken = default);
 
+    void Delete(
+        WorkItem workItem);
+
     Task SaveChangesAsync(
         CancellationToken cancellationToken = default);
 }

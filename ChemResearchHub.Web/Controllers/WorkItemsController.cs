@@ -34,19 +34,19 @@ public class WorkItemsController : Controller
     private readonly IWorkItemBlockService _workItemBlockService;
 
     public WorkItemsController(
-    IWorkItemService workItemService,
-    IBoardService boardService,
-    IProjectService projectService,
-    IUserService userService,
-    IExperimentService experimentService,
-    ISampleService sampleService,
-    IResultService resultService,
-    IAttachmentService attachmentService,
-    IDecisionLogService decisionLogService,
-    IWorkItemTransitionService workItemTransitionService,
-    IWorkItemFlowMetricsService workItemFlowMetricsService,
-    IWorkItemFlowSummaryService workItemFlowSummaryService,
-    IWorkItemBlockService workItemBlockService)
+        IWorkItemService workItemService,
+        IBoardService boardService,
+        IProjectService projectService,
+        IUserService userService,
+        IExperimentService experimentService,
+        ISampleService sampleService,
+        IResultService resultService,
+        IAttachmentService attachmentService,
+        IDecisionLogService decisionLogService,
+        IWorkItemTransitionService workItemTransitionService,
+        IWorkItemFlowMetricsService workItemFlowMetricsService,
+        IWorkItemFlowSummaryService workItemFlowSummaryService,
+        IWorkItemBlockService workItemBlockService)
     {
         _workItemService = workItemService;
         _boardService = boardService;
@@ -66,16 +66,15 @@ public class WorkItemsController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Index(
-    string? search,
-    string status = "all",
-    string? assignedToUserId = null,
-    CancellationToken cancellationToken = default)
+        string? search,
+        string status = "all",
+        string? assignedToUserId = null,
+        CancellationToken cancellationToken = default)
     {
         status =
             string.IsNullOrWhiteSpace(status)
                 ? "all"
                 : status.Trim().ToLowerInvariant();
-
 
         bool? isCompleted =
             status switch
@@ -85,7 +84,6 @@ public class WorkItemsController : Controller
                 _ => null
             };
 
-
         var workItems =
             await _workItemService.GetAllAsync(
                 search,
@@ -93,11 +91,9 @@ public class WorkItemsController : Controller
                 assignedToUserId,
                 cancellationToken);
 
-
         var users =
             await _userService.GetActiveUsersAsync(
                 cancellationToken);
-
 
         var items =
             workItems
@@ -119,7 +115,6 @@ public class WorkItemsController : Controller
                         })
                 .ToList();
 
-
         var assignees =
             users
                 .OrderBy(x => x.FullName)
@@ -135,7 +130,6 @@ public class WorkItemsController : Controller
                         })
                 .ToList();
 
-
         var model =
             new WorkItemsIndexViewModel
             {
@@ -145,7 +139,6 @@ public class WorkItemsController : Controller
                 Items = items,
                 Assignees = assignees
             };
-
 
         return View(model);
     }
@@ -205,6 +198,7 @@ public class WorkItemsController : Controller
                 BoardColumnId = boardColumnId
             });
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -276,17 +270,18 @@ public class WorkItemsController : Controller
             });
     }
 
+
     [HttpGet]
     public async Task<IActionResult> Details(
-     int id,
-     int boardId,
-     int projectId,
-     CancellationToken cancellationToken)
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
     {
         var workItem =
-    await _workItemService.GetByIdAsync(
-        id,
-        cancellationToken);
+            await _workItemService.GetByIdAsync(
+                id,
+                cancellationToken);
 
         if (workItem is null)
         {
@@ -297,11 +292,6 @@ public class WorkItemsController : Controller
             await _attachmentService.GetByWorkItemIdAsync(
                 workItem.Id,
                 cancellationToken);
-
-        if (workItem is null)
-        {
-            return NotFound();
-        }
 
         if (workItem.ProjectId != projectId)
         {
@@ -334,7 +324,7 @@ public class WorkItemsController : Controller
                 cancellationToken);
 
         var samplesByExperimentId =
-    new Dictionary<int, IReadOnlyList<SampleDto>>();
+            new Dictionary<int, IReadOnlyList<SampleDto>>();
 
         foreach (var experiment in experiments)
         {
@@ -347,7 +337,7 @@ public class WorkItemsController : Controller
         }
 
         var resultsBySampleId =
-    new Dictionary<int, IReadOnlyList<ResultDto>>();
+            new Dictionary<int, IReadOnlyList<ResultDto>>();
 
         foreach (var experiment in experiments)
         {
@@ -371,9 +361,9 @@ public class WorkItemsController : Controller
         }
 
         var decisionLogs =
-    await _decisionLogService.GetByWorkItemIdAsync(
-        workItem.Id,
-        cancellationToken);
+            await _decisionLogService.GetByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
 
         var transitions =
             await _workItemTransitionService.GetByWorkItemIdAsync(
@@ -397,35 +387,35 @@ public class WorkItemsController : Controller
                 cancellationToken);
 
         var model =
-     new WorkItemDetailsViewModel
-     {
-         Id = workItem.Id,
-         ProjectId = workItem.ProjectId,
-         BoardId = board.Id,
-         BoardColumnId = column.Id,
-         ColumnName = column.Name,
-         Title = workItem.Title,
-         Description = workItem.Description,
-         Type = workItem.Type,
-         Priority = workItem.Priority,
-         DueDate = workItem.DueDate,
-         IsCompleted = workItem.IsCompleted,
-         SortOrder = workItem.SortOrder,
-         AssignedToUserId = workItem.AssignedToUserId,
-         AssignedToUserName = workItem.AssignedToUserName,
+            new WorkItemDetailsViewModel
+            {
+                Id = workItem.Id,
+                ProjectId = workItem.ProjectId,
+                BoardId = board.Id,
+                BoardColumnId = column.Id,
+                ColumnName = column.Name,
+                Title = workItem.Title,
+                Description = workItem.Description,
+                Type = workItem.Type,
+                Priority = workItem.Priority,
+                DueDate = workItem.DueDate,
+                IsCompleted = workItem.IsCompleted,
+                SortOrder = workItem.SortOrder,
+                AssignedToUserId = workItem.AssignedToUserId,
+                AssignedToUserName = workItem.AssignedToUserName,
 
-         Experiments = experiments,
-         SamplesByExperimentId = samplesByExperimentId,
-         ResultsBySampleId = resultsBySampleId,
+                Experiments = experiments,
+                SamplesByExperimentId = samplesByExperimentId,
+                ResultsBySampleId = resultsBySampleId,
 
-         Attachments = attachments,
+                Attachments = attachments,
 
-         DecisionLogs = decisionLogs,
-         Transitions = transitions,
-         FlowMetrics = flowMetrics,
-         CurrentBlock = currentBlock,
-         BlockHistory = blockHistory,
-     };
+                DecisionLogs = decisionLogs,
+                Transitions = transitions,
+                FlowMetrics = flowMetrics,
+                CurrentBlock = currentBlock,
+                BlockHistory = blockHistory,
+            };
 
         return View(model);
     }
@@ -439,20 +429,29 @@ public class WorkItemsController : Controller
         CancellationToken cancellationToken = default)
     {
         if (boardId <= 0)
+        {
             return BadRequest();
+        }
 
         var periodEndUtc =
             to.HasValue
-                ? DateTime.SpecifyKind(to.Value.Date.AddDays(1), DateTimeKind.Utc)
+                ? DateTime.SpecifyKind(
+                    to.Value.Date.AddDays(1),
+                    DateTimeKind.Utc)
                 : DateTime.UtcNow;
 
         var periodStartUtc =
             from.HasValue
-                ? DateTime.SpecifyKind(from.Value.Date, DateTimeKind.Utc)
+                ? DateTime.SpecifyKind(
+                    from.Value.Date,
+                    DateTimeKind.Utc)
                 : periodEndUtc.Date.AddDays(-30);
 
         if (periodEndUtc <= periodStartUtc)
-            periodStartUtc = periodEndUtc.AddDays(-30);
+        {
+            periodStartUtc =
+                periodEndUtc.AddDays(-30);
+        }
 
         var board =
             await _boardService.GetByIdAsync(
@@ -460,7 +459,9 @@ public class WorkItemsController : Controller
                 cancellationToken);
 
         if (board is null)
+        {
             return NotFound();
+        }
 
         var summary =
             await _workItemFlowSummaryService.CalculateAsync(
@@ -473,6 +474,7 @@ public class WorkItemsController : Controller
 
         return View(summary);
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -487,16 +489,19 @@ public class WorkItemsController : Controller
             await _workItemBlockService.BlockAsync(
                 id,
                 reason,
-                User.FindFirstValue(ClaimTypes.NameIdentifier),
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
                 cancellationToken);
 
         if (!blocked)
         {
-            TempData["ErrorMessage"] = "This work item is already blocked or could not be blocked.";
+            TempData["ErrorMessage"] =
+                "This work item is already blocked or could not be blocked.";
         }
         else
         {
-            TempData["SuccessMessage"] = "Work item blocked successfully.";
+            TempData["SuccessMessage"] =
+                "Work item blocked successfully.";
         }
 
         return RedirectToAction(
@@ -508,6 +513,7 @@ public class WorkItemsController : Controller
                 projectId
             });
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -522,16 +528,19 @@ public class WorkItemsController : Controller
             await _workItemBlockService.UnblockAsync(
                 id,
                 note,
-                User.FindFirstValue(ClaimTypes.NameIdentifier),
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
                 cancellationToken);
 
         if (!unblocked)
         {
-            TempData["ErrorMessage"] = "No active block was found for this work item.";
+            TempData["ErrorMessage"] =
+                "No active block was found for this work item.";
         }
         else
         {
-            TempData["SuccessMessage"] = "Work item unblocked successfully.";
+            TempData["SuccessMessage"] =
+                "Work item unblocked successfully.";
         }
 
         return RedirectToAction(
@@ -543,6 +552,7 @@ public class WorkItemsController : Controller
                 projectId
             });
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Edit(
@@ -609,6 +619,7 @@ public class WorkItemsController : Controller
             });
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
@@ -657,8 +668,8 @@ public class WorkItemsController : Controller
         }
 
         var changedByUserId =
-    User.FindFirstValue(
-        ClaimTypes.NameIdentifier);
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
         var updated =
             await _workItemService.UpdateAsync(
@@ -683,12 +694,14 @@ public class WorkItemsController : Controller
             {
                 await _workItemService.CompleteAsync(
                     model.Id,
+                    changedByUserId,
                     cancellationToken);
             }
             else
             {
                 await _workItemService.ReopenAsync(
                     model.Id,
+                    changedByUserId,
                     cancellationToken);
             }
         }
@@ -702,6 +715,7 @@ public class WorkItemsController : Controller
                 boardId = model.BoardId
             });
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -718,7 +732,8 @@ public class WorkItemsController : Controller
                 id,
                 boardColumnId,
                 sortOrder,
-                User.FindFirstValue(ClaimTypes.NameIdentifier),
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
                 cancellationToken);
 
         if (!moved)
@@ -736,6 +751,7 @@ public class WorkItemsController : Controller
             });
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Complete(
@@ -744,9 +760,14 @@ public class WorkItemsController : Controller
         int projectId,
         CancellationToken cancellationToken)
     {
+        var changedByUserId =
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
         var completed =
             await _workItemService.CompleteAsync(
                 id,
+                changedByUserId,
                 cancellationToken);
 
         if (!completed)
@@ -764,6 +785,7 @@ public class WorkItemsController : Controller
             });
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Reopen(
@@ -772,9 +794,14 @@ public class WorkItemsController : Controller
         int projectId,
         CancellationToken cancellationToken)
     {
+        var changedByUserId =
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
         var reopened =
             await _workItemService.ReopenAsync(
                 id,
+                changedByUserId,
                 cancellationToken);
 
         if (!reopened)
