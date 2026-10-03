@@ -1,9 +1,11 @@
 using ChemResearchHub.Application.Projects.Interfaces;
 using ChemResearchHub.Web.Models.Projects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChemResearchHub.Web.Controllers;
 
+[Authorize]
 public class ProjectsController : Controller
 {
     private readonly IProjectService _projectService;
@@ -26,6 +28,7 @@ public class ProjectsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         return View(
@@ -34,6 +37,7 @@ public class ProjectsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(
         CreateProjectViewModel model,
         CancellationToken cancellationToken)
@@ -102,6 +106,7 @@ public class ProjectsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(
         int id,
         CancellationToken cancellationToken)
@@ -130,6 +135,7 @@ public class ProjectsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(
         EditProjectViewModel model,
         CancellationToken cancellationToken)

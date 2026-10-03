@@ -14,9 +14,11 @@ using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
 using System.Security.Claims;
 using ChemResearchHub.Web.Models.WorkItems;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChemResearchHub.Web.Controllers;
 
+[Authorize]
 public class WorkItemsController : Controller
 {
     private readonly IWorkItemService _workItemService;
@@ -62,7 +64,6 @@ public class WorkItemsController : Controller
         _workItemFlowSummaryService = workItemFlowSummaryService;
         _workItemBlockService = workItemBlockService;
     }
-
 
     [HttpGet]
     public async Task<IActionResult> Index(
@@ -143,8 +144,8 @@ public class WorkItemsController : Controller
         return View(model);
     }
 
-
     [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         int projectId,
         int boardId,
@@ -199,9 +200,9 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         CreateWorkItemViewModel model,
         CancellationToken cancellationToken)
@@ -257,7 +258,8 @@ public class WorkItemsController : Controller
             model.Priority,
             model.DueDate,
             model.AssignedToUserId,
-            User.FindFirstValue(ClaimTypes.NameIdentifier),
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier),
             cancellationToken);
 
         return RedirectToAction(
@@ -269,7 +271,6 @@ public class WorkItemsController : Controller
                 boardId = model.BoardId
             });
     }
-
 
     [HttpGet]
     public async Task<IActionResult> Details(
@@ -346,8 +347,7 @@ public class WorkItemsController : Controller
                     experiment.Id,
                     out var experimentSamples)
                     ? experimentSamples
-                    : Array.Empty<
-                        ChemResearchHub.Application.Samples.Dtos.SampleDto>();
+                    : Array.Empty<SampleDto>();
 
             foreach (var sample in samples)
             {
@@ -420,7 +420,6 @@ public class WorkItemsController : Controller
         return View(model);
     }
 
-
     [HttpGet]
     public async Task<IActionResult> FlowMetrics(
         int boardId,
@@ -475,9 +474,9 @@ public class WorkItemsController : Controller
         return View(summary);
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Block(
         int id,
         int boardId,
@@ -514,8 +513,8 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpPost]
+    [Authorize(Roles = "Admin,Researcher")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Unblock(
         int id,
@@ -553,8 +552,8 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Edit(
         int id,
         int boardId,
@@ -619,9 +618,9 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Edit(
         EditWorkItemViewModel model,
         CancellationToken cancellationToken)
@@ -716,9 +715,9 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Move(
         int id,
         int boardId,
@@ -751,9 +750,9 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Complete(
         int id,
         int boardId,
@@ -785,9 +784,9 @@ public class WorkItemsController : Controller
             });
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Reopen(
         int id,
         int boardId,
@@ -808,6 +807,39 @@ public class WorkItemsController : Controller
         {
             return NotFound();
         }
+
+        return RedirectToAction(
+            "Index",
+            "Boards",
+            new
+            {
+                projectId,
+                boardId
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
+    {
+        var deleted =
+            await _workItemService.DeleteAsync(
+                id,
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
+                cancellationToken);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        TempData["SuccessMessage"] =
+            "Work item deleted successfully.";
 
         return RedirectToAction(
             "Index",

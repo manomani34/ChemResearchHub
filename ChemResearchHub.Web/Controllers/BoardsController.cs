@@ -2,10 +2,12 @@
 using ChemResearchHub.Application.Projects.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Models.Boards;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChemResearchHub.Web.Controllers;
 
+[Authorize]
 public class BoardsController : Controller
 {
     private readonly IBoardService _boardService;
@@ -24,7 +26,7 @@ public class BoardsController : Controller
 
     [HttpGet]
     public async Task<IActionResult> List(
-    CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         var projects =
             await _projectService.GetAllAsync(
@@ -103,7 +105,7 @@ public class BoardsController : Controller
                 nameof(Create),
                 new
                 {
-                    projectId = projectId
+                    projectId
                 });
         }
 
@@ -146,6 +148,7 @@ public class BoardsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(
         int projectId,
         CancellationToken cancellationToken)
@@ -171,6 +174,7 @@ public class BoardsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(
         CreateBoardViewModel model,
         CancellationToken cancellationToken)
