@@ -16,4 +16,12 @@ public class CreateProjectViewModel
         ErrorMessage = "Description cannot exceed 2000 characters.")]
     [Display(Name = "Description")]
     public string? Description { get; set; }
+
+    [Display(Name = "Start Date")]
+    [DataType(DataType.Date)]
+    public DateTime? StartDate { get; set; }
+
+    [Display(Name = "End Date")]
+    [DataType(DataType.Date)]
+    public DateTime? EndDate { get; set; }
 }

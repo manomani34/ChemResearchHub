@@ -42,6 +42,15 @@ public class ProjectsController : Controller
         CreateProjectViewModel model,
         CancellationToken cancellationToken)
     {
+        if (model.StartDate.HasValue &&
+            model.EndDate.HasValue &&
+            model.EndDate < model.StartDate)
+        {
+            ModelState.AddModelError(
+                nameof(model.EndDate),
+                "End date cannot be earlier than start date.");
+        }
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -52,6 +61,8 @@ public class ProjectsController : Controller
             await _projectService.CreateAsync(
                 model.Name.Trim(),
                 model.Description?.Trim(),
+                model.StartDate,
+                model.EndDate,
                 cancellationToken);
 
             TempData["SuccessMessage"] =
@@ -127,6 +138,8 @@ public class ProjectsController : Controller
                 Id = project.Id,
                 Name = project.Name,
                 Description = project.Description,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
                 IsActive = project.IsActive
             };
 
@@ -140,6 +153,15 @@ public class ProjectsController : Controller
         EditProjectViewModel model,
         CancellationToken cancellationToken)
     {
+        if (model.StartDate.HasValue &&
+            model.EndDate.HasValue &&
+            model.EndDate < model.StartDate)
+        {
+            ModelState.AddModelError(
+                nameof(model.EndDate),
+                "End date cannot be earlier than start date.");
+        }
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -152,6 +174,8 @@ public class ProjectsController : Controller
                     model.Id,
                     model.Name.Trim(),
                     model.Description?.Trim(),
+                    model.StartDate,
+                    model.EndDate,
                     cancellationToken);
 
             if (!updated)

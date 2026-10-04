@@ -92,6 +92,38 @@
 
                 </div>
 
+                <div class="project-form-field">
+
+                    <label asp-for="StartDate"
+                           class="project-form-label">
+                    </label>
+
+                    <input asp-for="StartDate"
+                           type="date"
+                           class="project-form-input" />
+
+                    <span asp-validation-for="StartDate"
+                          class="project-form-error">
+                    </span>
+
+                </div>
+
+                <div class="project-form-field">
+
+                    <label asp-for="EndDate"
+                           class="project-form-label">
+                    </label>
+
+                    <input asp-for="EndDate"
+                           type="date"
+                           class="project-form-input" />
+
+                    <span asp-validation-for="EndDate"
+                          class="project-form-error">
+                    </span>
+
+                </div>
+
             </div>
 
             <div class="project-form-section">

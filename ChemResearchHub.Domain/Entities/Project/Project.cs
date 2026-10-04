@@ -10,25 +10,38 @@ public class Project : BaseEntity
 
     public Project(
         string name,
-        string? description = null)
+        string? description = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
     {
         SetName(name);
+
         Description = description;
+        StartDate = startDate;
+        EndDate = endDate;
     }
 
     public string Name { get; private set; } = null!;
 
     public string? Description { get; private set; }
 
+    public DateTime? StartDate { get; private set; }
+
+    public DateTime? EndDate { get; private set; }
+
     public bool IsActive { get; private set; } = true;
 
     public void Update(
         string name,
-        string? description)
+        string? description,
+        DateTime? startDate,
+        DateTime? endDate)
     {
         SetName(name);
 
         Description = description;
+        StartDate = startDate;
+        EndDate = endDate;
 
         ModifiedAt = DateTime.UtcNow;
     }

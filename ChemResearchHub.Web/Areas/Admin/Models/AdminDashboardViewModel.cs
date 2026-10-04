@@ -126,6 +126,13 @@ public class AdminDashboardViewModel
 
     public IReadOnlyList<AdminActivityItem> RecentActivities { get; set; }
         = Array.Empty<AdminActivityItem>();
+
+    // =========================
+    // Project Schedule
+    // =========================
+
+    public IReadOnlyList<AdminProjectScheduleItem> ProjectSchedule { get; set; }
+        = Array.Empty<AdminProjectScheduleItem>();
 }
 
 
@@ -158,4 +165,23 @@ public class AdminActivityItem
     public DateTime? CreatedAt { get; set; }
 
     public string Type { get; set; } = "info";
+}
+
+public class AdminProjectScheduleItem
+{
+    public int ProjectId { get; set; }
+
+    public string ReferenceCode { get; set; } = string.Empty;
+
+    public string ProjectName { get; set; } = string.Empty;
+
+    public bool IsActive { get; set; }
+
+    public DateTime? StartDate { get; set; }
+
+    public DateTime? EndDate { get; set; }
+
+    public string? StartDateJalali { get; set; }
+
+    public string? EndDateJalali { get; set; }
 }

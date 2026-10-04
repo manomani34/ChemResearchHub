@@ -1,0 +1,401 @@
+﻿@model ChemResearchHub.Web.Models.DecisionLogs.DecisionLogDetailsViewModel
+
+@{
+    ViewData["Title"] = "Decision Details";
+}
+
+<div style="
+    max-width:1050px;
+    margin:30px auto;
+    padding:0 18px;
+    direction:rtl;
+    font-family:Tahoma,Arial,sans-serif;">
+
+    <!-- Header -->
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:20px;
+        margin-bottom:22px;">
+
+        <div>
+
+            <div style="
+                color:#6b7280;
+                font-size:13px;
+                margin-bottom:6px;">
+                Decision Log
+            </div>
+
+            <h1 style="
+                margin:0 0 8px;
+                font-size:28px;">
+                جزئیات تصمیم پژوهشی
+            </h1>
+
+            <div style="
+                color:#4b5563;
+                font-size:14px;">
+                ثبت و مستندسازی یک تصمیم در فرآیند پژوهش
+            </div>
+
+        </div>
+
+        <a asp-action="List"
+           style="
+            border:1px solid #d1d5db;
+            background:#fff;
+            color:#374151;
+            text-decoration:none;
+            border-radius:8px;
+            padding:9px 15px;
+            white-space:nowrap;">
+            بازگشت
+        </a>
+
+    </div>
+
+
+    <!-- Reference -->
+    <section style="
+        background:linear-gradient(135deg,#eef2ff,#f8fafc);
+        border:1px solid #c7d2fe;
+        border-radius:12px;
+        padding:20px;
+        margin-bottom:18px;">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:20px;
+            flex-wrap:wrap;">
+
+            <div>
+
+                <div style="
+                    font-size:12px;
+                    color:#6366f1;
+                    margin-bottom:5px;">
+                    Decision Reference
+                </div>
+
+                <div style="
+                    font-size:26px;
+                    font-weight:700;
+                    color:#312e81;">
+                    @Model.ReferenceCode
+                </div>
+
+            </div>
+
+            <button type="button"
+                    onclick="navigator.clipboard.writeText('@Model.ReferenceCode')"
+                    style="
+                border:1px solid #c7d2fe;
+                background:#fff;
+                color:#3730a3;
+                border-radius:7px;
+                padding:8px 13px;
+                cursor:pointer;">
+                📋 کپی Reference
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- Decision Summary -->
+    <section style="
+        background:#fff;
+        border:1px solid #d1d5db;
+        border-radius:12px;
+        padding:15px;
+        margin-bottom:14px;">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:12px;
+            flex-wrap:wrap;">
+
+            <h2 style="
+                margin:0;
+                font-size:18px;">
+                تصمیم
+            </h2>
+
+            <span style="
+                display:inline-block;
+                background:#2563eb;
+                color:#fff;
+                border-radius:20px;
+                padding:4px 10px;
+                font-size:12px;">
+                @Model.DecisionType
+            </span>
+
+        </div>
+
+        <div style="
+            background:#f8fafc;
+            border:1px solid #e5e7eb;
+            border-radius:8px;
+            padding:12px;
+            line-height:1.8;
+            color:#111827;
+            white-space:pre-wrap;">
+            @Model.Decision
+        </div>
+
+    </section>
+
+
+    <!-- Rationale -->
+    @if (!string.IsNullOrWhiteSpace(Model.Rationale))
+    {
+        <section style="
+            background:#fff;
+            border:1px solid #d1d5db;
+            border-radius:12px;
+            padding:15px;
+            margin-bottom:14px;">
+
+            <h2 style="
+                margin:0 0 10px;
+                font-size:18px;">
+                🧠 منطق تصمیم
+            </h2>
+
+            <div style="
+                background:#fffbeb;
+                border:1px solid #fde68a;
+                border-radius:8px;
+                padding:12px;
+                line-height:1.8;
+                white-space:pre-wrap;
+                color:#374151;">
+                @Model.Rationale
+            </div>
+
+        </section>
+    }
+
+
+    <!-- Evidence -->
+    @if (!string.IsNullOrWhiteSpace(Model.Evidence))
+    {
+        <section style="
+            background:#fff;
+            border:1px solid #d1d5db;
+            border-radius:12px;
+            padding:15px;
+            margin-bottom:14px;">
+
+            <h2 style="
+                margin:0 0 10px;
+                font-size:18px;">
+                📚 شواهد و مستندات
+            </h2>
+
+            <div style="
+                background:#f0fdf4;
+                border:1px solid #bbf7d0;
+                border-radius:8px;
+                padding:12px;
+                line-height:1.8;
+                white-space:pre-wrap;
+                color:#374151;">
+                @Model.Evidence
+            </div>
+
+        </section>
+    }
+
+   
+
+    <!-- Research Context -->
+    <section style="
+        background:#fff;
+        border:1px solid #d1d5db;
+        border-radius:12px;
+        padding:22px;
+        margin-bottom:18px;">
+
+        <h2 style="
+            margin:0 0 17px;
+            font-size:19px;">
+            🔬 زمینه پژوهش
+        </h2>
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:14px;">
+
+            <div style="
+                background:#f9fafb;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                padding:14px;">
+
+                <div style="
+                    color:#6b7280;
+                    font-size:12px;
+                    margin-bottom:5px;">
+                    Work Item
+                </div>
+
+                <div style="
+                    font-weight:600;
+                    color:#111827;">
+                    @Model.WorkItemReferenceCode
+                </div>
+
+                <div style="
+                    margin-top:4px;
+                    color:#4b5563;
+                    font-size:13px;">
+                    @Model.WorkItemTitle
+                </div>
+
+            </div>
+
+
+            <div style="
+                background:#f9fafb;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                padding:14px;">
+
+                <div style="
+                    color:#6b7280;
+                    font-size:12px;
+                    margin-bottom:5px;">
+                    نوع تصمیم
+                </div>
+
+                <div style="
+                    font-weight:600;
+                    color:#111827;">
+                    @Model.DecisionType
+                </div>
+
+            </div>
+
+
+            <div style="
+                background:#f9fafb;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                padding:14px;">
+
+                <div style="
+                    color:#6b7280;
+                    font-size:12px;
+                    margin-bottom:5px;">
+                    ایجادکننده
+                </div>
+
+                <div style="
+                    font-weight:600;
+                    color:#111827;">
+                    @(string.IsNullOrWhiteSpace(Model.CreatedByUserId)
+                        ? "ثبت نشده"
+                        : Model.CreatedByUserId)
+                </div>
+
+            </div>
+
+
+            <div style="
+                background:#f9fafb;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                padding:14px;">
+
+                <div style="
+                    color:#6b7280;
+                    font-size:12px;
+                    margin-bottom:5px;">
+                    تاریخ ثبت
+                </div>
+
+                <div style="
+                    font-weight:600;
+                    color:#111827;">
+                    @Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Work Item -->
+    <section style="
+        background:#eff6ff;
+        border:1px solid #bfdbfe;
+        border-radius:12px;
+        padding:18px;">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            flex-wrap:wrap;">
+
+            <div>
+
+                <div style="
+                    font-size:12px;
+                    color:#2563eb;
+                    margin-bottom:4px;">
+                    Research Context
+                </div>
+
+                <strong>
+                    @Model.WorkItemReferenceCode
+                </strong>
+
+                <span style="margin:0 8px;color:#9ca3af;">
+                    •
+                </span>
+
+                <span>
+                    @Model.WorkItemTitle
+                </span>
+
+            </div>
+
+            <a asp-controller="WorkItems"
+               asp-action="Details"
+               asp-route-id="@Model.WorkItemId"
+               asp-route-projectId="@Model.ProjectId"
+               asp-route-boardId="@Model.BoardId"
+               style="display:inline-flex;align-items:center;gap:6px;border:1px solid #d1d5db;background:#fff;color:#374151;border-radius:7px;padding:8px 12px;text-decoration:none;">
+                مشاهده Work Item
+            </a>
+
+
+        </div>
+
+    </section>
+
+</div>
+
+<style>
+    @@media (max-width:700px) {
+
+        div[style*="grid-template-columns:repeat(2"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>

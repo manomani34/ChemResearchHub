@@ -8,6 +8,10 @@ public class ProjectDto
 
     public string? Description { get; init; }
 
+    public DateTime? StartDate { get; init; }
+
+    public DateTime? EndDate { get; init; }
+
     public bool IsActive { get; init; }
 
     public DateTime CreatedAt { get; init; }
@@ -15,5 +19,5 @@ public class ProjectDto
     public DateTime? ModifiedAt { get; init; }
 
     public string ReferenceCode =>
-    $"PRJ-{Id:D6}";
+        $"PRJ-{Id:D6}";
 }

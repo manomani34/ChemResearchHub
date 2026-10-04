@@ -3,8 +3,8 @@ using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.DecisionLogs.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Models.DecisionLogs;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ChemResearchHub.Web.Controllers;
 
@@ -56,11 +56,11 @@ public class DecisionLogsController : Controller
             logs
                 .Select(x => new DecisionLogListItemViewModel
                 {
-                    Id =
-                        x.Id,
+                    Id = x.Id,
 
-                    WorkItemId =
-                        x.WorkItemId,
+                    ReferenceCode = x.ReferenceCode,
+
+                    WorkItemId = x.WorkItemId,
 
                     WorkItemTitle =
                         workItemNames.TryGetValue(
@@ -94,6 +94,105 @@ public class DecisionLogsController : Controller
             {
                 Items = items
             });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        if (id <= 0)
+        {
+            return NotFound();
+        }
+
+        var logs =
+            await _decisionLogService.GetAllAsync(
+                cancellationToken);
+
+        var decision =
+            logs.FirstOrDefault(
+                x => x.Id == id);
+
+        if (decision is null)
+        {
+            return NotFound();
+        }
+
+        var workItem =
+            await _workItemService.GetByIdAsync(
+                decision.WorkItemId,
+                cancellationToken);
+
+        if (workItem is null)
+        {
+            return NotFound();
+        }
+
+        /*
+         * WorkItemDto مستقیماً BoardId ندارد.
+         * بنابراین Board مربوط به Work Item را
+         * از روی BoardColumnId پیدا می‌کنیم.
+         */
+        var boards =
+            await _boardService.GetByProjectIdAsync(
+                workItem.ProjectId,
+                cancellationToken);
+
+        var board =
+            boards.FirstOrDefault(
+                x => x.Columns.Any(
+                    column =>
+                        column.Id == workItem.BoardColumnId));
+
+        if (board is null)
+        {
+            return NotFound();
+        }
+
+        var model =
+            new DecisionLogDetailsViewModel
+            {
+                Id = decision.Id,
+
+                ReferenceCode =
+                    decision.ReferenceCode,
+
+                WorkItemId =
+                    workItem.Id,
+
+                WorkItemReferenceCode =
+                    $"CRH-{workItem.Id:D6}",
+
+                WorkItemTitle =
+                    workItem.Title,
+
+                ProjectId =
+                    workItem.ProjectId,
+
+                BoardId =
+                    board.Id,
+
+                DecisionType =
+                    decision.DecisionType,
+
+                Decision =
+                    decision.Decision,
+
+                Rationale =
+                    decision.Rationale,
+
+                Evidence =
+                    decision.Evidence,
+
+                CreatedByUserId =
+                    decision.CreatedByUserId,
+
+                CreatedAt =
+                    decision.CreatedAt
+            };
+
+        return View(model);
     }
 
     [HttpGet]

@@ -10,6 +10,8 @@ using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+
 
 namespace ChemResearchHub.Web.Areas.Admin.Controllers;
 
@@ -143,6 +145,32 @@ public class DashboardController : Controller
                 .Take(10)
                 .ToList();
 
+        var persianCalendar = new PersianCalendar();
+
+        model.ProjectSchedule =
+            projects
+                .Where(x => x.StartDate.HasValue || x.EndDate.HasValue)
+                .OrderBy(x => x.StartDate ?? x.EndDate)
+                .ThenBy(x => x.Name)
+                .Select(x => new AdminProjectScheduleItem
+                {
+                    ProjectId = x.Id,
+                    ReferenceCode = x.ReferenceCode,
+                    ProjectName = x.Name,
+                    IsActive = x.IsActive,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+
+                    StartDateJalali = x.StartDate.HasValue
+                        ? ToJalali(x.StartDate.Value, persianCalendar)
+                        : null,
+
+                    EndDateJalali = x.EndDate.HasValue
+                        ? ToJalali(x.EndDate.Value, persianCalendar)
+                        : null
+                })
+                .ToList();
+
         model.Alerts = BuildAlerts(model);
 
         model.RecentActivities =
@@ -215,5 +243,14 @@ public class DashboardController : Controller
         }
 
         return alerts;
+    }
+
+    private static string ToJalali(
+    DateTime date,
+    PersianCalendar calendar)
+    {
+        return $"{calendar.GetYear(date):0000}/" +
+               $"{calendar.GetMonth(date):00}/" +
+               $"{calendar.GetDayOfMonth(date):00}";
     }
 }

@@ -44,11 +44,15 @@ public class ProjectService : IProjectService
     public async Task<ProjectDto> CreateAsync(
         string name,
         string? description,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken cancellationToken = default)
     {
         var project = new Project(
             name,
-            description);
+            description,
+            startDate,
+            endDate);
 
         await _projectRepository.AddAsync(
             project,
@@ -64,6 +68,8 @@ public class ProjectService : IProjectService
         int id,
         string name,
         string? description,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken cancellationToken = default)
     {
         var project =
@@ -78,7 +84,9 @@ public class ProjectService : IProjectService
 
         project.Update(
             name,
-            description);
+            description,
+            startDate,
+            endDate);
 
         await _projectRepository.SaveChangesAsync(
             cancellationToken);
@@ -124,6 +132,8 @@ public class ProjectService : IProjectService
             Id = project.Id,
             Name = project.Name,
             Description = project.Description,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
             IsActive = project.IsActive,
             CreatedAt = project.CreatedAt,
             ModifiedAt = project.ModifiedAt

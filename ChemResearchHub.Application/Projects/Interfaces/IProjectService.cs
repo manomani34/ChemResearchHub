@@ -14,12 +14,16 @@ public interface IProjectService
     Task<ProjectDto> CreateAsync(
         string name,
         string? description,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken cancellationToken = default);
 
     Task<bool> UpdateAsync(
         int id,
         string name,
         string? description,
+        DateTime? startDate,
+        DateTime? endDate,
         CancellationToken cancellationToken = default);
 
     Task<bool> SetActiveAsync(
