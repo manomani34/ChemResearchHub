@@ -17,4 +17,7 @@ public class DecisionLogDto
     public string? CreatedByUserId { get; init; }
 
     public DateTime CreatedAt { get; init; }
+
+    public string ReferenceCode =>
+    $"DEC-{Id:D6}";
 }

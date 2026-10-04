@@ -25,4 +25,6 @@ public class DecisionLogListItemViewModel
     public string? CreatedByUserId { get; init; }
 
     public DateTime CreatedAt { get; init; }
+
+    public string ReferenceCode { get; set; } = string.Empty;
 }

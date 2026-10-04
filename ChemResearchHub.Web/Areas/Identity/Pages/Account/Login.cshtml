@@ -271,6 +271,76 @@
         }
 
         }
+
+    
+.demo-accounts {
+    margin-top: 16px;
+}
+
+.demo-account {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.demo-account + .demo-account {
+    margin-top: 6px;
+}
+
+.demo-account-role {
+    flex-shrink: 0;
+    min-width: 62px;
+    padding: 4px 7px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.admin-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.reviewer-badge {
+    background: #f5f3ff;
+    color: #6d28d9;
+}
+
+.demo-account-info {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    direction: ltr;
+}
+
+.demo-account-info span {
+    color: #6b7280;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.demo-account-info span:last-child {
+    color: #374151;
+    font-weight: 600;
+}
+
+@@media (max-width: 480px) {
+    .demo-account-info {
+        gap: 7px;
+    }
+
+    .demo-account-info span {
+        font-size: 9px;
+    }
+}
     </style>
     
 
@@ -367,6 +437,32 @@
                     ورود به سامانه
                 </button>
             </form>
+
+<div class="demo-accounts">
+
+    <div class="demo-account">
+        <div class="demo-account-role admin-badge">
+            Admin
+        </div>
+
+        <div class="demo-account-info">
+            <span>baheri1389@gmail.com</span>
+            <span>a@1233456</span>
+        </div>
+    </div>
+
+    <div class="demo-account">
+        <div class="demo-account-role reviewer-badge">
+            Reviewer
+        </div>
+
+        <div class="demo-account-info">
+            <span>reviewer@localhost.com</span>
+            <span>aA@123456</span>
+        </div>
+    </div>
+
+</div>
 
             <div class="login-footer">
                 <p class="login-footer-title">

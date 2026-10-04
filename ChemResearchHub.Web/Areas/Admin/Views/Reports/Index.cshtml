@@ -1,0 +1,1331 @@
+﻿@model ChemResearchHub.Web.Areas.Admin.Models.ReportsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "گزارش‌های مدیریتی";
+}
+
+<div class="reports-page" dir="rtl">
+
+    <!-- Header -->
+    <section class="reports-hero">
+
+        <div>
+            <div class="hero-badge">
+                📊 گزارش مدیریتی
+            </div>
+
+            <h1>
+                گزارش‌ها و تحلیل‌های سامانه
+            </h1>
+
+            <p>
+                بررسی وضعیت پروژه‌ها، فعالیت‌ها، کاربران و داده‌های پژوهشی
+            </p>
+        </div>
+
+        <div class="report-header-actions">
+
+            <a href="/Admin/Dashboard"
+               class="admin-nav-btn admin-nav-btn-primary">
+                <span class="admin-nav-btn-icon">📊</span>
+                <span>داشبورد مدیریت</span>
+            </a>
+
+             <button type="button"
+                    class="admin-nav-btn admin-nav-btn-secondary"
+                    onclick="window.print()">
+                <span class="admin-nav-btn-icon">🖨️</span>
+                <span>چاپ گزارش</span>
+            </button>
+
+<a href="@Url.Action(
+    "ExportExcel",
+    "Reports",
+    new
+    {
+        area = "Admin",
+        ReportType = Model.ReportType,
+        ProjectId = Model.ProjectId,
+        UserId = Model.UserId,
+        Status = Model.Status,
+        FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
+        ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
+    })"
+   class="admin-nav-btn admin-nav-btn-secondary">
+    <span class="admin-nav-btn-icon">📥</span>
+    <span>خروجی Excel</span>
+</a>
+
+
+
+        </div>
+
+    </section>
+
+
+    <!-- Filters -->
+    <section class="section-card filters-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="section-kicker">
+                    فیلتر گزارش
+                </span>
+
+                <h2>
+                    پارامترهای گزارش
+                </h2>
+
+                <p>
+                    اطلاعات مورد نظر خود را برای مشاهده گزارش انتخاب کنید
+                </p>
+            </div>
+
+        </div>
+
+
+        <form asp-area="Admin"
+      asp-controller="Reports"
+      asp-action="Index"
+      method="get"
+      class="filters-form">
+
+    <div class="filters-grid">
+
+        <!-- Report Type -->
+        <div class="filter-field">
+            <label>نوع گزارش</label>
+
+            <select name="ReportType" class="form-select">
+
+                <option value="overview"
+                        selected="@(Model.ReportType == "overview")">
+                    نمای کلی
+                </option>
+
+                <option value="projects"
+                        selected="@(Model.ReportType == "projects")">
+                    پروژه‌ها
+                </option>
+
+                <option value="workitems"
+                        selected="@(Model.ReportType == "workitems")">
+                    Work Item ها
+                </option>
+
+                <option value="users"
+                        selected="@(Model.ReportType == "users")">
+                    عملکرد کاربران
+                </option>
+
+                <option value="experiments"
+                        selected="@(Model.ReportType == "experiments")">
+                    آزمایش‌ها
+                </option>
+
+                <option value="samples"
+                        selected="@(Model.ReportType == "samples")">
+                    نمونه‌ها
+                </option>
+
+                <option value="results"
+                        selected="@(Model.ReportType == "results")">
+                    نتایج
+                </option>
+
+                <option value="attachments"
+                        selected="@(Model.ReportType == "attachments")">
+                    فایل‌ها
+                </option>
+
+                <option value="decisions"
+                        selected="@(Model.ReportType == "decisions")">
+                    تصمیم‌ها
+                </option>
+
+            </select>
+        </div>
+
+
+        <!-- Project -->
+        <div class="filter-field">
+            <label>پروژه</label>
+
+            <select name="ProjectId" class="form-select">
+
+                <option value=""
+                        selected="@(!Model.ProjectId.HasValue)">
+                    همه پروژه‌ها
+                </option>
+
+                @foreach (var project in Model.Projects)
+                {
+                    <option value="@project.Id"
+                            selected="@(Model.ProjectId == project.Id)">
+                        @project.Name
+                    </option>
+                }
+
+            </select>
+        </div>
+
+
+        <!-- User -->
+        <div class="filter-field">
+            <label>مسئول</label>
+
+            <select name="UserId" class="form-select">
+
+                <option value=""
+                        selected="@(string.IsNullOrWhiteSpace(Model.UserId))">
+                    همه کاربران
+                </option>
+
+                @foreach (var user in Model.Users)
+                {
+                    <option value="@user.Id"
+                            selected="@(Model.UserId == user.Id)">
+                        @user.FullName
+                    </option>
+                }
+
+            </select>
+        </div>
+
+
+        <!-- Status -->
+        <div class="filter-field">
+            <label>وضعیت</label>
+
+            <select name="Status" class="form-select">
+
+                <option value=""
+                        selected="@(string.IsNullOrWhiteSpace(Model.Status))">
+                    همه وضعیت‌ها
+                </option>
+
+                <option value="open"
+                        selected="@(Model.Status == "open")">
+                    باز
+                </option>
+
+                <option value="completed"
+                        selected="@(Model.Status == "completed")">
+                    تکمیل شده
+                </option>
+
+                <option value="overdue"
+                        selected="@(Model.Status == "overdue")">
+                    سررسید گذشته
+                </option>
+
+            </select>
+        </div>
+
+
+        <!-- From Date -->
+        <div class="filter-field">
+            <label>از تاریخ</label>
+
+            <input name="FromDate"
+                   type="date"
+                   class="form-control"
+                   value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+
+
+        <!-- To Date -->
+        <div class="filter-field">
+            <label>تا تاریخ</label>
+
+            <input name="ToDate"
+                   type="date"
+                   class="form-control"
+                   value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+
+    </div>
+
+
+    <div class="filter-actions">
+
+        <button type="submit"
+                class="filter-btn filter-btn-primary">
+            🔎 اعمال فیلتر
+        </button>
+
+        <a href="/Admin/Reports"
+           class="filter-btn filter-btn-secondary">
+            ↻ پاک کردن
+        </a>
+
+    </div>
+
+</form>
+
+    </section>
+
+
+    <!-- Summary -->
+    <section class="summary-grid">
+
+        <div class="summary-card blue">
+
+            <div class="summary-icon">
+                📁
+            </div>
+
+            <div>
+                <span>پروژه‌ها</span>
+
+                <strong>
+                    @Model.Summary.TotalProjects
+                </strong>
+
+                <small>
+                    @Model.Summary.ActiveProjects فعال
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card green">
+
+            <div class="summary-icon">
+                📋
+            </div>
+
+            <div>
+                <span>Work Itemها</span>
+
+                <strong>
+                    @Model.Summary.TotalWorkItems
+                </strong>
+
+                <small>
+                    @Model.Summary.OpenWorkItems باز
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card orange">
+
+            <div class="summary-icon">
+                ⚠️
+            </div>
+
+            <div>
+                <span>سررسید گذشته</span>
+
+                <strong>
+                    @Model.Summary.OverdueWorkItems
+                </strong>
+
+                <small>
+                    نیازمند پیگیری
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card purple">
+
+            <div class="summary-icon">
+                🧪
+            </div>
+
+            <div>
+                <span>آزمایش‌ها</span>
+
+                <strong>
+                    @Model.Summary.TotalExperiments
+                </strong>
+
+                <small>
+                    @Model.Summary.ActiveExperiments فعال
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card cyan">
+
+            <div class="summary-icon">
+                🧫
+            </div>
+
+            <div>
+                <span>نمونه‌ها</span>
+
+                <strong>
+                    @Model.Summary.TotalSamples
+                </strong>
+
+                <small>
+                    ثبت شده
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="summary-card gray">
+
+            <div class="summary-icon">
+                📄
+            </div>
+
+            <div>
+                <span>نتایج</span>
+
+                <strong>
+                    @Model.Summary.TotalResults
+                </strong>
+
+                <small>
+                    ثبت شده
+                </small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Report Content -->
+    <section class="section-card report-card">
+
+        <div class="section-heading report-heading">
+
+            <div>
+                <span class="section-kicker">
+                    خروجی گزارش
+                </span>
+
+                <h2>
+                    @GetReportTitle(Model.ReportType)
+                </h2>
+
+                <p>
+                    اطلاعات استخراج شده از داده‌های سامانه
+                </p>
+            </div>
+
+            <div class="report-count">
+                @Model.Rows.Count رکورد
+            </div>
+
+        </div>
+
+
+        @if (Model.ReportType == "overview")
+        {
+            <div class="overview-grid">
+
+                <div class="overview-item">
+                    <span>پروژه‌های فعال</span>
+                    <strong>@Model.Summary.ActiveProjects</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>Work Itemهای باز</span>
+                    <strong>@Model.Summary.OpenWorkItems</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>Work Itemهای تکمیل شده</span>
+                    <strong>@Model.Summary.CompletedWorkItems</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>Work Itemهای overdue</span>
+                    <strong>@Model.Summary.OverdueWorkItems</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>آزمایش‌های فعال</span>
+                    <strong>@Model.Summary.ActiveExperiments</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>پیوست‌ها</span>
+                    <strong>@Model.Summary.TotalAttachments</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>تصمیمات</span>
+                    <strong>@Model.Summary.TotalDecisions</strong>
+                </div>
+
+                <div class="overview-item">
+                    <span>نمونه‌ها</span>
+                    <strong>@Model.Summary.TotalSamples</strong>
+                </div>
+
+            </div>
+        }
+        else if (Model.Rows.Any())
+        {
+            <div class="table-wrapper">
+
+                <table class="report-table">
+
+                    <thead>
+                        <tr>
+                            <th>دسته</th>
+                            <th>عنوان</th>
+                            <th>وضعیت</th>
+                            <th>کل</th>
+                            <th>باز</th>
+                            <th>تکمیل شده</th>
+                            <th>Overdue</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var row in Model.Rows)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="category-badge">
+                                        @row.Category
+                                    </span>
+                                </td>
+
+                                <td class="name-cell">
+                                    @row.Name
+                                </td>
+
+                                <td>
+                                    <span class="status-badge">
+                                        @row.Status
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @row.Total
+                                </td>
+
+                                <td>
+                                    @row.Open
+                                </td>
+
+                                <td>
+                                    @row.Completed
+                                </td>
+
+                                <td>
+                                    @row.Overdue
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📭
+                </div>
+
+                <strong>
+                    داده‌ای برای نمایش وجود ندارد
+                </strong>
+
+                <span>
+                    فیلترهای انتخاب شده نتیجه‌ای برنگرداندند.
+                </span>
+
+            </div>
+        }
+
+    </section>
+
+</div>
+
+
+@functions {
+
+    private static string GetReportTitle(string? reportType)
+    {
+        return reportType?.ToLowerInvariant() switch
+        {
+            "projects" => "گزارش پروژه‌ها",
+            "workitems" => "گزارش Work Itemها",
+            "users" => "گزارش عملکرد کاربران",
+            "experiments" => "گزارش آزمایش‌ها",
+            "samples" => "گزارش نمونه‌ها",
+            "results" => "گزارش نتایج",
+            "attachments" => "گزارش پیوست‌ها",
+            "decisions" => "گزارش تصمیمات",
+            _ => "نمای کلی سامانه"
+        };
+    }
+
+}
+
+
+<style>
+
+    .reports-page {
+        min-height: calc(100vh - 60px);
+        padding: 28px;
+        background: #f6f8fb;
+    }
+
+
+    /* =========================
+       Hero
+       ========================= */
+
+    .reports-hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+
+        padding: 28px 30px;
+        margin-bottom: 22px;
+
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #0f172a 0%,
+                #1e3a8a 55%,
+                #2563eb 100%
+            );
+
+        color: white;
+
+        box-shadow:
+            0 15px 35px rgba(15, 23, 42, .14);
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 6px 11px;
+        margin-bottom: 10px;
+
+        border-radius: 20px;
+
+        background: rgba(255,255,255,.12);
+        color: #dbeafe;
+
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .reports-hero h1 {
+        margin: 0;
+        color: white;
+
+        font-size: 29px;
+        font-weight: 800;
+    }
+
+    .reports-hero p {
+        margin: 8px 0 0;
+        color: #cbd5e1;
+
+        font-size: 13px;
+    }
+
+
+    /* =========================
+       Header Buttons
+       ========================= */
+
+    .report-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .admin-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        min-height: 44px;
+        padding: 0 16px;
+
+        border-radius: 12px;
+
+        text-decoration: none !important;
+        border: 1px solid transparent;
+
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition:
+            transform .18s ease,
+            box-shadow .18s ease,
+            background-color .18s ease;
+    }
+
+    .admin-nav-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none !important;
+    }
+
+    .admin-nav-btn-primary {
+        background: #2563eb;
+        color: #fff !important;
+        border-color: #2563eb;
+
+        box-shadow:
+            0 5px 14px rgba(37, 99, 235, .18);
+    }
+
+    .admin-nav-btn-primary:hover {
+        background: #1d4ed8;
+        color: #fff !important;
+    }
+
+    .admin-nav-btn-secondary {
+        background: #fff;
+        color: #334155 !important;
+        border-color: #dbe3ee;
+    }
+
+    .admin-nav-btn-secondary:hover {
+        background: #f8fafc;
+        color: #0f172a !important;
+    }
+
+    .admin-nav-btn-icon {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+.admin-nav-btn-excel {
+    background: #eaf7ee;
+    color: #187a3d;
+    border: 1px solid #b9e3c6;
+}
+
+.admin-nav-btn-excel:hover {
+    background: #dff2e5;
+    color: #126330;
+    border-color: #9bd5ae;
+    transform: translateY(-1px);
+}
+
+
+    /* =========================
+       Cards
+       ========================= */
+
+    .section-card {
+        padding: 22px;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+
+        background: white;
+
+        box-shadow:
+            0 7px 24px rgba(15, 23, 42, .04);
+    }
+
+    .section-heading {
+        margin-bottom: 18px;
+    }
+
+    .section-kicker {
+        display: block;
+        margin-bottom: 4px;
+
+        color: #2563eb;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+
+        color: #0f172a;
+
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .section-heading p {
+        margin: 5px 0 0;
+
+        color: #94a3b8;
+
+        font-size: 11px;
+    }
+
+
+    /* =========================
+       Filters
+       ========================= */
+
+    .filters-card {
+        margin-bottom: 22px;
+    }
+
+    .filters-form {
+        width: 100%;
+    }
+
+    .filters-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 15px;
+
+        width: 100%;
+    }
+
+    .filter-field {
+        display: flex;
+        flex-direction: column;
+
+        min-width: 0;
+
+        gap: 7px;
+    }
+
+    .filter-field label {
+        color: #475569;
+
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .filter-field .form-control,
+    .filter-field .form-select {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+
+        border-color: #e2e8f0;
+        border-radius: 11px;
+
+        color: #334155;
+
+        font-size: 12px;
+
+        box-shadow: none;
+    }
+
+    .filter-field .form-control:focus,
+    .filter-field .form-select:focus {
+        border-color: #93c5fd;
+
+        box-shadow:
+            0 0 0 3px rgba(37,99,235,.08);
+    }
+
+    .filter-actions {
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        margin-top: 17px;
+        padding-top: 17px;
+
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .filter-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 40px;
+
+        padding: 0 17px;
+
+        border-radius: 10px;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        text-decoration: none;
+
+        border: 0;
+
+        cursor: pointer;
+
+        transition:
+            background-color .18s ease,
+            transform .18s ease;
+    }
+
+    .filter-btn:hover {
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .filter-btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .filter-btn-primary:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+    .filter-btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .filter-btn-secondary:hover {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+
+    /* =========================
+       Summary
+       ========================= */
+
+    .summary-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(6, minmax(0, 1fr));
+
+        gap: 13px;
+
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        min-height: 105px;
+
+        padding: 15px;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 15px;
+
+        background: white;
+    }
+
+    .summary-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        font-size: 18px;
+    }
+
+    .summary-card > div:last-child {
+        display: flex;
+        flex-direction: column;
+
+        gap: 3px;
+    }
+
+    .summary-card span {
+        color: #64748b;
+
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .summary-card strong {
+        color: #0f172a;
+
+        font-size: 21px;
+    }
+
+    .summary-card small {
+        color: #94a3b8;
+
+        font-size: 9px;
+    }
+
+    .summary-card.blue .summary-icon {
+        background: #eff6ff;
+    }
+
+    .summary-card.green .summary-icon {
+        background: #ecfdf5;
+    }
+
+    .summary-card.orange .summary-icon {
+        background: #fff7ed;
+    }
+
+    .summary-card.purple .summary-icon {
+        background: #f5f3ff;
+    }
+
+    .summary-card.cyan .summary-icon {
+        background: #ecfeff;
+    }
+
+    .summary-card.gray .summary-icon {
+        background: #f1f5f9;
+    }
+
+
+    /* =========================
+       Report
+       ========================= */
+
+    .report-card {
+        margin-bottom: 22px;
+    }
+
+    .report-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+    }
+
+    .report-count {
+        padding: 7px 11px;
+
+        border-radius: 9px;
+
+        background: #eff6ff;
+
+        color: #2563eb;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+
+    /* =========================
+       Overview
+       ========================= */
+
+    .overview-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+    .overview-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 15px;
+
+        border-radius: 12px;
+
+        background: #f8fafc;
+    }
+
+    .overview-item span {
+        color: #64748b;
+
+        font-size: 11px;
+    }
+
+    .overview-item strong {
+        color: #0f172a;
+
+        font-size: 18px;
+    }
+
+
+    /* =========================
+       Table
+       ========================= */
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .report-table {
+        width: 100%;
+
+        border-collapse: separate;
+        border-spacing: 0;
+
+        min-width: 800px;
+    }
+
+    .report-table th {
+        padding: 13px 12px;
+
+        border-bottom: 1px solid #e2e8f0;
+
+        background: #f8fafc;
+
+        color: #64748b;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        text-align: right;
+
+        white-space: nowrap;
+    }
+
+    .report-table th:first-child {
+        border-radius: 0 10px 0 0;
+    }
+
+    .report-table th:last-child {
+        border-radius: 10px 0 0 0;
+    }
+
+    .report-table td {
+        padding: 14px 12px;
+
+        border-bottom: 1px solid #f1f5f9;
+
+        color: #475569;
+
+        font-size: 11px;
+
+        text-align: right;
+    }
+
+    .report-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .name-cell {
+        color: #1e293b !important;
+        font-weight: 700;
+    }
+
+    .category-badge,
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+
+        padding: 5px 8px;
+
+        border-radius: 7px;
+
+        background: #f1f5f9;
+
+        color: #475569;
+
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .status-badge {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+
+    /* =========================
+       Empty
+       ========================= */
+
+    .empty-state {
+        min-height: 220px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-direction: column;
+
+        gap: 7px;
+
+        color: #94a3b8;
+    }
+
+    .empty-icon {
+        margin-bottom: 5px;
+
+        font-size: 32px;
+    }
+
+    .empty-state strong {
+        color: #475569;
+
+        font-size: 13px;
+    }
+
+    .empty-state span {
+        font-size: 11px;
+    }
+
+
+    /* =========================
+       Responsive
+       ========================= */
+
+    @@media (max-width: 1200px) {
+
+        .summary-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @@media (max-width: 900px) {
+
+        .reports-page {
+            padding: 18px;
+        }
+
+        .reports-hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .report-header-actions {
+            width: 100%;
+        }
+
+        .admin-nav-btn {
+            flex: 1;
+        }
+
+        .filters-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .overview-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @@media (max-width: 600px) {
+
+        .reports-page {
+            padding: 14px;
+        }
+
+        .reports-hero {
+            padding: 22px;
+        }
+
+        .reports-hero h1 {
+            font-size: 23px;
+        }
+
+        .report-header-actions {
+            flex-direction: column;
+        }
+
+        .admin-nav-btn {
+            width: 100%;
+        }
+
+        .filters-grid,
+        .summary-grid,
+        .overview-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .filter-btn {
+            width: 100%;
+        }
+
+        .report-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+    }
+
+
+    /* =========================
+       Print
+       ========================= */
+
+    @@media print {
+
+        .app-sidebar,
+        .app-topbar,
+        .report-header-actions,
+        .filters-card {
+            display: none !important;
+        }
+
+        .reports-page {
+            padding: 0;
+            background: white;
+        }
+
+        .reports-hero {
+            color: black;
+            background: white;
+            box-shadow: none;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .reports-hero h1 {
+            color: #0f172a;
+        }
+
+        .reports-hero p {
+            color: #64748b;
+        }
+
+        .section-card,
+        .summary-card {
+            box-shadow: none;
+        }
+
+    }
+
+</style>

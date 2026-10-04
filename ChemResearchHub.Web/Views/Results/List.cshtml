@@ -4,6 +4,36 @@
     ViewData["Title"] = "نتایج";
 }
 
+<style>
+    .result-reference-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.result-copy-button {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.result-copy-button:hover {
+    background: #e2e8f0;
+    color: #4f46e5;
+}
+
+.result-copy-button.copied {
+    color: #16a34a;
+    background: #dcfce7;
+}
+</style>
+
 <div class="results-page">
 
     <div class="results-header">
@@ -75,10 +105,20 @@
                             <tr>
 
                                 <td>
-                                    <span class="crh-id">
-                                        @item.Id
-                                    </span>
-                                </td>
+    <div class="result-reference-copy">
+        <span class="crh-id">
+            @item.ReferenceCode
+        </span>
+
+        <button type="button"
+                class="result-copy-button"
+                data-reference="@item.ReferenceCode"
+                title="کپی شناسه"
+                aria-label="کپی شناسه @item.ReferenceCode">
+            📋
+        </button>
+    </div>
+</td>
 
                                 <td>
                                     <div class="result-sample-code">
@@ -212,3 +252,47 @@
     }
 
 </div>
+
+                                            @section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.querySelectorAll(".result-copy-button")
+                .forEach(function (button) {
+
+                    button.addEventListener("click", async function (event) {
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const referenceCode = button.dataset.reference;
+
+                        if (!referenceCode)
+                            return;
+
+                        try {
+                            await navigator.clipboard.writeText(referenceCode);
+
+                            const originalText = button.textContent;
+
+                            button.textContent = "✓";
+                            button.classList.add("copied");
+                            button.title = "کپی شد";
+
+                            setTimeout(function () {
+                                button.textContent = originalText;
+                                button.classList.remove("copied");
+                                button.title = "کپی شناسه";
+                            }, 1200);
+
+                        } catch (error) {
+                            console.error(
+                                "Could not copy result reference:",
+                                error
+                            );
+                        }
+                    });
+                });
+        });
+    </script>
+}

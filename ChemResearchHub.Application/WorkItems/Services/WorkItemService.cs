@@ -637,6 +637,7 @@ public class WorkItemService : IWorkItemService
         return new WorkItemDto
         {
             Id = workItem.Id,
+            ReferenceCode = $"CRH-{workItem.Id:D6}",
             ProjectId = workItem.ProjectId,
             BoardColumnId = workItem.BoardColumnId,
             AssignedToUserId = workItem.AssignedToUserId,

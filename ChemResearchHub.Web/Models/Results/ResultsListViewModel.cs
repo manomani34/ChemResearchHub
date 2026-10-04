@@ -35,4 +35,6 @@ public class ResultListItemViewModel
     public string? Method { get; init; }
 
     public string Status { get; init; } = "Pending";
+
+    public string ReferenceCode { get; set; } = string.Empty;
 }

@@ -117,6 +117,37 @@
 
                 </div>
 
+                <div class="mb-3">
+
+    <label asp-for="AssignedToUserId"
+           class="form-label">
+        Assigned To
+    </label>
+
+    <select asp-for="AssignedToUserId"
+            class="form-select">
+
+        <option value="">
+            Unassigned
+        </option>
+
+        @foreach (var user in ViewBag.Users)
+        {
+            <option value="@user.Id">
+                @(string.IsNullOrWhiteSpace(user.FullName)
+                    ? user.Email ?? user.Id
+                    : user.FullName)
+            </option>
+        }
+
+    </select>
+
+    <span asp-validation-for="AssignedToUserId"
+          class="text-danger">
+    </span>
+
+</div>
+
                 <div class="form-check mb-4">
 
                     <input asp-for="IsCompleted"

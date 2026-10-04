@@ -16,4 +16,6 @@ public class ResearchReviewDto
     public DateTime? StartedAtUtc { get; init; }
     public DateTime? ReviewedAtUtc { get; init; }
     public string? ReviewNote { get; init; }
+    public string ReferenceCode =>
+    $"REV-{Id:D6}";
 }

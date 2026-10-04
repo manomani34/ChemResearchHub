@@ -223,27 +223,84 @@
                     </a>
 
 
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <div class="sidebar-section-title mt-4">
-                            مدیریت
-                        </div>
+@if (User.IsInRole("Admin"))
+{
+    <div class="sidebar-section-title mt-4">
+        مدیریت
+    </div>
 
-                        <a asp-area=""
-                           asp-controller="Users"
-                           asp-action="Index"
-                           class="sidebar-link">
+    <!-- Admin Dashboard -->
 
-                            <span class="sidebar-link-icon">
-                                👥
-                            </span>
+    <a asp-area="Admin"
+       asp-controller="Dashboard"
+       asp-action="Index"
+       class="sidebar-link">
 
-                            <span>
-                                مدیریت اعضای تیم
-                            </span>
+        <span class="sidebar-link-icon">
+            📊
+        </span>
 
-                        </a>
-                    }
+        <span>
+            داشبورد مدیریت
+        </span>
+
+    </a>
+
+
+    <!-- Reports -->
+
+    <a asp-area="Admin"
+       asp-controller="Reports"
+       asp-action="Index"
+       class="sidebar-link">
+
+        <span class="sidebar-link-icon">
+            📈
+        </span>
+
+        <span>
+            گزارش‌ها
+        </span>
+
+    </a>
+
+
+    <!-- Users -->
+
+    <a asp-area=""
+       asp-controller="Users"
+       asp-action="Index"
+       class="sidebar-link">
+
+        <span class="sidebar-link-icon">
+            👥
+        </span>
+
+        <span>
+            مدیریت اعضای تیم
+        </span>
+
+    </a>
+
+
+    <!-- Reviews -->
+
+    <a asp-area=""
+       asp-controller="Reviews"
+       asp-action="Index"
+       class="sidebar-link">
+
+        <span class="sidebar-link-icon">
+            🔍
+        </span>
+
+        <span>
+            بازبینی‌های پژوهشی
+        </span>
+
+    </a>
+}
+
 
 
                     <div class="sidebar-section-title mt-4">
@@ -265,7 +322,6 @@
                     </a>
 
                 </nav>
-
 
                 <div class="sidebar-footer">
 

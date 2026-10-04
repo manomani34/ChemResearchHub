@@ -25,7 +25,7 @@ public class HomeController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Index(
-        CancellationToken cancellationToken)
+     CancellationToken cancellationToken)
     {
         var currentUser =
             await _userManager.GetUserAsync(User);
@@ -42,6 +42,14 @@ public class HomeController : Controller
         var roleName =
             roles.FirstOrDefault()
             ?? "User";
+
+        if (string.Equals(roleName, "Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            return RedirectToAction(
+                "Index",
+                "Dashboard",
+                new { area = "Admin" });
+        }
 
         var persianCalendar =
             new PersianCalendar();

@@ -13,4 +13,7 @@ public class ProjectDto
     public DateTime CreatedAt { get; init; }
 
     public DateTime? ModifiedAt { get; init; }
+
+    public string ReferenceCode =>
+    $"PRJ-{Id:D6}";
 }

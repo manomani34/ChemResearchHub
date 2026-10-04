@@ -5,9 +5,11 @@ using ChemResearchHub.Application.Samples.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Models.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChemResearchHub.Web.Controllers;
 
+[Authorize]
 public class ResultsController : Controller
 {
     private static readonly string[] AvailableStatuses =
@@ -40,7 +42,7 @@ public class ResultsController : Controller
 
     [HttpGet]
     public async Task<IActionResult> List(
-    CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         var results =
             await _resultService.GetAllAsync(
@@ -98,6 +100,9 @@ public class ResultsController : Controller
                     {
                         Id = result.Id,
 
+                        ReferenceCode =
+                            result.ReferenceCode,
+
                         SampleId =
                             result.SampleId,
 
@@ -154,6 +159,7 @@ public class ResultsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         int sampleId,
         int experimentId,
@@ -189,6 +195,7 @@ public class ResultsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         CreateResultViewModel model,
         CancellationToken cancellationToken)
@@ -274,6 +281,7 @@ public class ResultsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Edit(
         int id,
         int sampleId,
@@ -330,6 +338,7 @@ public class ResultsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Edit(
         EditResultViewModel model,
         CancellationToken cancellationToken)

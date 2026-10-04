@@ -4,9 +4,11 @@ using ChemResearchHub.Application.DecisionLogs.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Models.DecisionLogs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChemResearchHub.Web.Controllers;
 
+[Authorize]
 public class DecisionLogsController : Controller
 {
     private static readonly string[] AvailableDecisionTypes =
@@ -95,6 +97,7 @@ public class DecisionLogsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         int workItemId,
         int projectId,
@@ -122,6 +125,7 @@ public class DecisionLogsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         CreateDecisionLogViewModel model,
         CancellationToken cancellationToken)

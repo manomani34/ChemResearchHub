@@ -4,6 +4,9 @@ public class ExperimentDto
 {
     public int Id { get; init; }
 
+    public string ReferenceCode =>
+        $"EXP-{Id:D6}";
+
     public int WorkItemId { get; init; }
 
     public string Title { get; init; } = string.Empty;

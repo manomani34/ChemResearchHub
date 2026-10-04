@@ -4,6 +4,40 @@
     ViewData["Title"] = "نمونه‌ها";
 }
 
+<style>
+ .sample-reference-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sample-copy-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sample-copy-button:hover {
+    background: #e2e8f0;
+    color: #4f46e5;
+}
+
+.sample-copy-button.copied {
+    color: #16a34a;
+    background: #dcfce7;
+}
+</style>
+
 <div class="samples-page">
 
     <div class="samples-header">
@@ -64,6 +98,7 @@
                             <th>آزمایش</th>
                             <th>کار پژوهشی</th>
                             <th>تاریخ جمع‌آوری</th>
+                            <th>عملیات</th>
                         </tr>
                     </thead>
 
@@ -74,9 +109,23 @@
                             <tr>
 
                                 <td>
-                                    <span class="crh-id">
-                                        @item.Id
-                                    </span>
+                               <div class="sample-reference-copy">
+
+    <span class="crh-id">
+        SMP-@item.Id.ToString("D6")
+    </span>
+
+    <button type="button"
+            class="sample-copy-button"
+            data-reference="SMP-@item.Id.ToString("D6")"
+            title="کپی شناسه"
+            aria-label="کپی شناسه SMP-@item.Id.ToString("D6")">
+
+        📋
+
+    </button>
+
+</div>
                                 </td>
 
                                 <td>
@@ -160,6 +209,13 @@
                                         </span>
                                     }
                                 </td>
+                                <td>
+                                    <a asp-controller="Samples" asp-action="Details"
+   asp-route-id="@item.Id"
+   class="crh-id">
+   مشاهده
+</a>
+                                </td>
 
                             </tr>
                         }
@@ -174,3 +230,65 @@
     }
 
 </div>
+
+                                        <script>
+                                            document.addEventListener("DOMContentLoaded", function () {
+
+    const copyButtons =
+        document.querySelectorAll(".sample-copy-button");
+
+    copyButtons.forEach(function (button) {
+
+        button.addEventListener("click", async function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const referenceCode =
+                button.dataset.reference;
+
+            if (!referenceCode) {
+                return;
+            }
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    referenceCode);
+
+                const originalText =
+                    button.textContent;
+
+                button.textContent = "✓";
+
+                button.classList.add("copied");
+
+                button.title = "کپی شد";
+
+                setTimeout(function () {
+
+                    button.textContent =
+                        originalText;
+
+                    button.classList.remove("copied");
+
+                    button.title =
+                        "کپی شناسه";
+
+                }, 1200);
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Could not copy sample reference:",
+                    error);
+
+            }
+
+        });
+
+    });
+
+});
+                                        </script>

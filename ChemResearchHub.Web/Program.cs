@@ -219,10 +219,18 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Area routes
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+// Default routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
 
 app.MapRazorPages();
 

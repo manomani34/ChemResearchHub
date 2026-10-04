@@ -25,4 +25,6 @@ public class AttachmentListItemViewModel
     public string? UploadedByUserId { get; init; }
 
     public DateTime CreatedAt { get; init; }
+
+    public string ReferenceCode { get; set; } = string.Empty;
 }

@@ -4,9 +4,11 @@ using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Models.Attachments;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChemResearchHub.Web.Controllers;
 
+[Authorize]
 public class AttachmentsController : Controller
 {
     private const long MaxFileSize =
@@ -100,6 +102,7 @@ public class AttachmentsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         int workItemId,
         int projectId,
@@ -126,6 +129,7 @@ public class AttachmentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
     public async Task<IActionResult> Create(
         CreateAttachmentViewModel model,
         CancellationToken cancellationToken)

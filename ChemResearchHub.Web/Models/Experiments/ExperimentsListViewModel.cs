@@ -22,4 +22,6 @@ public class ExperimentListItemViewModel
 
     public bool IsCompleted =>
         CompletedAt.HasValue;
+
+    public string ReferenceCode { get; set; } = string.Empty;
 }

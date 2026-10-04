@@ -4,6 +4,60 @@
     ViewData["Title"] = "آزمایش‌ها";
 }
 
+<style>
+    .experiment-reference-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .experiment-copy-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 11px;
+    }
+
+    .experiment-copy-button:hover {
+        background: #e2e8f0;
+        color: #4f46e5;
+    }
+
+    .experiment-copy-button.copied {
+        color: #16a34a;
+        background: #dcfce7;
+    }
+
+    .experiment-details-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #475569;
+        text-decoration: none;
+        font-size: 0.75rem;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+    }
+
+    .experiment-details-button:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #1e293b;
+    }
+</style>
+
 <div class="experiments-page">
 
     <div class="experiments-header">
@@ -21,6 +75,7 @@
         </div>
 
     </div>
+
 
     @if (Model.Items.Count == 0)
     {
@@ -60,6 +115,7 @@
                             <th>شروع</th>
                             <th>پایان</th>
                             <th>وضعیت</th>
+                            <th>عملیات</th>
                         </tr>
                     </thead>
 
@@ -69,29 +125,59 @@
                         {
                             <tr>
 
-                                <td>
-                                    <span class="crh-id">
-                                        @item.Id
-                                    </span>
-                                </td>
+                                <!-- Reference Code -->
 
                                 <td>
+
+                                    <div class="experiment-reference-copy">
+
+                                        <span class="crh-id">
+                                            @item.ReferenceCode
+                                        </span>
+
+                                        <button type="button"
+                                                class="experiment-copy-button"
+                                                data-reference="@item.ReferenceCode"
+                                                title="کپی شناسه"
+                                                aria-label="کپی شناسه @item.ReferenceCode">
+                                            📋
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Experiment Title -->
+
+                                <td>
+
                                     <div class="crh-primary-text">
                                         @item.Title
                                     </div>
+
                                 </td>
 
+
+                                <!-- Work Item -->
+
                                 <td>
+
                                     <div class="crh-primary-text">
                                         @item.WorkItemTitle
                                     </div>
 
                                     <div class="crh-secondary-text">
-                                        کار #@item.WorkItemId
+                                        CRH-@item.WorkItemId.ToString("D6")
                                     </div>
+
                                 </td>
 
+
+                                <!-- Started -->
+
                                 <td>
+
                                     @if (item.StartedAt.HasValue)
                                     {
                                         @item.StartedAt.Value.ToString("yyyy/MM/dd HH:mm")
@@ -102,9 +188,14 @@
                                             —
                                         </span>
                                     }
+
                                 </td>
 
+
+                                <!-- Completed -->
+
                                 <td>
+
                                     @if (item.CompletedAt.HasValue)
                                     {
                                         @item.CompletedAt.Value.ToString("yyyy/MM/dd HH:mm")
@@ -115,9 +206,14 @@
                                             —
                                         </span>
                                     }
+
                                 </td>
 
+
+                                <!-- Status -->
+
                                 <td>
+
                                     @if (item.IsCompleted)
                                     {
                                         <span class="crh-status crh-status-success">
@@ -130,6 +226,24 @@
                                             در حال انجام
                                         </span>
                                     }
+
+                                </td>
+
+
+                                <!-- Actions -->
+
+                                <td>
+
+                                    <a asp-controller="Experiments"
+                                       asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="experiment-details-button">
+
+                                        🔬
+                                        مشاهده Notebook
+
+                                    </a>
+
                                 </td>
 
                             </tr>
@@ -145,3 +259,70 @@
     }
 
 </div>
+
+
+@section Scripts {
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const copyButtons =
+                document.querySelectorAll(".experiment-copy-button");
+
+            copyButtons.forEach(function (button) {
+
+                button.addEventListener("click", async function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const referenceCode =
+                        button.dataset.reference;
+
+                    if (!referenceCode)
+                        return;
+
+                    try {
+
+                        await navigator.clipboard.writeText(
+                            referenceCode
+                        );
+
+                        const originalText =
+                            button.textContent;
+
+                        button.textContent = "✓";
+
+                        button.classList.add("copied");
+
+                        button.title = "کپی شد";
+
+                        setTimeout(function () {
+
+                            button.textContent =
+                                originalText;
+
+                            button.classList.remove("copied");
+
+                            button.title =
+                                "کپی شناسه";
+
+                        }, 1200);
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "Could not copy experiment reference:",
+                            error
+                        );
+
+                    }
+
+                });
+
+            });
+
+        });
+    </script>
+}

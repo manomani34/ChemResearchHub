@@ -1,0 +1,1093 @@
+﻿@model ChemResearchHub.Web.Models.Experiments.ExperimentDetailsViewModel
+
+@{
+    ViewData["Title"] = "Experiment Notebook";
+}
+
+<style>
+    .experiment-reference {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-bottom: 8px;
+        padding: 4px 9px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-family: monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        direction: ltr;
+    }
+
+    .experiment-header {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .experiment-title {
+        color: #111827;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .experiment-subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .notebook-section {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+        height: 100%;
+    }
+
+    .notebook-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        color: #1e293b;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .field-label {
+        color: #94a3b8;
+        font-size: 0.72rem;
+        margin-bottom: 3px;
+    }
+
+    .field-value {
+        color: #334155;
+        font-size: 0.88rem;
+        line-height: 1.8;
+    }
+
+    .research-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 10px;
+        border-radius: 7px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        text-decoration: none;
+        font-size: 0.78rem;
+    }
+
+    .research-link:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .status-card {
+        padding: 14px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+    }
+
+    .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-left: 6px;
+    }
+
+    .status-active {
+        background: #2563eb;
+    }
+
+    .status-completed {
+        background: #16a34a;
+    }
+
+    .status-pending {
+        background: #94a3b8;
+    }
+
+    .sample-card {
+        height: 100%;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .sample-reference {
+        direction: ltr;
+        font-family: monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 5px;
+    }
+
+    .sample-code {
+        color: #1e293b;
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+
+    .sample-meta {
+        margin-top: 9px;
+        color: #64748b;
+        font-size: 0.75rem;
+        line-height: 1.8;
+    }
+
+    .result-card {
+        height: 100%;
+        padding: 13px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #f8fafc;
+    }
+
+    .result-reference {
+        direction: ltr;
+        font-family: monospace;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #64748b;
+    }
+
+    .result-value {
+        margin-top: 10px;
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .review-card,
+    .decision-card {
+        padding: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .entity-reference {
+        direction: ltr;
+        font-family: monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #64748b;
+    }
+
+    .timeline {
+        position: relative;
+        padding-right: 42px;
+    }
+
+    .timeline::before {
+        content: "";
+        position: absolute;
+        top: 10px;
+        bottom: 10px;
+        right: 15px;
+        width: 2px;
+        background: linear-gradient(
+            to bottom,
+            #dbeafe,
+            #e5e7eb,
+            #f1f5f9
+        );
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 18px;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-icon {
+        position: absolute;
+        top: 15px;
+        right: -42px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 3px solid #dbeafe;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+        font-size: 14px;
+        z-index: 2;
+    }
+
+    .timeline-content {
+        padding: 15px 17px;
+        border: 1px solid #e5e7eb;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+    }
+
+    .timeline-type {
+        display: inline-flex;
+        padding: 3px 8px;
+        margin-bottom: 5px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 0.66rem;
+        font-weight: 700;
+    }
+
+    .timeline-title {
+        color: #1e293b;
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .timeline-description {
+        margin-top: 7px;
+        color: #64748b;
+        font-size: 0.78rem;
+        line-height: 1.8;
+    }
+
+    .timeline-date {
+        margin-top: 9px;
+        color: #94a3b8;
+        font-size: 0.68rem;
+    }
+
+    .empty-state {
+        padding: 28px 18px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #64748b;
+        text-align: center;
+    }
+
+    .notebook-placeholder {
+        padding: 25px 18px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #64748b;
+        text-align: center;
+    }
+
+    @@media (max-width: 576px) {
+        .experiment-header {
+            padding: 18px;
+        }
+
+        .experiment-title {
+            font-size: 1.3rem;
+        }
+
+        .timeline {
+            padding-right: 34px;
+        }
+
+        .timeline::before {
+            right: 11px;
+        }
+
+        .timeline-icon {
+            right: -34px;
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="container py-4">
+
+    <!-- Header -->
+
+    <div class="experiment-header mb-4">
+
+        <div class="d-flex justify-content-between align-items-start gap-3">
+
+            <div>
+
+                <div class="text-muted small mb-1">
+                    Experiment Notebook
+                </div>
+
+                <div class="experiment-reference">
+                    @Model.ReferenceCode
+                </div>
+
+                <div class="experiment-title">
+                    🔬 @Model.Title
+                </div>
+
+                <div class="experiment-subtitle">
+                    دفترچه پژوهشی کامل آزمایش
+                </div>
+
+            </div>
+
+            <a asp-controller="Experiments"
+               asp-action="List"
+               class="btn btn-outline-secondary btn-sm">
+                بازگشت
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- وضعیت -->
+
+        <div class="col-lg-4">
+
+            <div class="notebook-section">
+
+                <div class="notebook-section-title">
+                    🧪 وضعیت آزمایش
+                </div>
+
+                <div class="status-card mb-3">
+
+                    @if (Model.CompletedAt.HasValue)
+                    {
+                        <div class="fw-semibold">
+                            <span class="status-dot status-completed"></span>
+                            تکمیل شده
+                        </div>
+                    }
+                    else if (Model.StartedAt.HasValue)
+                    {
+                        <div class="fw-semibold">
+                            <span class="status-dot status-active"></span>
+                            در حال انجام
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="fw-semibold">
+                            <span class="status-dot status-pending"></span>
+                            هنوز شروع نشده
+                        </div>
+                    }
+
+                </div>
+
+                <div class="mb-3">
+                    <div class="field-label">
+                        شروع آزمایش
+                    </div>
+
+                    <div class="field-value">
+                        @(Model.StartedAt?.ToString("yyyy/MM/dd HH:mm") ?? "—")
+                    </div>
+                </div>
+
+                <div>
+                    <div class="field-label">
+                        پایان آزمایش
+                    </div>
+
+                    <div class="field-value">
+                        @(Model.CompletedAt?.ToString("yyyy/MM/dd HH:mm") ?? "—")
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- مسیر پژوهشی -->
+
+        <div class="col-lg-8">
+
+            <div class="notebook-section">
+
+                <div class="notebook-section-title">
+                    🧭 مسیر پژوهشی
+                </div>
+
+                <div class="mb-3">
+
+                    <div class="field-label">
+                        Work Item
+                    </div>
+
+                    <a asp-controller="WorkItems"
+                       asp-action="Details"
+                       asp-route-id="@Model.WorkItemId"
+                       class="research-link">
+
+                        @Model.WorkItemReferenceCode
+                        <span>@Model.WorkItemTitle</span>
+
+                    </a>
+
+                </div>
+
+                <div>
+
+                    <div class="field-label">
+                        Experiment
+                    </div>
+
+                    <div class="field-value">
+                        @Model.ReferenceCode
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- توضیحات -->
+
+        <div class="col-lg-6">
+
+            <div class="notebook-section">
+
+                <div class="notebook-section-title">
+                    📝 توضیحات آزمایش
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="field-value">
+                        @Model.Description
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted small">
+                        توضیحی برای این آزمایش ثبت نشده است.
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Protocol -->
+
+        <div class="col-lg-6">
+
+            <div class="notebook-section">
+
+                <div class="notebook-section-title">
+                    📋 Protocol
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Protocol))
+                {
+                    <div class="field-value">
+                        @Model.Protocol
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted small">
+                        پروتکلی برای این آزمایش ثبت نشده است.
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Samples + Results -->
+
+        <div class="col-12">
+
+            <div class="notebook-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div>
+                        <div class="notebook-section-title mb-1">
+                            🧫 Samples & Results
+                        </div>
+
+                        <div class="text-muted small">
+                            نمونه‌ها و نتایج ثبت‌شده برای این Experiment
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+
+                        <div class="fw-bold"
+                             style="font-size:1.25rem;color:#334155;">
+                            @Model.Samples.Count
+                        </div>
+
+                        <div class="text-muted"
+                             style="font-size:0.68rem;">
+                            نمونه
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                @if (Model.Samples.Count == 0)
+                {
+                    <div class="empty-state">
+                        <div style="font-size:2rem;margin-bottom:8px;">
+                            🧫
+                        </div>
+
+                        <div class="fw-semibold mb-2">
+                            هنوز نمونه‌ای برای این آزمایش ثبت نشده است
+                        </div>
+
+                        <div class="small">
+                            پس از ثبت Sample، نمونه‌ها و نتایج آن‌ها نمایش داده می‌شوند.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+
+                        @foreach (var sample in Model.Samples)
+                        {
+                            <div class="col-12">
+
+                                <div class="sample-card">
+
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+                                        <div>
+
+                                            <div class="sample-reference">
+                                                @sample.ReferenceCode
+                                            </div>
+
+                                            <div class="sample-code">
+                                                🧫 @sample.SampleCode
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(sample.Name))
+                                            {
+                                                <div class="sample-meta">
+                                                    @sample.Name
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                        <a asp-controller="Samples"
+                                           asp-action="Details"
+                                           asp-route-id="@sample.Id"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            مشاهده نمونه
+                                        </a>
+
+                                    </div>
+
+
+                                    <div class="sample-meta mb-3">
+
+                                        @if (!string.IsNullOrWhiteSpace(sample.SampleType))
+                                        {
+                                            <span>
+                                                نوع: @sample.SampleType
+                                            </span>
+                                        }
+
+                                        @if (!string.IsNullOrWhiteSpace(sample.Matrix))
+                                        {
+                                            <span class="ms-3">
+                                                Matrix: @sample.Matrix
+                                            </span>
+                                        }
+
+                                        @if (sample.CollectedAt.HasValue)
+                                        {
+                                            <span class="ms-3">
+                                                جمع‌آوری:
+                                                @sample.CollectedAt.Value.ToString("yyyy/MM/dd")
+                                            </span>
+                                        }
+
+                                    </div>
+
+
+                                    <div style="border-top:1px solid #e5e7eb;padding-top:14px;">
+
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                            <div class="fw-semibold"
+                                                 style="font-size:0.85rem;color:#334155;">
+                                                📊 نتایج
+                                            </div>
+
+                                            <span class="badge text-bg-light">
+                                                @sample.Results.Count
+                                            </span>
+
+                                        </div>
+
+
+                                        @if (sample.Results.Count == 0)
+                                        {
+                                            <div class="text-muted small">
+                                                هنوز نتیجه‌ای برای این Sample ثبت نشده است.
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="row g-2">
+
+                                                @foreach (var result in sample.Results)
+                                                {
+                                                    <div class="col-md-6 col-xl-4">
+
+                                                        <div class="result-card">
+
+                                                            <div class="d-flex justify-content-between align-items-start gap-2">
+
+                                                                <div>
+
+                                                                    <div class="result-reference">
+                                                                        @result.ReferenceCode
+                                                                    </div>
+
+                                                                    <div class="fw-semibold mt-1"
+                                                                         style="font-size:0.84rem;color:#1e293b;">
+                                                                        @result.MetricName
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <span class="badge text-bg-light">
+                                                                    @result.Status
+                                                                </span>
+
+                                                            </div>
+
+
+                                                            @if (result.NumericValue.HasValue)
+                                                            {
+                                                                <div class="result-value">
+
+                                                                    @result.NumericValue.Value
+
+                                                                    @if (!string.IsNullOrWhiteSpace(result.Unit))
+                                                                    {
+                                                                        <span class="text-muted small">
+                                                                            @result.Unit
+                                                                        </span>
+                                                                    }
+
+                                                                </div>
+                                                            }
+                                                            else if (!string.IsNullOrWhiteSpace(result.TextValue))
+                                                            {
+                                                                <div class="mt-3"
+                                                                     style="font-size:0.84rem;color:#334155;">
+                                                                    @result.TextValue
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="mt-3 text-muted small">
+                                                                    مقدار نتیجه ثبت نشده است.
+                                                                </div>
+                                                            }
+
+
+                                                            @if (!string.IsNullOrWhiteSpace(result.Method))
+                                                            {
+                                                                <div class="mt-2 text-muted"
+                                                                     style="font-size:0.7rem;">
+                                                                    Method: @result.Method
+                                                                </div>
+                                                            }
+
+
+                                                            @if (!string.IsNullOrWhiteSpace(result.Notes))
+                                                            {
+                                                                <div class="mt-2 text-muted"
+                                                                     style="font-size:0.72rem;line-height:1.7;">
+                                                                    @result.Notes
+                                                                </div>
+                                                            }
+
+                                                        </div>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Reviews -->
+
+        <div class="col-lg-6">
+
+            <div class="notebook-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div class="notebook-section-title mb-0">
+                        🔍 Research Reviews
+                    </div>
+
+                    <span class="badge text-bg-light">
+                        @Model.Reviews.Count
+                    </span>
+
+                </div>
+
+
+                @if (Model.Reviews.Count == 0)
+                {
+                    <div class="empty-state">
+                        هنوز Reviewای برای این Work Item ثبت نشده است.
+                    </div>
+                }
+                else
+                {
+                    <div class="d-grid gap-3">
+
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="review-card">
+
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+
+                                    <div>
+
+                                        <div class="entity-reference">
+                                            @review.ReferenceCode
+                                        </div>
+
+                                        <div class="fw-semibold mt-1">
+                                            Review
+                                        </div>
+
+                                    </div>
+
+                                    <span class="badge text-bg-light">
+                                        @review.Status
+                                    </span>
+
+                                </div>
+
+
+                                <div class="mt-3 small">
+
+                                    <div class="text-muted">
+                                        درخواست‌کننده
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        @review.RequestedByUserName
+                                    </div>
+
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(review.ReviewerUserName))
+                                {
+                                    <div class="mt-2 small">
+
+                                        <div class="text-muted">
+                                            Reviewer
+                                        </div>
+
+                                        <div class="fw-semibold">
+                                            @review.ReviewerUserName
+                                        </div>
+
+                                    </div>
+                                }
+
+
+                                @if (!string.IsNullOrWhiteSpace(review.ReviewNote))
+                                {
+                                    <div class="mt-2 small text-muted">
+                                        @review.ReviewNote
+                                    </div>
+                                }
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Decisions -->
+
+        <div class="col-lg-6">
+
+            <div class="notebook-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div class="notebook-section-title mb-0">
+                        🧠 Research Decisions
+                    </div>
+
+                    <span class="badge text-bg-light">
+                        @Model.Decisions.Count
+                    </span>
+
+                </div>
+
+
+                @if (Model.Decisions.Count == 0)
+                {
+                    <div class="empty-state">
+                        هنوز Decisionای برای این Work Item ثبت نشده است.
+                    </div>
+                }
+                else
+                {
+                    <div class="d-grid gap-3">
+
+                        @foreach (var decision in Model.Decisions)
+                        {
+                            <div class="decision-card">
+
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+
+                                    <div>
+
+                                        <div class="entity-reference">
+                                            @decision.ReferenceCode
+                                        </div>
+
+                                        <div class="fw-semibold mt-1">
+                                            @decision.DecisionType
+                                        </div>
+
+                                    </div>
+
+                                    <div class="text-muted"
+                                         style="font-size:0.68rem;">
+                                        @decision.CreatedAt.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+                                    </div>
+
+                                </div>
+
+
+                                <div class="mt-3 field-value">
+                                    @decision.Decision
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(decision.Rationale))
+                                {
+                                    <div class="mt-2 small text-muted">
+                                        <strong>Rationale:</strong>
+                                        @decision.Rationale
+                                    </div>
+                                }
+
+
+                                @if (!string.IsNullOrWhiteSpace(decision.Evidence))
+                                {
+                                    <div class="mt-2 small text-muted">
+                                        <strong>Evidence:</strong>
+                                        @decision.Evidence
+                                    </div>
+                                }
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Experiment Timeline -->
+
+        <div class="col-12">
+
+            <div class="notebook-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div>
+
+                        <div class="notebook-section-title mb-1">
+                            🕒 Experiment Timeline
+                        </div>
+
+                        <div class="text-muted small">
+                            تاریخچه فعالیت‌های پژوهشی مرتبط با این Experiment
+                        </div>
+
+                    </div>
+
+                    <div class="text-center">
+
+                        <div class="fw-bold"
+                             style="font-size:1.25rem;color:#334155;">
+                            @Model.Timeline.Count
+                        </div>
+
+                        <div class="text-muted"
+                             style="font-size:0.68rem;">
+                            رویداد
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                @if (Model.Timeline.Count == 0)
+                {
+                    <div class="empty-state">
+                        هنوز رویداد پژوهشی برای این Experiment ثبت نشده است.
+                    </div>
+                }
+                else
+                {
+                    <div class="timeline">
+
+                        @foreach (var item in Model.Timeline)
+                        {
+                            <div class="timeline-item">
+
+                                <div class="timeline-icon">
+                                    @item.Icon
+                                </div>
+
+                                <div class="timeline-content">
+
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+                                        <div>
+
+                                            <div class="timeline-type">
+                                                @item.EventType
+                                            </div>
+
+                                            <div class="timeline-title">
+                                                @item.Title
+                                            </div>
+
+                                        </div>
+
+                                        <div class="entity-reference">
+                                            @item.ReferenceCode
+                                        </div>
+
+                                    </div>
+
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <div class="timeline-description">
+                                            @item.Description
+                                        </div>
+                                    }
+
+
+                                    @if (item.OccurredAt.HasValue)
+                                    {
+                                        <div class="timeline-date">
+                                            🕐
+                                            @item.OccurredAt.Value.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="timeline-date">
+                                            زمان ثبت رویداد موجود نیست
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Notes -->
+
+        <div class="col-12">
+
+            <div class="notebook-section">
+
+                <div class="notebook-section-title">
+                    🧠 یادداشت‌های پژوهشی
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <div class="field-value">
+                        @Model.Notes
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted small">
+                        هنوز یادداشتی برای این آزمایش ثبت نشده است.
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

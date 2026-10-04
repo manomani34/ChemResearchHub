@@ -21,4 +21,7 @@ public class ResultDto
     public string? Evidence { get; init; }
 
     public string? Notes { get; init; }
+
+    public string ReferenceCode =>
+    $"RES-{Id:D6}";
 }

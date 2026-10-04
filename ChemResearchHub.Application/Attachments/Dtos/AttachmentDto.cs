@@ -19,4 +19,7 @@ public class AttachmentDto
     public string? UploadedByUserId { get; init; }
 
     public DateTime CreatedAt { get; init; }
+    public string ReferenceCode =>
+    $"ATT-{Id:D6}";
+
 }

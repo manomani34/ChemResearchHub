@@ -27,4 +27,6 @@ public class WorkItemDto
     public bool IsCompleted { get; init; }
 
     public int SortOrder { get; init; }
+
+    public string ReferenceCode { get; init; } = string.Empty;
 }
