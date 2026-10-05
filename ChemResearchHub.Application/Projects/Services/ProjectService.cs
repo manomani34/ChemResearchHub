@@ -15,6 +15,55 @@ public class ProjectService : IProjectService
         _projectRepository = projectRepository;
     }
 
+    public async Task<ProjectStatistics> GetStatisticsAsync(
+    CancellationToken cancellationToken = default)
+    {
+        return await _projectRepository.GetStatisticsAsync(
+            cancellationToken);
+    }
+
+
+    public async Task<IReadOnlyList<ProjectDto>> SearchAsync(
+    string searchTerm,
+    CancellationToken cancellationToken = default)
+    {
+        var projects =
+            await _projectRepository.SearchAsync(
+                searchTerm,
+                cancellationToken);
+
+        return projects
+            .Select(MapToDto)
+            .ToList();
+    }
+
+
+    public async Task<ProjectDto?> GetByNameAsync(
+    string name,
+    CancellationToken cancellationToken = default)
+    {
+        var project =
+            await _projectRepository.GetByNameAsync(
+                name,
+                cancellationToken);
+
+        return project is null
+            ? null
+            : MapToDto(project);
+    }
+
+    public async Task<ProjectDto?> GetLatestAsync(
+    CancellationToken cancellationToken = default)
+    {
+        var project =
+            await _projectRepository.GetLatestAsync(
+                cancellationToken);
+
+        return project is null
+            ? null
+            : MapToDto(project);
+    }
+
     public async Task<IReadOnlyList<ProjectDto>> GetAllAsync(
         CancellationToken cancellationToken = default)
     {

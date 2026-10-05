@@ -1,0 +1,11 @@
+﻿winget install Ollama.Ollama
+ollama --version
+
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" --version
+Test-Path "C:\Program Files\Ollama\ollama.exe"
+
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" pull phi3:mini
+
+ollama pull tinyllama
+
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" serve

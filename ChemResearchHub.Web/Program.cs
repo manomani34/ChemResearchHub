@@ -1,3 +1,7 @@
+using ChemResearchHub.Application.AI;
+using ChemResearchHub.Application.AI.Tools;
+using ChemResearchHub.Application.AI.Tools.Experiments;
+using ChemResearchHub.Application.AI.Tools.Projects;
 using ChemResearchHub.Application.Attachments.Interfaces;
 using ChemResearchHub.Application.Attachments.Repositories;
 using ChemResearchHub.Application.Attachments.Services;
@@ -50,6 +54,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // MVC + Razor Pages for ASP.NET Core Identity UI
 builder.Services.AddControllersWithViews(options =>
@@ -183,6 +190,24 @@ builder.Services.AddScoped<IAttachmentStorage>(sp =>
 builder.Services.AddScoped<IDecisionLogRepository, DecisionLogRepository>();
 builder.Services.AddScoped<IDecisionLogService, DecisionLogService>();
 
+builder.Services.AddScoped<ProjectAiContext>();
+builder.Services.AddScoped<IAiTool, GetProjectsAiTool>();
+builder.Services.AddScoped<IAiTool, GetLatestProjectAiTool>();
+builder.Services.AddScoped<AiToolRegistry>();
+builder.Services.AddScoped<IAiTool, GetProjectAiTool>();
+builder.Services.AddScoped<IAiTool, SearchProjectsAiTool>();
+builder.Services.AddScoped<IAiTool, GetProjectStatisticsAiTool>();
+builder.Services.AddScoped<IAiTool, GetProjectOverviewAiTool>();
+builder.Services.AddScoped<IAiTool, GetExperimentsAiTool>();
+builder.Services.AddScoped<IAiTool, GetLatestExperimentAiTool>();
+builder.Services.AddScoped<IAiTool, GetExperimentAiTool>();
+
+
+builder.Services.AddHttpClient<IAIChatService, OllamaChatService>(client =>
+{
+    client.BaseAddress = new Uri("http://127.0.0.1:11434");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -191,6 +216,9 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

@@ -13,6 +13,42 @@ public class ExperimentService : IExperimentService
     {
         _experimentRepository = experimentRepository;
     }
+    public async Task<ExperimentDto?> GetByTitleAsync(
+    string title,
+    CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return null;
+        }
+
+        return await _experimentRepository.GetByTitleAsync(
+            title.Trim(),
+            cancellationToken);
+    }
+
+
+    public async Task<ExperimentDto?> GetLatestAsync(
+    CancellationToken cancellationToken = default)
+    {
+        return await _experimentRepository.GetLatestAsync(
+            cancellationToken);
+    }
+
+
+    public async Task<IReadOnlyList<ExperimentDto>> GetByProjectIdAsync(
+    int projectId,
+    CancellationToken cancellationToken = default)
+    {
+        if (projectId <= 0)
+        {
+            return Array.Empty<ExperimentDto>();
+        }
+
+        return await _experimentRepository.GetByProjectIdAsync(
+            projectId,
+            cancellationToken);
+    }
 
     public async Task<IReadOnlyList<ExperimentDto>> GetAllAsync(
     CancellationToken cancellationToken = default)

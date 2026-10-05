@@ -1,4 +1,5 @@
 using ChemResearchHub.Domain.Entities.Project;
+using ChemResearchHub.Application.Projects.Dtos;
 
 namespace ChemResearchHub.Application.Projects.Repositories;
 
@@ -17,4 +18,18 @@ public interface IProjectRepository
 
     Task SaveChangesAsync(
         CancellationToken cancellationToken = default);
+
+    Task<Project?> GetLatestAsync(
+   CancellationToken cancellationToken = default);
+
+    Task<Project?> GetByNameAsync(
+    string name,
+    CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Project>> SearchAsync(
+    string searchTerm,
+    CancellationToken cancellationToken = default);
+
+    Task<ProjectStatistics> GetStatisticsAsync(
+    CancellationToken cancellationToken = default);
+
 }

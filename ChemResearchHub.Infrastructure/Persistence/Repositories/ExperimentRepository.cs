@@ -15,6 +15,77 @@ public class ExperimentRepository : IExperimentRepository
         _context = context;
     }
 
+    public async Task<ExperimentDto?> GetByTitleAsync(
+    string title,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Experiments
+            .AsNoTracking()
+            .Where(x => x.Title == title)
+            .Select(x => new ExperimentDto
+            {
+                Id = x.Id,
+                WorkItemId = x.WorkItemId,
+                Title = x.Title,
+                Description = x.Description,
+                Protocol = x.Protocol,
+                StartedAt = x.StartedAt,
+                CompletedAt = x.CompletedAt,
+                Notes = x.Notes
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<ExperimentDto?> GetLatestAsync(
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Experiments
+            .AsNoTracking()
+            .OrderByDescending(x => x.StartedAt)
+            .ThenByDescending(x => x.Id)
+            .Select(x => new ExperimentDto
+            {
+                Id = x.Id,
+                WorkItemId = x.WorkItemId,
+                Title = x.Title,
+                Description = x.Description,
+                Protocol = x.Protocol,
+                StartedAt = x.StartedAt,
+                CompletedAt = x.CompletedAt,
+                Notes = x.Notes
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+
+    public async Task<IReadOnlyList<ExperimentDto>> GetByProjectIdAsync(
+    int projectId,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Experiments
+            .AsNoTracking()
+            .Where(x =>
+                _context.WorkItems.Any(
+                    w =>
+                        w.Id == x.WorkItemId &&
+                        w.ProjectId == projectId))
+            .OrderByDescending(x => x.StartedAt)
+            .ThenByDescending(x => x.Id)
+            .Select(x => new ExperimentDto
+            {
+                Id = x.Id,
+                WorkItemId = x.WorkItemId,
+                Title = x.Title,
+                Description = x.Description,
+                Protocol = x.Protocol,
+                StartedAt = x.StartedAt,
+                CompletedAt = x.CompletedAt,
+                Notes = x.Notes
+            })
+            .ToListAsync(cancellationToken);
+    }
+
+
     public async Task<IReadOnlyList<ExperimentDto>> GetAllAsync(
     CancellationToken cancellationToken = default)
     {

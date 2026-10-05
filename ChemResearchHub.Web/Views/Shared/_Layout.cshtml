@@ -444,6 +444,55 @@
 
     </div>
 
+    <!-- AI Assistant -->
+<button id="aiAssistantButton"
+        type="button"
+        class="ai-assistant-button"
+        title="دستیار هوشمند">
+    AI
+</button>
+
+<div id="aiAssistantPanel" class="ai-assistant-panel">
+
+    <div class="ai-assistant-header">
+        <div>
+            <strong>دستیار پژوهشی</strong>
+            <small>ChemResearchHub AI</small>
+        </div>
+
+        <button type="button"
+                id="aiAssistantClose"
+                class="ai-assistant-close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div id="aiAssistantMessages"
+         class="ai-assistant-messages">
+
+        <div class="ai-message ai-message-bot">
+            سلام 👋
+            <br />
+            چطور می‌تونم در کار پژوهشی کمکتون کنم؟
+        </div>
+
+    </div>
+
+    <div class="ai-assistant-input">
+
+        <textarea id="aiAssistantInput"
+                  rows="1"
+                  placeholder="سوال خود را بنویسید..."></textarea>
+
+        <button type="button"
+        id="aiAssistantSend">
+    ➤
+</button>
+
+    </div>
+
+</div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
@@ -455,6 +504,202 @@
     @await RenderSectionAsync(
     "Scripts",
         required: false)
+
+
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const button = document.getElementById("aiAssistantButton");
+        const panel = document.getElementById("aiAssistantPanel");
+        const closeButton = document.getElementById("aiAssistantClose");
+
+        const input = document.getElementById("aiAssistantInput");
+        const sendButton = document.getElementById("aiAssistantSend");
+        const messages = document.getElementById("aiAssistantMessages");
+
+
+        // =========================
+        // باز کردن دستیار
+        // =========================
+
+        button.addEventListener("click", function () {
+
+            panel.classList.toggle("active");
+
+            if (panel.classList.contains("active")) {
+                input.focus();
+            }
+
+        });
+
+
+        // =========================
+        // بستن دستیار
+        // =========================
+
+        closeButton.addEventListener("click", function () {
+
+            panel.classList.remove("active");
+
+        });
+
+
+        // =========================
+        // ارسال پیام
+        // =========================
+
+        async function sendMessage() {
+
+            const message = input.value.trim();
+
+            if (!message) {
+                return;
+            }
+
+
+            // پیام کاربر
+            const userMessage = document.createElement("div");
+
+            userMessage.className =
+                "ai-message ai-message-user";
+
+            userMessage.textContent = message;
+
+            messages.appendChild(userMessage);
+
+
+            // خالی کردن ورودی
+            input.value = "";
+
+
+            // پیام Loading
+            const loadingMessage = document.createElement("div");
+
+            loadingMessage.className =
+                "ai-message ai-message-bot";
+
+            loadingMessage.textContent =
+                "در حال فکر کردن...";
+
+            messages.appendChild(loadingMessage);
+
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
+
+            sendButton.disabled = true;
+
+
+            try {
+
+                const response = await fetch(
+                    "/api/AI/Ai/ask",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            message: message
+                        })
+                    }
+                );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "خطا در ارتباط با سرور"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                loadingMessage.remove();
+
+
+                // پاسخ AI
+                const botMessage =
+                    document.createElement("div");
+
+                botMessage.className =
+                    "ai-message ai-message-bot";
+
+                botMessage.textContent =
+                    data.answer ||
+                    "پاسخی دریافت نشد.";
+
+
+                messages.appendChild(botMessage);
+
+
+                messages.scrollTop =
+                    messages.scrollHeight;
+
+            }
+            catch (error) {
+
+                console.error(
+                    "AI Error:",
+                    error
+                );
+
+                loadingMessage.textContent =
+                    "در ارتباط با دستیار هوشمند مشکلی پیش آمد.";
+
+            }
+            finally {
+
+                sendButton.disabled = false;
+
+                input.focus();
+
+            }
+
+        }
+
+
+        // =========================
+        // کلیک ارسال
+        // =========================
+
+        sendButton.addEventListener(
+            "click",
+            sendMessage
+        );
+
+
+        // =========================
+        // Enter برای ارسال
+        // =========================
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    sendMessage();
+
+                }
+
+            }
+        );
+
+    });
+</script>
 
 </body>
 

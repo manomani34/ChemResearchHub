@@ -34,4 +34,15 @@ public interface IExperimentRepository
         DateTime? completedAt,
         string? notes,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<ExperimentDto>> GetByProjectIdAsync(
+    int projectId,
+    CancellationToken cancellationToken = default);
+
+    Task<ExperimentDto?> GetLatestAsync(
+    CancellationToken cancellationToken = default);
+
+    Task<ExperimentDto?> GetByTitleAsync(
+    string title,
+    CancellationToken cancellationToken = default);
 }
