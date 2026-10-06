@@ -15,6 +15,30 @@ public class SampleRepository : ISampleRepository
         _context = context;
     }
 
+    public async Task<SampleDto?> GetBySampleCodeAsync(
+    string sampleCode,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Samples
+            .AsNoTracking()
+            .Where(x => x.SampleCode == sampleCode)
+            .Select(x => new SampleDto
+            {
+                Id = x.Id,
+                ExperimentId = x.ExperimentId,
+                SampleCode = x.SampleCode,
+                Name = x.Name,
+                SampleType = x.SampleType,
+                Matrix = x.Matrix,
+                PreparationMethod = x.PreparationMethod,
+                CollectedAt = x.CollectedAt,
+                ExternalReference = x.ExternalReference,
+                Description = x.Description,
+                Notes = x.Notes
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<SampleDto>> GetAllAsync(
     CancellationToken cancellationToken = default)
     {

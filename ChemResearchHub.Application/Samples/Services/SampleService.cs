@@ -15,7 +15,7 @@ public class SampleService : ISampleService
     }
 
     public async Task<IReadOnlyList<SampleDto>> GetAllAsync(
-    CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
         return await _sampleRepository.GetAllAsync(
             cancellationToken);
@@ -46,6 +46,20 @@ public class SampleService : ISampleService
 
         return await _sampleRepository.GetByIdAsync(
             id,
+            cancellationToken);
+    }
+
+    public async Task<SampleDto?> GetBySampleCodeAsync(
+        string sampleCode,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(sampleCode))
+        {
+            return null;
+        }
+
+        return await _sampleRepository.GetBySampleCodeAsync(
+            sampleCode.Trim(),
             cancellationToken);
     }
 

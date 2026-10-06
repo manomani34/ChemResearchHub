@@ -13,6 +13,43 @@ public class ExperimentService : IExperimentService
     {
         _experimentRepository = experimentRepository;
     }
+
+    public async Task<ExperimentStatistics> GetStatisticsByProjectIdAsync(
+    int projectId,
+    CancellationToken cancellationToken = default)
+    {
+        if (projectId <= 0)
+        {
+            return new ExperimentStatistics();
+        }
+
+        return await _experimentRepository
+            .GetStatisticsByProjectIdAsync(
+                projectId,
+                cancellationToken);
+    }
+
+    public async Task<ExperimentStatistics> GetStatisticsAsync(
+    CancellationToken cancellationToken = default)
+    {
+        return await _experimentRepository.GetStatisticsAsync(
+            cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<ExperimentDto>> SearchAsync(
+    string searchTerm,
+    CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return Array.Empty<ExperimentDto>();
+        }
+
+        return await _experimentRepository.SearchAsync(
+            searchTerm.Trim(),
+            cancellationToken);
+    }
+
     public async Task<ExperimentDto?> GetByTitleAsync(
     string title,
     CancellationToken cancellationToken = default)

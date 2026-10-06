@@ -45,4 +45,15 @@ public interface IExperimentRepository
     Task<ExperimentDto?> GetByTitleAsync(
     string title,
     CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<ExperimentDto>> SearchAsync(
+    string searchTerm,
+    CancellationToken cancellationToken = default);
+
+    Task<ExperimentStatistics> GetStatisticsAsync(
+    CancellationToken cancellationToken = default);
+
+    Task<ExperimentStatistics> GetStatisticsByProjectIdAsync(
+    int projectId,
+    CancellationToken cancellationToken = default);
 }

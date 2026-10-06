@@ -4,8 +4,8 @@ ollama --version
 & "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" --version
 Test-Path "C:\Program Files\Ollama\ollama.exe"
 
-& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" pull phi3:mini
-
-ollama pull tinyllama
-
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" pull qwen3:4b-instruct-2507-q4_K_M
+& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" list
 & "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" serve
+
+Invoke-RestMethod http://127.0.0.1:11434/api/tags

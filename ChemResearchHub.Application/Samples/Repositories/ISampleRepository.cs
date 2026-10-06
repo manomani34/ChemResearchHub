@@ -40,4 +40,8 @@ public interface ISampleRepository
         string? description,
         string? notes,
         CancellationToken cancellationToken = default);
+
+    Task<SampleDto?> GetBySampleCodeAsync(
+    string sampleCode,
+    CancellationToken cancellationToken = default);
 }

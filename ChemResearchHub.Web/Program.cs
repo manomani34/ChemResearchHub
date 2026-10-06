@@ -1,7 +1,13 @@
 using ChemResearchHub.Application.AI;
+using ChemResearchHub.Application.AI.Experiment;
+using ChemResearchHub.Application.AI.Ollama;
+using ChemResearchHub.Application.AI.Prompting;
+using ChemResearchHub.Application.AI.Routing;
+using ChemResearchHub.Application.AI.Sample;
 using ChemResearchHub.Application.AI.Tools;
 using ChemResearchHub.Application.AI.Tools.Experiments;
 using ChemResearchHub.Application.AI.Tools.Projects;
+using ChemResearchHub.Application.AI.Tools.Samples;
 using ChemResearchHub.Application.Attachments.Interfaces;
 using ChemResearchHub.Application.Attachments.Repositories;
 using ChemResearchHub.Application.Attachments.Services;
@@ -47,6 +53,7 @@ using ChemResearchHub.Infrastructure.Persistence;
 using ChemResearchHub.Infrastructure.Persistence.Repositories;
 using ChemResearchHub.Infrastructure.Repositories;
 using ChemResearchHub.Infrastructure.Storage;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -150,6 +157,10 @@ builder.Services.AddScoped<IWorkItemFlowMetricsService, WorkItemFlowMetricsServi
 builder.Services.AddScoped<IWorkItemFlowSummaryService, WorkItemFlowSummaryService>();
 builder.Services.AddScoped<IWorkItemBlockRepository, WorkItemBlockRepository>();
 builder.Services.AddScoped<IWorkItemBlockService, WorkItemBlockService>();
+builder.Services.AddScoped<IAiTool, SearchExperimentsAiTool>();
+builder.Services.AddScoped<IAiTool, GetExperimentStatisticsAiTool>();
+builder.Services.AddScoped<IAiTool, GetProjectExperimentSummaryAiTool>();
+builder.Services.AddScoped<IAIChatService, OllamaChatService>();
 
 // Experiments
 builder.Services.AddScoped<IExperimentRepository, ExperimentRepository>();
@@ -201,11 +212,23 @@ builder.Services.AddScoped<IAiTool, GetProjectOverviewAiTool>();
 builder.Services.AddScoped<IAiTool, GetExperimentsAiTool>();
 builder.Services.AddScoped<IAiTool, GetLatestExperimentAiTool>();
 builder.Services.AddScoped<IAiTool, GetExperimentAiTool>();
+builder.Services.AddScoped<IAiTool, GetSamplesByExperimentAiTool>();
+builder.Services.AddScoped<AiIntentRouter>();
+builder.Services.AddScoped<SampleRequestHandler>();
+builder.Services.AddScoped<ExperimentRequestHandler>();
+builder.Services.AddScoped<IAiRequestRouter, AiRequestRouter>();
+builder.Services.AddScoped<AiToolExecutor>();
+builder.Services.AddScoped<IAiPromptProvider, AiSystemPrompt>();
+builder.Services.AddScoped<AiToolSelector>();
 
 
-builder.Services.AddHttpClient<IAIChatService, OllamaChatService>(client =>
+builder.Services.AddHttpClient<IOllamaClient, OllamaClient>(client =>
 {
-    client.BaseAddress = new Uri("http://127.0.0.1:11434");
+    client.BaseAddress =
+        new Uri("http://127.0.0.1:11434");
+
+    client.Timeout =
+        TimeSpan.FromMinutes(5);
 });
 
 var app = builder.Build();
