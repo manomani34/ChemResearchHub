@@ -64,28 +64,32 @@ public class BoardService : IBoardService
         return MapToDto(board);
     }
 
-    private static void AddDefaultColumns(
-        Board board)
+    private static void AddDefaultColumns(Board board)
     {
         board.AddColumn(
             "Research Backlog",
-            0);
+            0,
+            wipLimit: null);
 
         board.AddColumn(
             "Ready",
-            1);
+            1,
+            wipLimit: 5);
 
         board.AddColumn(
             "In Progress",
-            2);
+            2,
+            wipLimit: 4);
 
         board.AddColumn(
             "Review / Validation",
-            3);
+            3,
+            wipLimit: 3);
 
         board.AddColumn(
             "Done",
-            4);
+            4,
+            wipLimit: null);
     }
 
     private static BoardDto MapToDto(

@@ -718,36 +718,45 @@ public class WorkItemsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin,Researcher")]
-    public async Task<IActionResult> Move(
-        int id,
-        int boardId,
-        int projectId,
-        int boardColumnId,
-        int sortOrder = 0,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Move(int id,
+                                          int boardId,
+                                          int projectId,
+                                          int boardColumnId,
+                                          int sortOrder = 0,
+                                          CancellationToken cancellationToken = default)
     {
-        var moved =
-            await _workItemService.MoveAsync(
+        try
+        {
+            var moved = await _workItemService.MoveAsync(
                 id,
                 boardColumnId,
                 sortOrder,
-                User.FindFirstValue(
-                    ClaimTypes.NameIdentifier),
+                User.FindFirstValue(ClaimTypes.NameIdentifier),
                 cancellationToken);
 
-        if (!moved)
-        {
-            return NotFound();
-        }
-
-        return RedirectToAction(
-            "Index",
-            "Boards",
-            new
+            if (!moved)
             {
-                projectId,
-                boardId
-            });
+                return NotFound();
+            }
+
+            return RedirectToAction(
+                "Index",
+                "Boards",
+                new { projectId, boardId });
+        }
+        catch (InvalidOperationException ex)
+            when (ex.Message.StartsWith(
+                "WIP limit reached",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["ErrorMessage"] =
+                "این ستون به حداکثر تعداد کارهای مجاز رسیده است.";
+
+            return RedirectToAction(
+                "Index",
+                "Boards",
+                new { projectId, boardId });
+        }
     }
 
     [HttpPost]

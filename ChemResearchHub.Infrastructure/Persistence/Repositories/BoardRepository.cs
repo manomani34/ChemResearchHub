@@ -15,8 +15,8 @@ public class BoardRepository : IBoardRepository
     }
 
     public async Task<IReadOnlyList<Board>> GetByProjectIdAsync(
-        int projectId,
-        CancellationToken cancellationToken = default)
+     int projectId,
+     CancellationToken cancellationToken = default)
     {
         return await _dbContext.Boards
             .AsNoTracking()
