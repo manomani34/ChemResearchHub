@@ -39,4 +39,6 @@ public class CreateWorkItemViewModel
     [Display(Name = "Due Date")]
     [DataType(DataType.Date)]
     public DateTime? DueDate { get; set; }
+    [Display(Name = "Additional Collaborators")]
+    public List<string> AssignedUserIds { get; set; } = new();
 }

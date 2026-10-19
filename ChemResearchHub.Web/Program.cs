@@ -39,6 +39,7 @@ using ChemResearchHub.Application.Samples.Services;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.Users.Repositories;
 using ChemResearchHub.Application.Users.Services;
+using ChemResearchHub.Application.WorkItemAssignments.Repositories;
 using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
 using ChemResearchHub.Application.WorkItemBlocks.Repositories;
 using ChemResearchHub.Application.WorkItemBlocks.Services;
@@ -183,6 +184,7 @@ builder.Services.AddScoped<IResearchReviewService, ResearchReviewService>();
 
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+builder.Services.AddScoped<IWorkItemAssignmentRepository, WorkItemAssignmentRepository>();
 
 
 builder.Services.AddScoped<IAttachmentStorage>(sp =>

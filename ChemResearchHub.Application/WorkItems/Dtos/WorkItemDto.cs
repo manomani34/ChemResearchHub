@@ -14,6 +14,12 @@ public class WorkItemDto
 
     public string? AssignedToUserName { get; init; }
 
+    public IReadOnlyList<string> AssignedUserIds { get; init; }
+    = Array.Empty<string>();
+
+    public IReadOnlyList<string> AssignedUserNames { get; init; }
+        = Array.Empty<string>();
+
     public string Title { get; init; } = null!;
 
     public string? Description { get; init; }

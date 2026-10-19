@@ -1,4 +1,5 @@
-﻿using ChemResearchHub.Application.WorkItems.Dtos;
+﻿
+using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Domain.Enums;
 
 namespace ChemResearchHub.Application.WorkItems.Interfaces;
@@ -19,15 +20,17 @@ public interface IWorkItemService
         int id,
         CancellationToken cancellationToken = default);
 
-    Task<WorkItemDto?> UpdateAsync(int id,
-                                 string title,
-                                 string? description,
-                                 WorkItemType type,
-                                 int priority,
-                                 DateTime? dueDate,
-                                 string? assignedToUserId,
-                                 string? changedByUserId,
-                                 CancellationToken cancellationToken = default);
+    Task<WorkItemDto?> UpdateAsync(
+        int id,
+        string title,
+        string? description,
+        WorkItemType type,
+        int priority,
+        DateTime? dueDate,
+        string? assignedToUserId,
+        string? changedByUserId,
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<string>? assignedUserIds = null);
 
     Task<WorkItemDto> CreateAsync(
         int projectId,
@@ -39,7 +42,8 @@ public interface IWorkItemService
         DateTime? dueDate,
         string? assignedToUserId,
         string? changedByUserId,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<string>? assignedUserIds = null);
 
     Task<bool> MoveAsync(
         int id,
@@ -49,9 +53,9 @@ public interface IWorkItemService
         CancellationToken cancellationToken = default);
 
     Task<bool> CompleteAsync(
-    int id,
-    string? changedByUserId,
-    CancellationToken cancellationToken = default);
+        int id,
+        string? changedByUserId,
+        CancellationToken cancellationToken = default);
 
     Task<bool> ReopenAsync(
         int id,
@@ -62,5 +66,4 @@ public interface IWorkItemService
         int id,
         string? changedByUserId,
         CancellationToken cancellationToken = default);
-
 }

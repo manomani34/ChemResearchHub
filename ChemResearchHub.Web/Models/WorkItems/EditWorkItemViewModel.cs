@@ -43,4 +43,7 @@ public class EditWorkItemViewModel
     public DateTime? DueDate { get; set; }
 
     public bool IsCompleted { get; set; }
+
+    [Display(Name = "Additional Collaborators")]
+    public List<string> AssignedUserIds { get; set; } = new();
 }

@@ -1,7 +1,8 @@
-using ChemResearchHub.Application.AuditLogs.Interfaces;
+﻿using ChemResearchHub.Application.AuditLogs.Interfaces;
 using ChemResearchHub.Application.Boards.Repositories;
 using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Interfaces;
+using ChemResearchHub.Application.WorkItemAssignments.Repositories;
 using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Application.WorkItems.Repositories;
@@ -18,19 +19,22 @@ public class WorkItemService : IWorkItemService
     private readonly IUserService _userService;
     private readonly IWorkItemTransitionRepository _workItemTransitionRepository;
     private readonly IAuditLogService _auditLogService;
+    private readonly IWorkItemAssignmentRepository _workItemAssignmentRepository;
 
     public WorkItemService(
         IWorkItemRepository workItemRepository,
         IBoardRepository boardRepository,
         IUserService userService,
         IWorkItemTransitionRepository workItemTransitionRepository,
-        IAuditLogService auditLogService)
+        IAuditLogService auditLogService,
+        IWorkItemAssignmentRepository workItemAssignmentRepository)
     {
         _workItemRepository = workItemRepository;
         _boardRepository = boardRepository;
         _userService = userService;
         _workItemTransitionRepository = workItemTransitionRepository;
         _auditLogService = auditLogService;
+        _workItemAssignmentRepository = workItemAssignmentRepository;
     }
 
     
@@ -38,22 +42,20 @@ public class WorkItemService : IWorkItemService
         int boardColumnId,
         CancellationToken cancellationToken = default)
     {
-        var workItems =
-            await _workItemRepository.GetByBoardColumnIdAsync(
-                boardColumnId,
-                cancellationToken);
+        var workItems = await _workItemRepository.GetByBoardColumnIdAsync(
+            boardColumnId,
+            cancellationToken);
 
-        var users =
-            await _userService.GetActiveUsersAsync(
-                cancellationToken);
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var usersById = users.ToDictionary(x => x.Id, x => x);
 
-        var usersById =
-            users.ToDictionary(
-                x => x.Id,
-                x => x);
+        var assignments = await _workItemAssignmentRepository
+            .GetUserIdsByWorkItemIdsAsync(
+                workItems.Select(x => x.Id).ToArray(),
+                cancellationToken);
 
         return workItems
-            .Select(x => MapToDto(x, usersById))
+            .Select(x => MapToDto(x, usersById, assignments))
             .ToList();
     }
 
@@ -63,28 +65,22 @@ public class WorkItemService : IWorkItemService
         string? assignedToUserId = null,
         CancellationToken cancellationToken = default)
     {
-        var workItems =
-            await _workItemRepository.GetAllAsync(
-                search,
-                isCompleted,
-                assignedToUserId,
-                cancellationToken);
+        var workItems = await _workItemRepository.GetAllAsync(
+            search,
+            isCompleted,
+            assignedToUserId,
+            cancellationToken);
 
-        var users =
-            await _userService.GetActiveUsersAsync(
-                cancellationToken);
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var usersById = users.ToDictionary(x => x.Id, x => x);
 
-        var usersById =
-            users.ToDictionary(
-                x => x.Id,
-                x => x);
+        var assignments = await _workItemAssignmentRepository
+            .GetUserIdsByWorkItemIdsAsync(
+                workItems.Select(x => x.Id).ToArray(),
+                cancellationToken);
 
         return workItems
-            .Select(
-                x =>
-                    MapToDto(
-                        x,
-                        usersById))
+            .Select(x => MapToDto(x, usersById, assignments))
             .ToList();
     }
 
@@ -92,30 +88,28 @@ public class WorkItemService : IWorkItemService
         int id,
         CancellationToken cancellationToken = default)
     {
-        var workItem =
-            await _workItemRepository.GetByIdAsync(
-                id,
-                cancellationToken);
+        var workItem = await _workItemRepository.GetByIdAsync(
+            id,
+            cancellationToken);
 
         if (workItem is null)
         {
             return null;
         }
 
-        UserDto? assignedUser = null;
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var usersById = users.ToDictionary(x => x.Id, x => x);
 
-        if (!string.IsNullOrWhiteSpace(
-                workItem.AssignedToUserId))
-        {
-            assignedUser =
-                await _userService.GetByIdAsync(
-                    workItem.AssignedToUserId,
-                    cancellationToken);
-        }
+        var assignments = await _workItemAssignmentRepository
+            .GetUserIdsByWorkItemIdAsync(id, cancellationToken);
 
         return MapToDto(
             workItem,
-            assignedUser);
+            usersById,
+            new Dictionary<int, IReadOnlyList<string>>
+            {
+                [id] = assignments
+            });
     }
 
     public async Task<WorkItemDto?> UpdateAsync(
@@ -127,12 +121,12 @@ public class WorkItemService : IWorkItemService
         DateTime? dueDate,
         string? assignedToUserId,
         string? changedByUserId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<string>? assignedUserIds = null)
     {
-        var workItem =
-            await _workItemRepository.GetByIdAsync(
-                id,
-                cancellationToken);
+        var workItem = await _workItemRepository.GetByIdAsync(
+            id,
+            cancellationToken);
 
         if (workItem is null)
         {
@@ -142,6 +136,25 @@ public class WorkItemService : IWorkItemService
         await ValidateAssignedUserAsync(
             assignedToUserId,
             cancellationToken);
+
+        // If callers omit the collaborator list, preserve existing assignments.
+        // An explicitly supplied empty list clears all additional assignments.
+        var collaboratorIds = assignedUserIds is null
+            ? await _workItemAssignmentRepository.GetUserIdsByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken)
+            : await NormalizeAndValidateCollaboratorsAsync(
+                assignedUserIds,
+                assignedToUserId,
+                cancellationToken);
+
+        if (assignedUserIds is null)
+        {
+            collaboratorIds = await NormalizeAndValidateCollaboratorsAsync(
+                collaboratorIds,
+                assignedToUserId,
+                cancellationToken);
+        }
 
         workItem.Update(
             title,
@@ -156,12 +169,17 @@ public class WorkItemService : IWorkItemService
         }
         else
         {
-            workItem.AssignTo(
-                assignedToUserId);
+            workItem.AssignTo(assignedToUserId.Trim());
         }
 
-        await _workItemRepository.SaveChangesAsync(
+        await _workItemAssignmentRepository.ReplaceAssignmentsAsync(
+            workItem.Id,
+            collaboratorIds,
+            changedByUserId,
             cancellationToken);
+
+        // Both repositories use the same scoped DbContext.
+        await _workItemRepository.SaveChangesAsync(cancellationToken);
 
         await _auditLogService.AddAsync(
             changedByUserId,
@@ -171,20 +189,21 @@ public class WorkItemService : IWorkItemService
             $"Work Item '{workItem.Title}' was updated.",
             cancellationToken: cancellationToken);
 
-        UserDto? assignedUser = null;
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var usersById = users.ToDictionary(x => x.Id, x => x);
 
-        if (!string.IsNullOrWhiteSpace(
-                workItem.AssignedToUserId))
-        {
-            assignedUser =
-                await _userService.GetByIdAsync(
-                    workItem.AssignedToUserId,
-                    cancellationToken);
-        }
+        var savedCollaboratorIds =
+            await _workItemAssignmentRepository.GetUserIdsByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
 
         return MapToDto(
             workItem,
-            assignedUser);
+            usersById,
+            new Dictionary<int, IReadOnlyList<string>>
+            {
+                [workItem.Id] = savedCollaboratorIds
+            });
     }
 
     public async Task<WorkItemDto> CreateAsync(
@@ -197,12 +216,12 @@ public class WorkItemService : IWorkItemService
         DateTime? dueDate,
         string? assignedToUserId,
         string? changedByUserId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<string>? assignedUserIds = null)
     {
-        var board =
-            await _boardRepository.GetByColumnIdAsync(
-                boardColumnId,
-                cancellationToken);
+        var board = await _boardRepository.GetByColumnIdAsync(
+            boardColumnId,
+            cancellationToken);
 
         if (board is null)
         {
@@ -220,14 +239,18 @@ public class WorkItemService : IWorkItemService
             assignedToUserId,
             cancellationToken);
 
-        var existingItems =
-            await _workItemRepository.GetByBoardColumnIdAsync(
-                boardColumnId,
-                cancellationToken);
+        // Validate additional collaborators before creating the work item.
+        var collaboratorIds = await NormalizeAndValidateCollaboratorsAsync(
+            assignedUserIds,
+            assignedToUserId,
+            cancellationToken);
 
-        var targetColumn =
-            board.Columns.FirstOrDefault(
-                x => x.Id == boardColumnId);
+        var existingItems = await _workItemRepository.GetByBoardColumnIdAsync(
+            boardColumnId,
+            cancellationToken);
+
+        var targetColumn = board.Columns.FirstOrDefault(
+            x => x.Id == boardColumnId);
 
         if (targetColumn is null)
         {
@@ -242,14 +265,12 @@ public class WorkItemService : IWorkItemService
                 $"WIP limit reached for column '{targetColumn.Name}'.");
         }
 
-        var nextSortOrder =
-            existingItems.Count;
+        var nextSortOrder = existingItems.Count;
 
-        var workItem =
-            new WorkItem(
-                projectId,
-                title,
-                type);
+        var workItem = new WorkItem(
+            projectId,
+            title,
+            type);
 
         workItem.Update(
             title,
@@ -262,11 +283,9 @@ public class WorkItemService : IWorkItemService
             boardColumnId,
             nextSortOrder);
 
-        if (!string.IsNullOrWhiteSpace(
-                assignedToUserId))
+        if (!string.IsNullOrWhiteSpace(assignedToUserId))
         {
-            workItem.AssignTo(
-                assignedToUserId);
+            workItem.AssignTo(assignedToUserId.Trim());
         }
 
         await _workItemRepository.AddAsync(
@@ -281,8 +300,19 @@ public class WorkItemService : IWorkItemService
                 changedByUserId),
             cancellationToken);
 
-        await _workItemRepository.SaveChangesAsync(
-            cancellationToken);
+        // Save first so the new work item has its generated ID.
+        await _workItemRepository.SaveChangesAsync(cancellationToken);
+
+        if (collaboratorIds.Count > 0)
+        {
+            await _workItemAssignmentRepository.ReplaceAssignmentsAsync(
+                workItem.Id,
+                collaboratorIds,
+                changedByUserId,
+                cancellationToken);
+
+            await _workItemRepository.SaveChangesAsync(cancellationToken);
+        }
 
         await _auditLogService.AddAsync(
             changedByUserId,
@@ -292,20 +322,21 @@ public class WorkItemService : IWorkItemService
             $"Work Item '{workItem.Title}' was created.",
             cancellationToken: cancellationToken);
 
-        UserDto? assignedUser = null;
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var usersById = users.ToDictionary(x => x.Id, x => x);
 
-        if (!string.IsNullOrWhiteSpace(
-                workItem.AssignedToUserId))
-        {
-            assignedUser =
-                await _userService.GetByIdAsync(
-                    workItem.AssignedToUserId,
-                    cancellationToken);
-        }
+        var savedCollaboratorIds =
+            await _workItemAssignmentRepository.GetUserIdsByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
 
         return MapToDto(
             workItem,
-            assignedUser);
+            usersById,
+            new Dictionary<int, IReadOnlyList<string>>
+            {
+                [workItem.Id] = savedCollaboratorIds
+            });
     }
 
     public async Task<bool> MoveAsync(
@@ -603,36 +634,85 @@ public class WorkItemService : IWorkItemService
         }
     }
 
-    private static WorkItemDto MapToDto(
-        WorkItem workItem,
-        IReadOnlyDictionary<string, UserDto> usersById)
+    private async Task<IReadOnlyList<string>> NormalizeAndValidateCollaboratorsAsync(
+        IReadOnlyCollection<string>? assignedUserIds,
+        string? primaryUserId,
+        CancellationToken cancellationToken)
     {
-        UserDto? assignedUser = null;
+        var normalizedIds = (assignedUserIds ?? Array.Empty<string>())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Where(x => string.IsNullOrWhiteSpace(primaryUserId) ||
+                        !string.Equals(x, primaryUserId.Trim(), StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
 
-        if (!string.IsNullOrWhiteSpace(
-                workItem.AssignedToUserId))
+        foreach (var userId in normalizedIds)
         {
-            usersById.TryGetValue(
-                workItem.AssignedToUserId,
-                out assignedUser);
+            await ValidateAssignedUserAsync(userId, cancellationToken);
         }
 
-        return MapToDto(
-            workItem,
-            assignedUser);
+        return normalizedIds;
     }
 
     private static WorkItemDto MapToDto(
         WorkItem workItem,
-        UserDto? assignedUser)
+        IReadOnlyDictionary<string, UserDto> usersById,
+        IReadOnlyDictionary<int, IReadOnlyList<string>> assignmentsByWorkItemId)
     {
-        var assignedUserName =
-            assignedUser is null
-                ? null
-                : !string.IsNullOrWhiteSpace(
-                    assignedUser.FullName)
-                    ? assignedUser.FullName
-                    : assignedUser.Email;
+        usersById.TryGetValue(
+            workItem.AssignedToUserId ?? string.Empty,
+            out var primaryUser);
+
+        assignmentsByWorkItemId.TryGetValue(
+            workItem.Id,
+            out var collaboratorIds);
+
+        collaboratorIds ??= Array.Empty<string>();
+
+        var additionalIds = collaboratorIds
+            .Where(x => string.IsNullOrWhiteSpace(workItem.AssignedToUserId) ||
+                        !string.Equals(
+                            x,
+                            workItem.AssignedToUserId,
+                            StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        var additionalNames = additionalIds
+            .Select(id =>
+            {
+                if (!usersById.TryGetValue(id, out var user))
+                {
+                    return id;
+                }
+
+                return !string.IsNullOrWhiteSpace(user.FullName)
+                    ? user.FullName
+                    : !string.IsNullOrWhiteSpace(user.Email)
+                        ? user.Email
+                        : id;
+            })
+            .ToList();
+
+        return MapToDto(
+            workItem,
+            primaryUser,
+            additionalIds,
+            additionalNames);
+    }
+
+    private static WorkItemDto MapToDto(
+        WorkItem workItem,
+        UserDto? assignedUser,
+        IReadOnlyList<string>? assignedUserIds = null,
+        IReadOnlyList<string>? assignedUserNames = null)
+    {
+        var assignedUserName = assignedUser is null
+            ? null
+            : !string.IsNullOrWhiteSpace(assignedUser.FullName)
+                ? assignedUser.FullName
+                : assignedUser.Email;
 
         return new WorkItemDto
         {
@@ -642,6 +722,8 @@ public class WorkItemService : IWorkItemService
             BoardColumnId = workItem.BoardColumnId,
             AssignedToUserId = workItem.AssignedToUserId,
             AssignedToUserName = assignedUserName,
+            AssignedUserIds = assignedUserIds ?? Array.Empty<string>(),
+            AssignedUserNames = assignedUserNames ?? Array.Empty<string>(),
             Title = workItem.Title,
             Description = workItem.Description,
             Type = workItem.Type,
@@ -652,3 +734,6 @@ public class WorkItemService : IWorkItemService
         };
     }
 }
+
+
+

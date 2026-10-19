@@ -260,7 +260,8 @@ public class WorkItemsController : Controller
             model.AssignedToUserId,
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier),
-            cancellationToken);
+            cancellationToken,
+            assignedUserIds: model.AssignedUserIds);
 
         return RedirectToAction(
             "Index",
@@ -614,6 +615,7 @@ public class WorkItemsController : Controller
                 Priority = workItem.Priority,
                 DueDate = workItem.DueDate,
                 AssignedToUserId = workItem.AssignedToUserId,
+                AssignedUserIds = workItem.AssignedUserIds.ToList(),
                 IsCompleted = workItem.IsCompleted
             });
     }
@@ -680,7 +682,8 @@ public class WorkItemsController : Controller
                 model.DueDate,
                 model.AssignedToUserId,
                 changedByUserId,
-                cancellationToken);
+                cancellationToken,
+                assignedUserIds: model.AssignedUserIds);
 
         if (updated is null)
         {
@@ -718,21 +721,24 @@ public class WorkItemsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin,Researcher")]
-    public async Task<IActionResult> Move(int id,
-                                          int boardId,
-                                          int projectId,
-                                          int boardColumnId,
-                                          int sortOrder = 0,
-                                          CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Move(
+        int id,
+        int boardId,
+        int projectId,
+        int boardColumnId,
+        int sortOrder = 0,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var moved = await _workItemService.MoveAsync(
-                id,
-                boardColumnId,
-                sortOrder,
-                User.FindFirstValue(ClaimTypes.NameIdentifier),
-                cancellationToken);
+            var moved =
+                await _workItemService.MoveAsync(
+                    id,
+                    boardColumnId,
+                    sortOrder,
+                    User.FindFirstValue(
+                        ClaimTypes.NameIdentifier),
+                    cancellationToken);
 
             if (!moved)
             {
@@ -742,7 +748,11 @@ public class WorkItemsController : Controller
             return RedirectToAction(
                 "Index",
                 "Boards",
-                new { projectId, boardId });
+                new
+                {
+                    projectId,
+                    boardId
+                });
         }
         catch (InvalidOperationException ex)
             when (ex.Message.StartsWith(
@@ -755,7 +765,11 @@ public class WorkItemsController : Controller
             return RedirectToAction(
                 "Index",
                 "Boards",
-                new { projectId, boardId });
+                new
+                {
+                    projectId,
+                    boardId
+                });
         }
     }
 

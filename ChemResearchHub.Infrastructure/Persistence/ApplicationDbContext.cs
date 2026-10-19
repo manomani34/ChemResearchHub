@@ -6,8 +6,9 @@ using ChemResearchHub.Domain.Entities.Project;
 using ChemResearchHub.Domain.Entities.Result;
 using ChemResearchHub.Domain.Entities.Sample;
 using ChemResearchHub.Domain.Entities.WorkItem;
-using ChemResearchHub.Domain.Entities.WorkItemTransition;
+using ChemResearchHub.Domain.Entities.WorkItemAssignment;
 using ChemResearchHub.Domain.Entities.WorkItemBlock;
+using ChemResearchHub.Domain.Entities.WorkItemTransition;
 using ChemResearchHub.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ public class ApplicationDbContext
         : base(options)
     {
     }
-
+    public DbSet<WorkItemAssignment> WorkItemAssignments => Set<WorkItemAssignment>();
     public DbSet<DecisionLog> DecisionLogs => Set<DecisionLog>();
     public DbSet<Attachment> Attachments => Set<Attachment>();
     public DbSet<Result> Results => Set<Result>();
