@@ -69,11 +69,16 @@ public class DashboardController : Controller
             UserCount = users.Count,
             ActiveUserCount = activeUsers.Count,
             AdminCount = users.Count(x =>
-                string.Equals(x.RoleName, "Admin", StringComparison.OrdinalIgnoreCase)),
+    x.RoleNames.Contains("Admin",
+        StringComparer.OrdinalIgnoreCase)),
+
             ResearcherCount = users.Count(x =>
-                string.Equals(x.RoleName, "Researcher", StringComparison.OrdinalIgnoreCase)),
+                x.RoleNames.Contains("Researcher",
+                    StringComparer.OrdinalIgnoreCase)),
+
             ReviewerCount = users.Count(x =>
-                string.Equals(x.RoleName, "Reviewer", StringComparison.OrdinalIgnoreCase)),
+                x.RoleNames.Contains("Reviewer",
+                    StringComparer.OrdinalIgnoreCase)),
 
             ProjectCount = projects.Count,
             ActiveProjectCount = projects.Count(x => x.IsActive),

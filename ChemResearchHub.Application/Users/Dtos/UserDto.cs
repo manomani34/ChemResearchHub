@@ -1,4 +1,5 @@
-﻿namespace ChemResearchHub.Application.Users.Dtos;
+﻿
+namespace ChemResearchHub.Application.Users.Dtos;
 
 public class UserDto
 {
@@ -10,5 +11,6 @@ public class UserDto
 
     public bool IsActive { get; init; }
 
-    public string RoleName { get; init; } = string.Empty;
+    public IReadOnlyList<string> RoleNames { get; init; }
+        = Array.Empty<string>();
 }

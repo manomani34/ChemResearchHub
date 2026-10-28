@@ -18,7 +18,7 @@ public interface IUserService
         string userId,
         string fullName,
         string? email,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         bool isActive,
         CancellationToken cancellationToken = default);
 
@@ -26,6 +26,6 @@ public interface IUserService
         string fullName,
         string email,
         string password,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         CancellationToken cancellationToken = default);
 }

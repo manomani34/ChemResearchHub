@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace ChemResearchHub.Web.Models.Users;
 
@@ -36,7 +37,11 @@ public class CreateUserViewModel
     [Display(Name = "Confirm Password")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Please select a role.")]
-    [Display(Name = "Role")]
-    public string RoleName { get; set; } = "Researcher";
+    [Required(ErrorMessage = "Please select at least one role.")]
+    [MinLength(1, ErrorMessage = "Please select at least one role.")]
+    [Display(Name = "Roles")]
+    public List<string> RoleNames { get; set; } = new()
+    {
+        "Researcher"
+    };
 }

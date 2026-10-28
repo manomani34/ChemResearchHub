@@ -1,4 +1,5 @@
-﻿using ChemResearchHub.Application.Users.Dtos;
+﻿
+using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.Users.Repositories;
 
@@ -8,64 +9,61 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
 
-    public UserService(
-        IUserRepository userRepository)
+    public UserService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
-    public async Task<IReadOnlyList<UserDto>> GetAllAsync(
+    public Task<IReadOnlyList<UserDto>> GetAllAsync(
         CancellationToken cancellationToken = default)
     {
-        return await _userRepository.GetAllAsync(
-            cancellationToken);
+        return _userRepository.GetAllAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<UserDto>> GetActiveUsersAsync(
+    public Task<IReadOnlyList<UserDto>> GetActiveUsersAsync(
         CancellationToken cancellationToken = default)
     {
-        return await _userRepository.GetActiveUsersAsync(
-            cancellationToken);
+        return _userRepository.GetActiveUsersAsync(cancellationToken);
     }
 
-    public async Task<UserDto?> GetByIdAsync(
+    public Task<UserDto?> GetByIdAsync(
         string userId,
         CancellationToken cancellationToken = default)
     {
-        return await _userRepository.GetByIdAsync(
+        return _userRepository.GetByIdAsync(
             userId,
             cancellationToken);
     }
 
-    public async Task<bool> UpdateAsync(
+    public Task<bool> UpdateAsync(
         string userId,
         string fullName,
         string? email,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         bool isActive,
         CancellationToken cancellationToken = default)
     {
-        return await _userRepository.UpdateAsync(
+        return _userRepository.UpdateAsync(
             userId,
             fullName,
             email,
-            roleName,
+            roleNames,
             isActive,
             cancellationToken);
     }
 
-    public async Task<UserDto?> CreateAsync(
+    public Task<UserDto?> CreateAsync(
         string fullName,
         string email,
         string password,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         CancellationToken cancellationToken = default)
     {
-        return await _userRepository.CreateAsync(
+        return _userRepository.CreateAsync(
             fullName,
             email,
             password,
-            roleName,
+            roleNames,
             cancellationToken);
     }
 }

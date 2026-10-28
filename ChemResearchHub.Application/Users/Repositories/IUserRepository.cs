@@ -18,7 +18,7 @@ public interface IUserRepository
         string userId,
         string fullName,
         string? email,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         bool isActive,
         CancellationToken cancellationToken = default);
 
@@ -26,6 +26,7 @@ public interface IUserRepository
         string fullName,
         string email,
         string password,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         CancellationToken cancellationToken = default);
+
 }

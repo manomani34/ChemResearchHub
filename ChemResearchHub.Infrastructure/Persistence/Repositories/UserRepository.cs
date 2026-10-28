@@ -1,4 +1,5 @@
-﻿using ChemResearchHub.Application.Users.Dtos;
+﻿
+using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Repositories;
 using ChemResearchHub.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -19,68 +20,40 @@ public class UserRepository : IUserRepository
         _roleManager = roleManager;
     }
 
-
     public async Task<IReadOnlyList<UserDto>> GetAllAsync(
-    CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
-        var users =
-            await _userManager.Users
-                .AsNoTracking()
-                .OrderBy(x => x.FullName)
-                .ThenBy(x => x.Email)
-                .ToListAsync(cancellationToken);
+        var users = await _userManager.Users
+            .AsNoTracking()
+            .OrderBy(x => x.FullName)
+            .ThenBy(x => x.Email)
+            .ToListAsync(cancellationToken);
 
-        var result =
-            new List<UserDto>();
+        var result = new List<UserDto>(users.Count);
 
         foreach (var user in users)
         {
-            var roles =
-                await _userManager.GetRolesAsync(user);
-
-            result.Add(
-                new UserDto
-                {
-                    Id = user.Id,
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    IsActive = user.IsActive,
-                    RoleName = roles.FirstOrDefault() ?? string.Empty
-                });
+            result.Add(await MapUserAsync(user));
         }
 
         return result;
     }
 
-
     public async Task<IReadOnlyList<UserDto>> GetActiveUsersAsync(
         CancellationToken cancellationToken = default)
     {
-        var users =
-            await _userManager.Users
-                .AsNoTracking()
-                .Where(x => x.IsActive)
-                .OrderBy(x => x.FullName)
-                .ThenBy(x => x.Email)
-                .ToListAsync(cancellationToken);
+        var users = await _userManager.Users
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.FullName)
+            .ThenBy(x => x.Email)
+            .ToListAsync(cancellationToken);
 
-        var result =
-            new List<UserDto>();
+        var result = new List<UserDto>(users.Count);
 
         foreach (var user in users)
         {
-            var roles =
-                await _userManager.GetRolesAsync(user);
-
-            result.Add(
-                new UserDto
-                {
-                    Id = user.Id,
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    IsActive = user.IsActive,
-                    RoleName = roles.FirstOrDefault() ?? string.Empty
-                });
+            result.Add(await MapUserAsync(user));
         }
 
         return result;
@@ -95,71 +68,50 @@ public class UserRepository : IUserRepository
             return null;
         }
 
-        var user =
-            await _userManager.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    x => x.Id == userId,
-                    cancellationToken);
+        var user = await _userManager.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                x => x.Id == userId,
+                cancellationToken);
 
-        if (user is null)
-        {
-            return null;
-        }
-
-        var roles =
-            await _userManager.GetRolesAsync(user);
-
-        return new UserDto
-        {
-            Id = user.Id,
-            FullName = user.FullName,
-            Email = user.Email,
-            IsActive = user.IsActive,
-            RoleName = roles.FirstOrDefault() ?? string.Empty
-        };
+        return user is null
+            ? null
+            : await MapUserAsync(user);
     }
 
     public async Task<bool> UpdateAsync(
         string userId,
         string fullName,
         string? email,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         bool isActive,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(userId))
+        if (string.IsNullOrWhiteSpace(userId) ||
+            string.IsNullOrWhiteSpace(fullName))
         {
             return false;
         }
 
-        if (string.IsNullOrWhiteSpace(roleName))
+        var targetRoles = NormalizeRoles(roleNames);
+
+        if (targetRoles.Count == 0)
         {
-            return false;
+            throw new InvalidOperationException(
+                "At least one role must be selected.");
         }
 
-        var user =
-            await _userManager.FindByIdAsync(userId);
+        await EnsureRolesExistAsync(targetRoles);
+
+        var user = await _userManager.FindByIdAsync(userId);
 
         if (user is null)
         {
             return false;
         }
 
-        var roleExists =
-            await _roleManager.RoleExistsAsync(
-                roleName.Trim());
-
-        if (!roleExists)
-        {
-            return false;
-        }
-
-        user.FullName =
-            fullName.Trim();
-
-        user.IsActive =
-            isActive;
+        user.FullName = fullName.Trim();
+        user.IsActive = isActive;
 
         if (email is not null &&
             !string.Equals(
@@ -167,125 +119,117 @@ public class UserRepository : IUserRepository
                 email.Trim(),
                 StringComparison.OrdinalIgnoreCase))
         {
-            var normalizedEmail =
-                email.Trim();
+            var normalizedEmail = email.Trim();
 
-            var emailResult =
-                await _userManager.SetEmailAsync(
-                    user,
-                    normalizedEmail);
+            var emailResult = await _userManager.SetEmailAsync(
+                user,
+                normalizedEmail);
 
             if (!emailResult.Succeeded)
             {
-                return false;
+                throw new InvalidOperationException(
+                    FormatErrors(emailResult.Errors));
             }
 
-            var userNameResult =
-                await _userManager.SetUserNameAsync(
-                    user,
-                    normalizedEmail);
+            var userNameResult = await _userManager.SetUserNameAsync(
+                user,
+                normalizedEmail);
 
             if (!userNameResult.Succeeded)
             {
-                return false;
+                throw new InvalidOperationException(
+                    FormatErrors(userNameResult.Errors));
             }
         }
 
-        var currentRoles =
-            await _userManager.GetRolesAsync(user);
+        var currentRoles = await _userManager.GetRolesAsync(user);
 
-        var targetRole =
-            roleName.Trim();
+        var rolesToRemove = currentRoles
+            .Where(role => !targetRoles.Contains(
+                role,
+                StringComparer.OrdinalIgnoreCase))
+            .ToArray();
 
-        var rolesToRemove =
-            currentRoles
-                .Where(
-                    role =>
-                        !string.Equals(
-                            role,
-                            targetRole,
-                            StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-        if (rolesToRemove.Count > 0)
+        if (rolesToRemove.Length > 0)
         {
-            var removeResult =
-                await _userManager.RemoveFromRolesAsync(
-                    user,
-                    rolesToRemove);
+            var removeResult = await _userManager.RemoveFromRolesAsync(
+                user,
+                rolesToRemove);
 
             if (!removeResult.Succeeded)
             {
-                return false;
+                throw new InvalidOperationException(
+                    FormatErrors(removeResult.Errors));
             }
         }
 
-        var hasTargetRole =
-            currentRoles.Any(
-                role =>
-                    string.Equals(
-                        role,
-                        targetRole,
-                        StringComparison.OrdinalIgnoreCase));
+        var rolesToAdd = targetRoles
+            .Where(role => !currentRoles.Contains(
+                role,
+                StringComparer.OrdinalIgnoreCase))
+            .ToArray();
 
-        if (!hasTargetRole)
+        if (rolesToAdd.Length > 0)
         {
-            var addResult =
-                await _userManager.AddToRoleAsync(
-                    user,
-                    targetRole);
+            var addResult = await _userManager.AddToRolesAsync(
+                user,
+                rolesToAdd);
 
             if (!addResult.Succeeded)
             {
-                return false;
+                throw new InvalidOperationException(
+                    FormatErrors(addResult.Errors));
             }
         }
 
-        var securityStampResult =
-    await _userManager.UpdateSecurityStampAsync(user);
+        var updateResult = await _userManager.UpdateAsync(user);
 
-        if (!securityStampResult.Succeeded)
+        if (!updateResult.Succeeded)
         {
-            return false;
+            throw new InvalidOperationException(
+                FormatErrors(updateResult.Errors));
         }
 
-        var updateResult =
-            await _userManager.UpdateAsync(user);
+        var stampResult =
+            await _userManager.UpdateSecurityStampAsync(user);
 
-        return updateResult.Succeeded;
+        if (!stampResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatErrors(stampResult.Errors));
+        }
+
+        return true;
     }
 
     public async Task<UserDto?> CreateAsync(
         string fullName,
         string email,
         string password,
-        string roleName,
+        IReadOnlyCollection<string> roleNames,
         CancellationToken cancellationToken = default)
     {
         fullName = fullName.Trim();
         email = email.Trim();
-        roleName = roleName.Trim();
 
         if (string.IsNullOrWhiteSpace(fullName) ||
             string.IsNullOrWhiteSpace(email) ||
-            string.IsNullOrWhiteSpace(password) ||
-            string.IsNullOrWhiteSpace(roleName))
+            string.IsNullOrWhiteSpace(password))
         {
             return null;
         }
 
-        var roleExists =
-            await _roleManager.RoleExistsAsync(
-                roleName);
+        var targetRoles = NormalizeRoles(roleNames);
 
-        if (!roleExists)
+        if (targetRoles.Count == 0)
         {
             throw new InvalidOperationException(
-                $"Role '{roleName}' does not exist.");
+                "At least one role must be selected.");
         }
 
-        var existingUser =
-            await _userManager.FindByEmailAsync(email);
+        await EnsureRolesExistAsync(targetRoles);
+
+        var existingUser = await _userManager.FindByEmailAsync(email);
 
         if (existingUser is not null)
         {
@@ -293,49 +237,34 @@ public class UserRepository : IUserRepository
                 "A user with this email already exists.");
         }
 
-        var user =
-            new ApplicationUser
-            {
-                UserName = email,
-                Email = email,
-                FullName = fullName,
-                IsActive = true
-            };
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            FullName = fullName,
+            IsActive = true
+        };
 
-        var createResult =
-            await _userManager.CreateAsync(
-                user,
-                password);
+        var createResult = await _userManager.CreateAsync(
+            user,
+            password);
 
         if (!createResult.Succeeded)
         {
-            var errors =
-                string.Join(
-                    "; ",
-                    createResult.Errors.Select(
-                        x => x.Description));
-
             throw new InvalidOperationException(
-                $"Failed to create user: {errors}");
+                $"Failed to create user: {FormatErrors(createResult.Errors)}");
         }
 
-        var roleResult =
-            await _userManager.AddToRoleAsync(
-                user,
-                roleName);
+        var roleResult = await _userManager.AddToRolesAsync(
+            user,
+            targetRoles);
 
         if (!roleResult.Succeeded)
         {
             await _userManager.DeleteAsync(user);
 
-            var errors =
-                string.Join(
-                    "; ",
-                    roleResult.Errors.Select(
-                        x => x.Description));
-
             throw new InvalidOperationException(
-                $"Failed to assign role '{roleName}': {errors}");
+                $"Failed to assign roles: {FormatErrors(roleResult.Errors)}");
         }
 
         return new UserDto
@@ -344,7 +273,53 @@ public class UserRepository : IUserRepository
             FullName = user.FullName,
             Email = user.Email,
             IsActive = user.IsActive,
-            RoleName = roleName
+            RoleNames = targetRoles
         };
+    }
+
+    private async Task<UserDto> MapUserAsync(
+        ApplicationUser user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new UserDto
+        {
+            Id = user.Id,
+            FullName = user.FullName,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            RoleNames = roles.ToArray()
+        };
+    }
+
+    private async Task EnsureRolesExistAsync(
+        IReadOnlyCollection<string> roleNames)
+    {
+        foreach (var roleName in roleNames)
+        {
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                throw new InvalidOperationException(
+                    $"Role '{roleName}' does not exist.");
+            }
+        }
+    }
+
+    private static List<string> NormalizeRoles(
+        IEnumerable<string>? roleNames)
+    {
+        return (roleNames ?? Array.Empty<string>())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private static string FormatErrors(
+        IEnumerable<IdentityError> errors)
+    {
+        return string.Join(
+            "; ",
+            errors.Select(x => x.Description));
     }
 }

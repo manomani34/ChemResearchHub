@@ -1,6 +1,8 @@
-﻿using ChemResearchHub.Application.Users.Interfaces;
+﻿
+using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChemResearchHub.Web.Controllers;
@@ -8,42 +10,34 @@ namespace ChemResearchHub.Web.Controllers;
 [Authorize(Roles = "Admin")]
 public class UsersController : Controller
 {
-    private static readonly string[] AvailableRoles =
-    {
-        "Researcher",
-        "Reviewer",
-        "Admin"
-    };
-
     private readonly IUserService _userService;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public UsersController(
-        IUserService userService)
+        IUserService userService,
+        RoleManager<IdentityRole> roleManager)
     {
         _userService = userService;
+        _roleManager = roleManager;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index(
         CancellationToken cancellationToken)
     {
-        var users =
-            await _userService.GetAllAsync(
-                cancellationToken);
-
+        var users = await _userService.GetAllAsync(cancellationToken);
         return View(users);
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        ViewBag.Roles = AvailableRoles;
+        await LoadRolesAsync();
 
-        return View(
-            new CreateUserViewModel
-            {
-                RoleName = "Researcher"
-            });
+        return View(new CreateUserViewModel
+        {
+            RoleNames = new List<string> { "Researcher" }
+        });
     }
 
     [HttpPost]
@@ -52,16 +46,11 @@ public class UsersController : Controller
         CreateUserViewModel model,
         CancellationToken cancellationToken)
     {
-        ViewBag.Roles = AvailableRoles;
+        await LoadRolesAsync();
 
-        if (!AvailableRoles.Contains(
-                model.RoleName,
-                StringComparer.OrdinalIgnoreCase))
-        {
-            ModelState.AddModelError(
-                nameof(model.RoleName),
-                "The selected role is not valid.");
-        }
+        await ValidateSelectedRolesAsync(
+            model.RoleNames,
+            nameof(model.RoleNames));
 
         if (!ModelState.IsValid)
         {
@@ -70,13 +59,12 @@ public class UsersController : Controller
 
         try
         {
-            var user =
-                await _userService.CreateAsync(
-                    model.FullName,
-                    model.Email,
-                    model.Password,
-                    model.RoleName,
-                    cancellationToken);
+            var user = await _userService.CreateAsync(
+                model.FullName,
+                model.Email,
+                model.Password,
+                model.RoleNames,
+                cancellationToken);
 
             if (user is null)
             {
@@ -87,15 +75,11 @@ public class UsersController : Controller
                 return View(model);
             }
 
-            return RedirectToAction(
-                nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
         catch (InvalidOperationException ex)
         {
-            ModelState.AddModelError(
-                string.Empty,
-                ex.Message);
-
+            ModelState.AddModelError(string.Empty, ex.Message);
             return View(model);
         }
     }
@@ -105,30 +89,25 @@ public class UsersController : Controller
         string id,
         CancellationToken cancellationToken)
     {
-        var user =
-            await _userService.GetByIdAsync(
-                id,
-                cancellationToken);
+        var user = await _userService.GetByIdAsync(
+            id,
+            cancellationToken);
 
         if (user is null)
         {
             return NotFound();
         }
 
-        ViewBag.Roles = AvailableRoles;
+        await LoadRolesAsync();
 
-        return View(
-            new EditUserViewModel
-            {
-                Id = user.Id,
-                FullName = user.FullName,
-                Email = user.Email,
-                RoleName = string.IsNullOrWhiteSpace(
-                    user.RoleName)
-                    ? "Researcher"
-                    : user.RoleName,
-                IsActive = user.IsActive
-            });
+        return View(new EditUserViewModel
+        {
+            Id = user.Id,
+            FullName = user.FullName,
+            Email = user.Email,
+            RoleNames = user.RoleNames.ToList(),
+            IsActive = user.IsActive
+        });
     }
 
     [HttpPost]
@@ -137,16 +116,11 @@ public class UsersController : Controller
         EditUserViewModel model,
         CancellationToken cancellationToken)
     {
-        ViewBag.Roles = AvailableRoles;
+        await LoadRolesAsync();
 
-        if (!AvailableRoles.Contains(
-                model.RoleName,
-                StringComparer.OrdinalIgnoreCase))
-        {
-            ModelState.AddModelError(
-                nameof(model.RoleName),
-                "The selected role is not valid.");
-        }
+        await ValidateSelectedRolesAsync(
+            model.RoleNames,
+            nameof(model.RoleNames));
 
         if (!ModelState.IsValid)
         {
@@ -155,30 +129,71 @@ public class UsersController : Controller
 
         try
         {
-            var updated =
-                await _userService.UpdateAsync(
-                    model.Id,
-                    model.FullName,
-                    model.Email,
-                    model.RoleName,
-                    model.IsActive,
-                    cancellationToken);
+            var updated = await _userService.UpdateAsync(
+                model.Id,
+                model.FullName,
+                model.Email,
+                model.RoleNames,
+                model.IsActive,
+                cancellationToken);
 
             if (!updated)
             {
                 return NotFound();
             }
 
-            return RedirectToAction(
-                nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
         catch (InvalidOperationException ex)
         {
-            ModelState.AddModelError(
-                string.Empty,
-                ex.Message);
-
+            ModelState.AddModelError(string.Empty, ex.Message);
             return View(model);
         }
     }
+
+    private async Task LoadRolesAsync()
+    {
+        ViewBag.Roles = _roleManager.Roles
+            .OrderBy(x => x.Name)
+            .Select(x => x.Name!)
+            .ToList();
+    }
+
+    private async Task ValidateSelectedRolesAsync(
+        IEnumerable<string>? selectedRoles,
+        string modelStateKey)
+    {
+        var roles = (selectedRoles ?? Array.Empty<string>())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (roles.Count == 0)
+        {
+            ModelState.AddModelError(
+                modelStateKey,
+                "Please select at least one role.");
+
+            return;
+        }
+
+        var availableRoles = _roleManager.Roles
+            .Select(x => x.Name!)
+            .ToList();
+
+        foreach (var role in roles)
+        {
+            if (!availableRoles.Contains(
+                    role,
+                    StringComparer.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(
+                    modelStateKey,
+                    $"The selected role '{role}' is not valid.");
+            }
+        }
+    }
 }
+
+

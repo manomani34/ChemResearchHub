@@ -1,4 +1,5 @@
-﻿@model IReadOnlyList<ChemResearchHub.Application.Users.Dtos.UserDto>
+﻿
+@model IReadOnlyList<ChemResearchHub.Application.Users.Dtos.UserDto>
 
 @{
     ViewData["Title"] = "Team Members";
@@ -7,7 +8,6 @@
 <div class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <div>
             <div class="text-muted mb-1">
                 Team Management
@@ -22,103 +22,82 @@
             </p>
         </div>
 
-        <a asp-action="Create"
-           class="btn btn-primary">
+        <a asp-action="Create" class="btn btn-primary">
             Add User
         </a>
-
     </div>
 
     @if (Model.Count == 0)
     {
         <div class="card shadow-sm">
-
             <div class="card-body text-center py-5">
-
-                <h5 class="mb-2">
-                    No users
-                </h5>
+                <h5 class="mb-2">No users</h5>
 
                 <p class="text-muted mb-0">
                     There are currently no team members.
                 </p>
-
             </div>
-
         </div>
     }
     else
     {
         <div class="card shadow-sm">
-
             <div class="table-responsive">
-
                 <table class="table table-hover align-middle mb-0">
 
                     <thead class="table-light">
-
                         <tr>
-
-                            <th>
-                                Full Name
-                            </th>
-
-                            <th>
-                                Email
-                            </th>
-
-                            <th>
-                                Role
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th class="text-end">
-                                Actions
-                            </th>
-
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
                         </tr>
-
                     </thead>
 
                     <tbody>
-
                         @foreach (var user in Model)
                         {
                             <tr>
-
                                 <td>
                                     <strong>
                                         @(string.IsNullOrWhiteSpace(user.FullName)
-                                                                        ? "-"
-                                                                        : user.FullName)
-                            </strong>
-                        </td>
+                                            ? "-"
+                                            : user.FullName)
+                                    </strong>
+                                </td>
 
                                 <td>
                                     @user.Email
                                 </td>
 
                                 <td>
-                            @if (user.RoleName == "Admin")
+                                    @if (user.RoleNames != null && user.RoleNames.Count > 0)
                                     {
-                                        <span class="badge bg-danger">
-                                            Admin
-                                        </span>
-                                    }
-                                    else if (user.RoleName == "Reviewer")
-                                    {
-                                        <span class="badge bg-warning text-dark">
-                                            Reviewer
-                                        </span>
+                                        foreach (var role in user.RoleNames)
+                                        {
+                                            var badgeClass = role.Equals(
+                                                "Admin",
+                                                StringComparison.OrdinalIgnoreCase)
+                                                ? "bg-danger"
+                                                : role.Equals(
+                                                    "Reviewer",
+                                                    StringComparison.OrdinalIgnoreCase)
+                                                    ? "bg-warning text-dark"
+                                                    : role.Equals(
+                                                        "Researcher",
+                                                        StringComparison.OrdinalIgnoreCase)
+                                                        ? "bg-secondary"
+                                                        : "bg-info text-dark";
+
+                                            <span class="badge @badgeClass me-1 mb-1">
+                                                @role
+                                            </span>
+                                        }
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">
-                                            Researcher
-                                        </span>
+                                        <span class="text-muted">No role assigned</span>
                                     }
                                 </td>
 
@@ -138,24 +117,18 @@
                                 </td>
 
                                 <td class="text-end">
-
                                     <a asp-action="Edit"
                                        asp-route-id="@user.Id"
                                        class="btn btn-sm btn-outline-primary">
                                         Edit
                                     </a>
-
                                 </td>
-
                             </tr>
                         }
-
                     </tbody>
 
                 </table>
-
             </div>
-
         </div>
     }
 

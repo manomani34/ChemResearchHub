@@ -440,7 +440,7 @@ public class ReportsController : Controller
 
                     Email = user.Email ?? string.Empty,
 
-                    RoleName = user.RoleName ?? string.Empty,
+                    RoleName = string.Join(", ", user.RoleNames),
 
                     IsActive = user.IsActive,
 

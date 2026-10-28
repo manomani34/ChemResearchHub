@@ -39,11 +39,13 @@ public class HomeController : Controller
             await _userManager.GetRolesAsync(
                 currentUser);
 
-        var roleName =
-            roles.FirstOrDefault()
-            ?? "User";
+        var roleName = roles.Count == 0
+    ? "User"
+    : string.Join(", ", roles);
 
-        if (string.Equals(roleName, "Admin", StringComparison.OrdinalIgnoreCase))
+        if (roles.Contains(
+                "Admin",
+                StringComparer.OrdinalIgnoreCase))
         {
             return RedirectToAction(
                 "Index",
