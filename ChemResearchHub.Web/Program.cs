@@ -54,6 +54,8 @@ using ChemResearchHub.Infrastructure.Persistence;
 using ChemResearchHub.Infrastructure.Persistence.Repositories;
 using ChemResearchHub.Infrastructure.Repositories;
 using ChemResearchHub.Infrastructure.Storage;
+using ChemResearchHub.Web.Authorization.Permissions;
+using ChemResearchHub.Web.Authorization.Services;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -185,6 +187,11 @@ builder.Services.AddScoped<IResearchReviewService, ResearchReviewService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IWorkItemAssignmentRepository, WorkItemAssignmentRepository>();
+
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 
 
 builder.Services.AddScoped<IAttachmentStorage>(sp =>

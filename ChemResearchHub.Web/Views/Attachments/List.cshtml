@@ -1,4 +1,4 @@
-﻿@model ChemResearchHub.Web.Models.Attachments.AttachmentsListViewModel
+@model ChemResearchHub.Web.Models.Attachments.AttachmentsListViewModel
 
 @{
     ViewData["Title"] = "پیوست‌ها";
@@ -71,7 +71,7 @@
                 فایل‌ها از داخل بخش کارهای پژوهشی به سامانه اضافه می‌شوند.
             </p>
 
-            <a asp-controller="WorkItems"
+            <a asp-area="Research" asp-controller="WorkItems"
                asp-action="Index"
                class="crh-btn crh-btn-primary">
                 مشاهده کارهای پژوهشی

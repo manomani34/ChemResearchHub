@@ -1,4 +1,4 @@
-﻿@model ChemResearchHub.Web.Models.Attachments.CreateAttachmentViewModel
+@model ChemResearchHub.Web.Models.Attachments.CreateAttachmentViewModel
 
 @{
     ViewData["Title"] = "Add Attachment";
@@ -85,7 +85,7 @@
                         Upload Attachment
                     </button>
 
-                    <a asp-controller="WorkItems"
+                    <a asp-area="Research" asp-controller="WorkItems"
                        asp-action="Details"
                        asp-route-id="@Model.WorkItemId"
                        asp-route-projectId="@Model.ProjectId"

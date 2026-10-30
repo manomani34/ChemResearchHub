@@ -1,0 +1,104 @@
+﻿@model ChemResearchHub.Web.Areas.Admin.Models.Roles.ManageRolePermissionsViewModel
+
+@{
+    ViewData["Title"] = "Manage Role Permissions";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Manage Role Permissions</h2>
+            <p class="text-muted mb-0">
+                Role: <strong>@Model.RoleName</strong>
+            </p>
+        </div>
+
+        <a asp-area="Admin"
+           asp-controller="Roles"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Back to Roles
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @successMessage
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @errorMessage
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-area="Admin"
+          asp-controller="Roles"
+          asp-action="Permissions"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="RoleId" />
+
+        @foreach (var group in Model.Groups)
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">@group.Name</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var permission in group.Permissions)
+                        {
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="SelectedPermissions"
+                                           value="@permission.Name"
+                                           id="permission_@permission.Name"
+                                           checked="@permission.IsSelected" />
+
+                                    <label class="form-check-label"
+                                           for="permission_@permission.Name">
+                                        <strong>@permission.DisplayName</strong>
+                                    </label>
+                                </div>
+
+                                <small class="text-muted ms-4">
+                                    @permission.Description
+                                </small>
+
+                                <div class="small text-secondary ms-4">
+                                    @permission.Name
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="d-flex justify-content-end gap-2 mb-4">
+            <a asp-area="Admin"
+               asp-controller="Roles"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Save Permissions
+            </button>
+        </div>
+    </form>
+</div>

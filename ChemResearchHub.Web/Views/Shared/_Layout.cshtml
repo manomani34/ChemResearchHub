@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -97,8 +97,7 @@
 
                     </a>
 
-                    <a asp-area=""
-                       asp-controller="Projects"
+                    <a asp-area="Research" asp-controller="Projects"
                        asp-action="Index"
                        class="sidebar-link">
 
@@ -112,7 +111,7 @@
 
                     </a>
 
-                    <a asp-area=""
+                    <a asp-area="Research"
                        asp-controller="Boards"
                        asp-action="List"
                        class="sidebar-link">
@@ -132,7 +131,7 @@
                         پژوهش
                     </div>
 
-                    <a asp-area=""
+                    <a asp-area="Research"
                        asp-controller="WorkItems"
                        asp-action="Index"
                        class="sidebar-link">
@@ -147,8 +146,7 @@
 
                     </a>
 
-                    <a asp-area=""
-                       asp-controller="Experiments"
+                    <a asp-area="Research" asp-controller="Experiments"
                        asp-action="List"
                        class="sidebar-link">
 
@@ -162,8 +160,7 @@
 
                     </a>
 
-                    <a asp-area=""
-                       asp-controller="Samples"
+                    <a asp-area="Research" asp-controller="Samples"
                        asp-action="List"
                        class="sidebar-link">
 
@@ -177,9 +174,9 @@
 
                     </a>
 
-                    <a asp-area=""
-                       asp-controller="Results"
-                       asp-action="List"
+                    <a asp-area="Research"
+   asp-controller="Results"
+   asp-action="List"
                        class="sidebar-link">
 
                         <span class="sidebar-link-icon">
@@ -207,10 +204,10 @@
 
                     </a>
 
-                    <a asp-area=""
-                       asp-controller="DecisionLogs"
-                       asp-action="List"
-                       class="sidebar-link">
+                    <a asp-area="Research"
+   asp-controller="DecisionLogs"
+   asp-action="List"
+   class="sidebar-link">
 
                         <span class="sidebar-link-icon">
                             📋
@@ -267,9 +264,9 @@
 
     <!-- Users -->
 
-    <a asp-area=""
-       asp-controller="Users"
-       asp-action="Index"
+    <a asp-area="Admin"
+   asp-controller="Users"
+   asp-action="Index"
        class="sidebar-link">
 
         <span class="sidebar-link-icon">
@@ -277,10 +274,24 @@
         </span>
 
         <span>
-            مدیریت اعضای تیم
+            مدیریت کاربران
         </span>
 
     </a>
+    <a asp-area="Admin"
+   asp-controller="Roles"
+   asp-action="Index"
+   class="sidebar-link">
+
+    <span class="sidebar-link-icon">
+        🛡️
+    </span>
+
+    <span>
+        مدیریت نقش‌ها
+    </span>
+
+</a>
 
 
     <!-- Reviews -->
@@ -704,3 +715,7 @@
 </body>
 
 </html>
+
+
+
+

@@ -1,0 +1,293 @@
+@model ChemResearchHub.Web.Models.DecisionLogs.DecisionLogsListViewModel
+
+@{
+    ViewData["Title"] = "تصمیمات";
+}
+
+<style>
+    .decision-reference-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .decision-copy-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 11px;
+    }
+
+        .decision-copy-button:hover {
+            background: #e2e8f0;
+            color: #4f46e5;
+        }
+
+        .decision-copy-button.copied {
+            color: #16a34a;
+            background: #dcfce7;
+        }
+</style>
+
+<div class="decision-logs-page">
+
+    <div class="decision-logs-header">
+
+        <div>
+            <h1>تصمیمات پژوهشی</h1>
+
+            <p>
+                سابقه تصمیمات علمی، اعتبارسنجی، بازبینی و تأیید پروژه‌ها
+            </p>
+        </div>
+
+        <div class="decision-logs-count">
+            @Model.Items.Count تصمیم
+        </div>
+
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="decision-logs-empty">
+
+            <div class="decision-logs-empty-icon">
+                📋
+            </div>
+
+            <h3>
+                هنوز تصمیمی ثبت نشده است
+            </h3>
+
+            <p>
+                تصمیمات پژوهشی از داخل بخش کارهای پژوهشی ثبت می‌شوند.
+            </p>
+
+            <a asp-area="Research" asp-controller="WorkItems"
+               asp-action="Index"
+               class="crh-btn crh-btn-primary">
+                مشاهده کارهای پژوهشی
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="decision-logs-table-card">
+
+            <div class="table-responsive">
+
+                <table class="table crh-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>کار پژوهشی</th>
+                            <th>نوع تصمیم</th>
+                            <th>تصمیم</th>
+                            <th>دلیل / منطق</th>
+                            <th>شواهد</th>
+                            <th>ثبت‌کننده</th>
+                            <th>تاریخ</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <div class="decision-reference-copy">
+                                        <span class="crh-id">
+                                            @item.ReferenceCode
+                                        </span>
+
+                                        <button type="button"
+                                                class="decision-copy-button"
+                                                data-reference="@item.ReferenceCode"
+                                                title="کپی شناسه"
+                                                aria-label="کپی شناسه @item.ReferenceCode">
+                                            📋
+                                        </button>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="crh-primary-text">
+                                        @item.WorkItemTitle
+                                    </div>
+
+                                    <div class="crh-secondary-text">
+                                        کار #@item.WorkItemId
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @{
+                                        var typeClass =
+                                        item.DecisionType?.ToLowerInvariant() switch
+                                        {
+                                            "scientific" => "decision-type-scientific",
+                                            "validation" => "decision-type-validation",
+                                            "review" => "decision-type-review",
+                                            "approval" => "decision-type-approval",
+                                            "rejection" => "decision-type-rejection",
+                                            _ => "decision-type-other"
+                                        };
+
+                                        var typeText =
+                                        item.DecisionType?.ToLowerInvariant() switch
+                                        {
+                                            "scientific" => "علمی",
+                                            "validation" => "اعتبارسنجی",
+                                            "review" => "بازبینی",
+                                            "approval" => "تأیید",
+                                            "rejection" => "رد",
+                                            _ => "سایر"
+                                        };
+                                    }
+
+                                    <span class="decision-type @typeClass">
+                                        @typeText
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="decision-main-text">
+                                        @item.Decision
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Rationale))
+                                    {
+                                        <div class="decision-text-preview"
+                                             title="@item.Rationale">
+                                            @item.Rationale
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Evidence))
+                                    {
+                                        <div class="decision-text-preview"
+                                             title="@item.Evidence">
+                                            @item.Evidence
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.CreatedByUserId))
+                                    {
+                                        <span class="decision-user-id">
+                                            @item.CreatedByUserId
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="crh-muted">
+                                            —
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                                </td>
+
+                                <td>
+                                    <a asp-area="Research" 
+                                    asp-controller="DecisionLogs"
+                                       asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       style="
+                                        display:inline-block;
+                                        background:#2563eb;
+                                        color:#fff;
+                                        text-decoration:none;
+                                        border-radius:7px;
+                                        padding:7px 12px;
+                                        font-size:13px;">
+                                         مشاهده جزئیات
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            document.querySelectorAll(".decision-copy-button")
+                .forEach(function(button) {
+
+                    button.addEventListener("click", async function(event) {
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const referenceCode = button.dataset.reference;
+
+                        if (!referenceCode)
+                            return;
+
+                        try {
+                            await navigator.clipboard.writeText(referenceCode);
+
+                            const originalText = button.textContent;
+
+                            button.textContent = "✓";
+                            button.classList.add("copied");
+                            button.title = "کپی شد";
+
+                            setTimeout(function() {
+                                button.textContent = originalText;
+                                button.classList.remove("copied");
+                                button.title = "کپی شناسه";
+                            }, 1200);
+
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    });
+                });
+        });
+    </script>
+}

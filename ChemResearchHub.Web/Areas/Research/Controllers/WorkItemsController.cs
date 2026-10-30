@@ -1,0 +1,884 @@
+using ChemResearchHub.Application.Attachments.Interfaces;
+using ChemResearchHub.Application.Boards.Interfaces;
+using ChemResearchHub.Application.DecisionLogs.Interfaces;
+using ChemResearchHub.Application.Experiments.Interfaces;
+using ChemResearchHub.Application.Projects.Interfaces;
+using ChemResearchHub.Application.Results.Dtos;
+using ChemResearchHub.Application.Results.Interfaces;
+using ChemResearchHub.Application.Samples.Dtos;
+using ChemResearchHub.Application.Samples.Interfaces;
+using ChemResearchHub.Application.Users.Interfaces;
+using ChemResearchHub.Application.WorkItems.Interfaces;
+using ChemResearchHub.Application.WorkItemTransitions.Interfaces;
+using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
+using System.Security.Claims;
+using ChemResearchHub.Web.Models.WorkItems;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+namespace ChemResearchHub.Web.Areas.Research.Controllers;
+
+[Area("Research")]
+[Authorize]
+public class WorkItemsController : Controller
+{
+    private readonly IWorkItemService _workItemService;
+    private readonly IBoardService _boardService;
+    private readonly IProjectService _projectService;
+    private readonly IUserService _userService;
+    private readonly IExperimentService _experimentService;
+    private readonly ISampleService _sampleService;
+    private readonly IResultService _resultService;
+    private readonly IAttachmentService _attachmentService;
+    private readonly IDecisionLogService _decisionLogService;
+    private readonly IWorkItemTransitionService _workItemTransitionService;
+    private readonly IWorkItemFlowMetricsService _workItemFlowMetricsService;
+    private readonly IWorkItemFlowSummaryService _workItemFlowSummaryService;
+    private readonly IWorkItemBlockService _workItemBlockService;
+
+    public WorkItemsController(
+        IWorkItemService workItemService,
+        IBoardService boardService,
+        IProjectService projectService,
+        IUserService userService,
+        IExperimentService experimentService,
+        ISampleService sampleService,
+        IResultService resultService,
+        IAttachmentService attachmentService,
+        IDecisionLogService decisionLogService,
+        IWorkItemTransitionService workItemTransitionService,
+        IWorkItemFlowMetricsService workItemFlowMetricsService,
+        IWorkItemFlowSummaryService workItemFlowSummaryService,
+        IWorkItemBlockService workItemBlockService)
+    {
+        _workItemService = workItemService;
+        _boardService = boardService;
+        _projectService = projectService;
+        _userService = userService;
+        _experimentService = experimentService;
+        _sampleService = sampleService;
+        _resultService = resultService;
+        _attachmentService = attachmentService;
+        _decisionLogService = decisionLogService;
+        _workItemTransitionService = workItemTransitionService;
+        _workItemFlowMetricsService = workItemFlowMetricsService;
+        _workItemFlowSummaryService = workItemFlowSummaryService;
+        _workItemBlockService = workItemBlockService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Index(
+        string? search,
+        string status = "all",
+        string? assignedToUserId = null,
+        CancellationToken cancellationToken = default)
+    {
+        status =
+            string.IsNullOrWhiteSpace(status)
+                ? "all"
+                : status.Trim().ToLowerInvariant();
+
+        bool? isCompleted =
+            status switch
+            {
+                "open" => false,
+                "completed" => true,
+                _ => null
+            };
+
+        var workItems =
+            await _workItemService.GetAllAsync(
+                search,
+                isCompleted,
+                assignedToUserId,
+                cancellationToken);
+
+        var users =
+            await _userService.GetActiveUsersAsync(
+                cancellationToken);
+
+        var items =
+            workItems
+                .Select(
+                    x =>
+                        new WorkItemListItemViewModel
+                        {
+                            Id = x.Id,
+                            ProjectId = x.ProjectId,
+                            BoardColumnId = x.BoardColumnId,
+                            Title = x.Title,
+                            Description = x.Description,
+                            Type = x.Type.ToString(),
+                            Priority = x.Priority,
+                            DueDate = x.DueDate,
+                            IsCompleted = x.IsCompleted,
+                            AssignedToUserName =
+                                x.AssignedToUserName
+                        })
+                .ToList();
+
+        var assignees =
+            users
+                .OrderBy(x => x.FullName)
+                .Select(
+                    x =>
+                        new WorkItemAssigneeViewModel
+                        {
+                            Id = x.Id,
+                            FullName =
+                                string.IsNullOrWhiteSpace(x.FullName)
+                                    ? x.Email ?? x.Id
+                                    : x.FullName
+                        })
+                .ToList();
+
+        var model =
+            new WorkItemsIndexViewModel
+            {
+                Search = search,
+                Status = status,
+                AssignedToUserId = assignedToUserId,
+                Items = items,
+                Assignees = assignees
+            };
+
+        return View(model);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Create(
+        int projectId,
+        int boardId,
+        int boardColumnId,
+        CancellationToken cancellationToken)
+    {
+        var project =
+            await _projectService.GetByIdAsync(
+                projectId,
+                cancellationToken);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+
+        var board =
+            await _boardService.GetByIdAsync(
+                boardId,
+                cancellationToken);
+
+        if (board is null ||
+            board.ProjectId != projectId)
+        {
+            return NotFound();
+        }
+
+        var column =
+            board.Columns.FirstOrDefault(
+                x => x.Id == boardColumnId);
+
+        if (column is null)
+        {
+            return NotFound();
+        }
+
+        var users =
+            await _userService.GetActiveUsersAsync(
+                cancellationToken);
+
+        ViewBag.Project = project;
+        ViewBag.Board = board;
+        ViewBag.Column = column;
+        ViewBag.Users = users;
+
+        return View(
+            new CreateWorkItemViewModel
+            {
+                ProjectId = projectId,
+                BoardId = boardId,
+                BoardColumnId = boardColumnId
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Create(
+        CreateWorkItemViewModel model,
+        CancellationToken cancellationToken)
+    {
+        var project =
+            await _projectService.GetByIdAsync(
+                model.ProjectId,
+                cancellationToken);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+
+        var board =
+            await _boardService.GetByIdAsync(
+                model.BoardId,
+                cancellationToken);
+
+        if (board is null ||
+            board.ProjectId != model.ProjectId)
+        {
+            return NotFound();
+        }
+
+        var column =
+            board.Columns.FirstOrDefault(
+                x => x.Id == model.BoardColumnId);
+
+        if (column is null)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Project = project;
+            ViewBag.Board = board;
+            ViewBag.Column = column;
+            ViewBag.Users =
+                await _userService.GetActiveUsersAsync(
+                    cancellationToken);
+
+            return View(model);
+        }
+
+        await _workItemService.CreateAsync(
+            model.ProjectId,
+            model.BoardColumnId,
+            model.Title,
+            model.Description,
+            model.Type,
+            model.Priority,
+            model.DueDate,
+            model.AssignedToUserId,
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier),
+            cancellationToken,
+            assignedUserIds: model.AssignedUserIds);
+
+        return RedirectToAction(
+            "Index",
+            "Boards",
+            new
+            {
+                area = "Research",
+                projectId = model.ProjectId,
+                boardId = model.BoardId
+            });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
+    {
+        var workItem =
+            await _workItemService.GetByIdAsync(
+                id,
+                cancellationToken);
+
+        if (workItem is null)
+        {
+            return NotFound();
+        }
+
+        var attachments =
+            await _attachmentService.GetByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
+
+        if (workItem.ProjectId != projectId)
+        {
+            return NotFound();
+        }
+
+        var board =
+            await _boardService.GetByIdAsync(
+                boardId,
+                cancellationToken);
+
+        if (board is null ||
+            board.ProjectId != projectId)
+        {
+            return NotFound();
+        }
+
+        var column =
+            board.Columns.FirstOrDefault(
+                x => x.Id == workItem.BoardColumnId);
+
+        if (column is null)
+        {
+            return NotFound();
+        }
+
+        var experiments =
+            await _experimentService.GetByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var samplesByExperimentId =
+            new Dictionary<int, IReadOnlyList<SampleDto>>();
+
+        foreach (var experiment in experiments)
+        {
+            var samples =
+                await _sampleService.GetByExperimentIdAsync(
+                    experiment.Id,
+                    cancellationToken);
+
+            samplesByExperimentId[experiment.Id] = samples;
+        }
+
+        var resultsBySampleId =
+            new Dictionary<int, IReadOnlyList<ResultDto>>();
+
+        foreach (var experiment in experiments)
+        {
+            var samples =
+                samplesByExperimentId.TryGetValue(
+                    experiment.Id,
+                    out var experimentSamples)
+                    ? experimentSamples
+                    : Array.Empty<SampleDto>();
+
+            foreach (var sample in samples)
+            {
+                var results =
+                    await _resultService.GetBySampleIdAsync(
+                        sample.Id,
+                        cancellationToken);
+
+                resultsBySampleId[sample.Id] = results;
+            }
+        }
+
+        var decisionLogs =
+            await _decisionLogService.GetByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var transitions =
+            await _workItemTransitionService.GetByWorkItemIdAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var flowMetrics =
+            await _workItemFlowMetricsService.CalculateAsync(
+                workItem.Id,
+                workItem.IsCompleted,
+                cancellationToken);
+
+        var currentBlock =
+            await _workItemBlockService.GetCurrentAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var blockHistory =
+            await _workItemBlockService.GetHistoryAsync(
+                workItem.Id,
+                cancellationToken);
+
+        var model =
+            new WorkItemDetailsViewModel
+            {
+                Id = workItem.Id,
+                ProjectId = workItem.ProjectId,
+                BoardId = board.Id,
+                BoardColumnId = column.Id,
+                ColumnName = column.Name,
+                Title = workItem.Title,
+                Description = workItem.Description,
+                Type = workItem.Type,
+                Priority = workItem.Priority,
+                DueDate = workItem.DueDate,
+                IsCompleted = workItem.IsCompleted,
+                SortOrder = workItem.SortOrder,
+                AssignedToUserId = workItem.AssignedToUserId,
+                AssignedToUserName = workItem.AssignedToUserName,
+
+                Experiments = experiments,
+                SamplesByExperimentId = samplesByExperimentId,
+                ResultsBySampleId = resultsBySampleId,
+
+                Attachments = attachments,
+
+                DecisionLogs = decisionLogs,
+                Transitions = transitions,
+                FlowMetrics = flowMetrics,
+                CurrentBlock = currentBlock,
+                BlockHistory = blockHistory,
+            };
+
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> FlowMetrics(
+        int boardId,
+        DateTime? from,
+        DateTime? to,
+        CancellationToken cancellationToken = default)
+    {
+        if (boardId <= 0)
+        {
+            return BadRequest();
+        }
+
+        var periodEndUtc =
+            to.HasValue
+                ? DateTime.SpecifyKind(
+                    to.Value.Date.AddDays(1),
+                    DateTimeKind.Utc)
+                : DateTime.UtcNow;
+
+        var periodStartUtc =
+            from.HasValue
+                ? DateTime.SpecifyKind(
+                    from.Value.Date,
+                    DateTimeKind.Utc)
+                : periodEndUtc.Date.AddDays(-30);
+
+        if (periodEndUtc <= periodStartUtc)
+        {
+            periodStartUtc =
+                periodEndUtc.AddDays(-30);
+        }
+
+        var board =
+            await _boardService.GetByIdAsync(
+                boardId,
+                cancellationToken);
+
+        if (board is null)
+        {
+            return NotFound();
+        }
+
+        var summary =
+            await _workItemFlowSummaryService.CalculateAsync(
+                boardId,
+                periodStartUtc,
+                periodEndUtc,
+                cancellationToken);
+
+        ViewBag.BoardName = board.Name;
+
+        return View(summary);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Block(
+        int id,
+        int boardId,
+        int projectId,
+        string reason,
+        CancellationToken cancellationToken)
+    {
+        var blocked =
+            await _workItemBlockService.BlockAsync(
+                id,
+                reason,
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
+                cancellationToken);
+
+        if (!blocked)
+        {
+            TempData["ErrorMessage"] =
+                "This work item is already blocked or could not be blocked.";
+        }
+        else
+        {
+            TempData["SuccessMessage"] =
+                "Work item blocked successfully.";
+        }
+
+        return RedirectToAction(
+            "Details",
+            new
+            {
+                id,
+                boardId,
+                projectId
+            });
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin,Researcher")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Unblock(
+        int id,
+        int boardId,
+        int projectId,
+        string? note,
+        CancellationToken cancellationToken)
+    {
+        var unblocked =
+            await _workItemBlockService.UnblockAsync(
+                id,
+                note,
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
+                cancellationToken);
+
+        if (!unblocked)
+        {
+            TempData["ErrorMessage"] =
+                "No active block was found for this work item.";
+        }
+        else
+        {
+            TempData["SuccessMessage"] =
+                "Work item unblocked successfully.";
+        }
+
+        return RedirectToAction(
+            "Details",
+            new
+            {
+                id,
+                boardId,
+                projectId
+            });
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Edit(
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
+    {
+        var workItem =
+            await _workItemService.GetByIdAsync(
+                id,
+                cancellationToken);
+
+        if (workItem is null)
+        {
+            return NotFound();
+        }
+
+        if (workItem.ProjectId != projectId)
+        {
+            return NotFound();
+        }
+
+        var board =
+            await _boardService.GetByIdAsync(
+                boardId,
+                cancellationToken);
+
+        if (board is null ||
+            board.ProjectId != projectId)
+        {
+            return NotFound();
+        }
+
+        var column =
+            board.Columns.FirstOrDefault(
+                x => x.Id == workItem.BoardColumnId);
+
+        if (column is null)
+        {
+            return NotFound();
+        }
+
+        var users =
+            await _userService.GetActiveUsersAsync(
+                cancellationToken);
+
+        ViewBag.Users = users;
+
+        return View(
+            new EditWorkItemViewModel
+            {
+                Id = workItem.Id,
+                ProjectId = workItem.ProjectId,
+                BoardId = board.Id,
+                BoardColumnId = column.Id,
+                Title = workItem.Title,
+                Description = workItem.Description,
+                Type = workItem.Type,
+                Priority = workItem.Priority,
+                DueDate = workItem.DueDate,
+                AssignedToUserId = workItem.AssignedToUserId,
+                AssignedUserIds = workItem.AssignedUserIds.ToList(),
+                IsCompleted = workItem.IsCompleted
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Edit(
+        EditWorkItemViewModel model,
+        CancellationToken cancellationToken)
+    {
+        var project =
+            await _projectService.GetByIdAsync(
+                model.ProjectId,
+                cancellationToken);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+
+        var board =
+            await _boardService.GetByIdAsync(
+                model.BoardId,
+                cancellationToken);
+
+        if (board is null ||
+            board.ProjectId != model.ProjectId)
+        {
+            return NotFound();
+        }
+
+        var workItem =
+            await _workItemService.GetByIdAsync(
+                model.Id,
+                cancellationToken);
+
+        if (workItem is null ||
+            workItem.ProjectId != model.ProjectId)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Users =
+                await _userService.GetActiveUsersAsync(
+                    cancellationToken);
+
+            return View(model);
+        }
+
+        var changedByUserId =
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+        var updated =
+            await _workItemService.UpdateAsync(
+                model.Id,
+                model.Title,
+                model.Description,
+                model.Type,
+                model.Priority,
+                model.DueDate,
+                model.AssignedToUserId,
+                changedByUserId,
+                cancellationToken,
+                assignedUserIds: model.AssignedUserIds);
+
+        if (updated is null)
+        {
+            return NotFound();
+        }
+
+        if (model.IsCompleted != updated.IsCompleted)
+        {
+            if (model.IsCompleted)
+            {
+                await _workItemService.CompleteAsync(
+                    model.Id,
+                    changedByUserId,
+                    cancellationToken);
+            }
+            else
+            {
+                await _workItemService.ReopenAsync(
+                    model.Id,
+                    changedByUserId,
+                    cancellationToken);
+            }
+        }
+
+        return RedirectToAction(
+            "Index",
+            "Boards",
+            new
+            {
+                area = "Research",
+                projectId = model.ProjectId,
+                boardId = model.BoardId
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Move(
+        int id,
+        int boardId,
+        int projectId,
+        int boardColumnId,
+        int sortOrder = 0,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var moved =
+                await _workItemService.MoveAsync(
+                    id,
+                    boardColumnId,
+                    sortOrder,
+                    User.FindFirstValue(
+                        ClaimTypes.NameIdentifier),
+                    cancellationToken);
+
+            if (!moved)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(
+                "Index",
+                "Boards",
+                new
+                {
+                    area = "Research",
+                    projectId,
+                    boardId
+                });
+        }
+        catch (InvalidOperationException ex)
+            when (ex.Message.StartsWith(
+                "WIP limit reached",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["ErrorMessage"] =
+                "این ستون به حداکثر تعداد کارهای مجاز رسیده است.";
+
+            return RedirectToAction(
+                "Index",
+                "Boards",
+                new
+                {
+                    area = "Research",
+                    projectId,
+                    boardId
+                });
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Complete(
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
+    {
+        var changedByUserId =
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+        var completed =
+            await _workItemService.CompleteAsync(
+                id,
+                changedByUserId,
+                cancellationToken);
+
+        if (!completed)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(
+            "Index",
+            "Boards",
+            new
+            {
+                area = "Research",
+                projectId,
+                boardId
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Researcher")]
+    public async Task<IActionResult> Reopen(
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
+    {
+        var changedByUserId =
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+        var reopened =
+            await _workItemService.ReopenAsync(
+                id,
+                changedByUserId,
+                cancellationToken);
+
+        if (!reopened)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(
+            "Index",
+            "Boards",
+            new
+            {
+                area = "Research",
+                projectId,
+                boardId
+            });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(
+        int id,
+        int boardId,
+        int projectId,
+        CancellationToken cancellationToken)
+    {
+        var deleted =
+            await _workItemService.DeleteAsync(
+                id,
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier),
+                cancellationToken);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        TempData["SuccessMessage"] =
+            "Work item deleted successfully.";
+
+        return RedirectToAction(
+            "Index",
+            "Boards",
+            new
+            {
+                area = "Research",
+                projectId,
+                boardId
+            });
+    }
+}

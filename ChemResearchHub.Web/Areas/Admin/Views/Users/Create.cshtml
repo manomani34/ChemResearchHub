@@ -1,0 +1,155 @@
+﻿
+@model ChemResearchHub.Web.Models.Users.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Add Team Member";
+
+    var roles = ViewBag.Roles as IReadOnlyList<string>
+        ?? Array.Empty<string>();
+
+    var selectedRoles = Model.RoleNames ?? new List<string>();
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <div class="text-muted mb-1">
+            Team Management
+        </div>
+
+        <h1 class="h3 mb-1">
+            Add Team Member
+        </h1>
+
+        <p class="text-muted mb-0">
+            Create a new team member account and assign one or more roles.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Create" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label">
+                    </label>
+
+                    <input asp-for="FullName"
+                           class="form-control"
+                           placeholder="For example: Dr. Ahmad Rezaei" />
+
+                    <span asp-validation-for="FullName"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="form-control"
+                           autocomplete="email"
+                           placeholder="researcher@example.com" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label">
+                        </label>
+
+                        <input asp-for="Password"
+                               type="password"
+                               class="form-control"
+                               autocomplete="new-password" />
+
+                        <span asp-validation-for="Password"
+                              class="text-danger">
+                        </span>
+
+                        <div class="form-text">
+                            Follow the password requirements configured
+                            for ChemResearchHub.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ConfirmPassword"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="ConfirmPassword"
+                               type="password"
+                               class="form-control"
+                               autocomplete="new-password" />
+
+                        <span asp-validation-for="ConfirmPassword"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="RoleNames" class="form-label">
+                        Roles
+                    </label>
+
+                    <select asp-for="RoleNames"
+                            class="form-select"
+                            multiple
+                            size="5">
+                        @foreach (var role in roles)
+                        {
+                            <option value="@role"
+                                    selected="@selectedRoles.Contains(
+                                        role,
+                                        StringComparer.OrdinalIgnoreCase)">
+                                @role
+                            </option>
+                        }
+                    </select>
+
+                    <div class="form-text">
+                        Select one or more roles. On Windows, hold Ctrl
+                        while clicking to select multiple roles.
+                    </div>
+
+                    <span asp-validation-for="RoleNames"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        Create User
+                    </button>
+
+                    <a asp-action="Index" asp-area="Admin"
+                       asp-controller="Users"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

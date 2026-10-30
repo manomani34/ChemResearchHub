@@ -1,4 +1,4 @@
-﻿@model ChemResearchHub.Web.Areas.Admin.Models.AdminDashboardViewModel
+@model ChemResearchHub.Web.Areas.Admin.Models.AdminDashboardViewModel
 
 @{
 Layout = "~/Views/Shared/_Layout.cshtml";
@@ -227,8 +227,7 @@ ViewData["Title"] = "داشبورد مدیریت";
         </a>
 
 
-        <a asp-area=""
-           asp-controller="Projects"
+        <a asp-area="Research" asp-controller="Projects"
            asp-action="Index"
            class="quick-action-card">
 
@@ -248,7 +247,7 @@ ViewData["Title"] = "داشبورد مدیریت";
         </a>
 
 
-        <a asp-area=""
+        <a asp-area="Research"
            asp-controller="WorkItems"
            asp-action="Index"
            class="quick-action-card">
@@ -269,9 +268,8 @@ ViewData["Title"] = "داشبورد مدیریت";
         </a>
 
 
-        <a asp-area=""
-           asp-controller="Experiments"
-           asp-action="Index"
+        <a asp-area="Research" asp-controller="Experiments"
+           asp-action="List"
            class="quick-action-card">
 
             <div class="quick-action-icon">
@@ -290,9 +288,8 @@ ViewData["Title"] = "داشبورد مدیریت";
         </a>
 
 
-        <a asp-area=""
-           asp-controller="Samples"
-           asp-action="Index"
+        <a asp-area="Research" asp-controller="Samples"
+           asp-action="List"
            class="quick-action-card">
 
             <div class="quick-action-icon">
@@ -311,10 +308,10 @@ ViewData["Title"] = "داشبورد مدیریت";
         </a>
 
 
-        <a asp-area=""
-           asp-controller="DecisionLogs"
-           asp-action="Index"
-           class="quick-action-card">
+        <a asp-area="Research"
+   asp-controller="DecisionLogs"
+   asp-action="List"
+   class="quick-action-card">
 
             <div class="quick-action-icon">
                 ⚖️
@@ -3058,3 +3055,12 @@ ViewData["Title"] = "داشبورد مدیریت";
     }
 
 </style>
+
+
+
+
+
+
+
+
+
