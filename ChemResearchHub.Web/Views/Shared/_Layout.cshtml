@@ -28,6 +28,24 @@
           <link rel="stylesheet"
           href="~/css/font.css" />
 
+          <style>
+    .work-item-alert-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 21px;
+        height: 21px;
+        padding: 0 6px;
+        margin-right: auto;
+        border-radius: 50px;
+        background: #dc3545;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+    }
+</style>
+
 </head>
 
 <body>
@@ -131,20 +149,27 @@
                         پژوهش
                     </div>
 
-                    <a asp-area="Research"
-                       asp-controller="WorkItems"
-                       asp-action="Index"
-                       class="sidebar-link">
+                   <a asp-area="Research"
+   asp-controller="WorkItems"
+   asp-action="Index"
+   class="sidebar-link"
+   id="workItemsMenuLink">
 
-                        <span class="sidebar-link-icon">
-                            ✅
-                        </span>
+    <span class="sidebar-link-icon">
+        ✅
+    </span>
 
-                        <span>
-                            کارهای پژوهشی
-                        </span>
+    <span>
+        کارهای پژوهشی
+    </span>
 
-                    </a>
+    <span id="workItemAlertBadge"
+          class="work-item-alert-badge"
+          style="display:none;">
+        0
+    </span>
+
+</a>
 
                     <a asp-area="Research" asp-controller="Experiments"
                        asp-action="List"
@@ -520,6 +545,10 @@
 
 </div>
 
+<form id="antiForgeryForm" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
@@ -527,6 +556,112 @@
 
     <script src="~/js/site.js"
             asp-append-version="true"></script>
+
+            <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const badge = document.getElementById("workItemAlertBadge");
+    const menuLink = document.getElementById("workItemsMenuLink");
+
+    if (!badge || !menuLink) {
+        return;
+    }
+
+    const unreadCountUrl =
+        "/Research/WorkItemAlerts/UnreadCount";
+
+    const markAsReadUrl =
+        "/Research/WorkItemAlerts/MarkAllAsRead";
+
+    function updateBadge(count) {
+        const value = Number(count) || 0;
+
+        badge.textContent = value > 99 ? "99+" : value;
+        badge.style.display = value > 0 ? "inline-flex" : "none";
+    }
+
+    async function loadUnreadCount() {
+        try {
+            const response = await fetch(unreadCountUrl, {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            updateBadge(data.count);
+
+        } catch (error) {
+            console.error("Loading work item alerts failed:", error);
+        }
+    }
+
+    // دریافت شمارنده هنگام بارگذاری صفحه
+    await loadUnreadCount();
+
+    // اتصال SignalR
+    if (typeof signalR !== "undefined") {
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/work-item-alerts")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("UnreadCountChanged", function (count) {
+            updateBadge(count);
+        });
+
+        try {
+            await connection.start();
+        } catch (error) {
+            console.error("SignalR connection failed:", error);
+        }
+    }
+
+    // با کلیک روی منوی کارهای پژوهشی، اعلان‌ها خوانده‌شده می‌شوند.
+    menuLink.addEventListener("click", async function () {
+
+        try {
+           const tokenInput = document.querySelector(
+    '#antiForgeryForm input[name="__RequestVerificationToken"]'
+);
+
+            const headers = {
+                "Content-Type": "application/json"
+            };
+
+            if (tokenInput) {
+                headers["RequestVerificationToken"] =
+                    tokenInput.value;
+            }
+
+            const response = await fetch(markAsReadUrl, {
+                method: "POST",
+                credentials: "same-origin",
+                headers: headers,
+                body: "{}"
+            });
+
+            if (response.ok) {
+                updateBadge(0);
+            }
+
+        } catch (error) {
+            console.error("Marking alerts as read failed:", error);
+        }
+    });
+
+});
+</script>
+
 
     @await RenderSectionAsync(
     "Scripts",

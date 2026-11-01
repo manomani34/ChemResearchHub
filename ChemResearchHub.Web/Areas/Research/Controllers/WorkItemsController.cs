@@ -16,6 +16,9 @@ using System.Security.Claims;
 using ChemResearchHub.Web.Models.WorkItems;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using ChemResearchHub.Application.WorkItemUserAlerts.Interfaces;
+using Microsoft.AspNetCore.SignalR;
+using ChemResearchHub.Web.Hubs;
 
 namespace ChemResearchHub.Web.Areas.Research.Controllers;
 
@@ -38,6 +41,8 @@ public class WorkItemsController : Controller
     private readonly IWorkItemFlowSummaryService _workItemFlowSummaryService;
     private readonly IWorkItemBlockService _workItemBlockService;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IWorkItemUserAlertService _alertService;
+    private readonly IHubContext<WorkItemAlertHub> _hubContext;
 
     public WorkItemsController(
         IWorkItemService workItemService,
@@ -52,7 +57,11 @@ public class WorkItemsController : Controller
         IWorkItemTransitionService workItemTransitionService,
         IWorkItemFlowMetricsService workItemFlowMetricsService,
         IWorkItemFlowSummaryService workItemFlowSummaryService,
-        IWorkItemBlockService workItemBlockService, IAuthorizationService authorizationService, ITagService tagService)
+        IWorkItemBlockService workItemBlockService,
+        IAuthorizationService authorizationService,
+        ITagService tagService,
+        IWorkItemUserAlertService alertService,
+        IHubContext<WorkItemAlertHub> hubContext)
     {
         _workItemService = workItemService;
         _tagService = tagService;
@@ -69,6 +78,8 @@ public class WorkItemsController : Controller
         _workItemFlowSummaryService = workItemFlowSummaryService;
         _workItemBlockService = workItemBlockService;
         _authorizationService = authorizationService;
+        _alertService = alertService;
+        _hubContext = hubContext;
     }
 
     [HttpGet]
@@ -226,55 +237,45 @@ public class WorkItemsController : Controller
     [ValidateAntiForgeryToken]
     [Authorize(Policy = "Permission:WorkItems.Create")]
     public async Task<IActionResult> Create(
-        CreateWorkItemViewModel model,
-        CancellationToken cancellationToken)
+    CreateWorkItemViewModel model,
+    CancellationToken cancellationToken)
     {
-        var project =
-            await _projectService.GetByIdAsync(
-                model.ProjectId,
-                cancellationToken);
+        var project = await _projectService.GetByIdAsync(
+            model.ProjectId,
+            cancellationToken);
 
         if (project is null)
-        {
             return NotFound();
-        }
 
-        var board =
-            await _boardService.GetByIdAsync(
-                model.BoardId,
-                cancellationToken);
+        var board = await _boardService.GetByIdAsync(
+            model.BoardId,
+            cancellationToken);
 
-        if (board is null ||
-            board.ProjectId != model.ProjectId)
-        {
+        if (board is null || board.ProjectId != model.ProjectId)
             return NotFound();
-        }
 
-        var column =
-            board.Columns.FirstOrDefault(
-                x => x.Id == model.BoardColumnId);
+        var column = board.Columns.FirstOrDefault(
+            x => x.Id == model.BoardColumnId);
 
         if (column is null)
-        {
             return NotFound();
-        }
 
         if (!ModelState.IsValid)
         {
             ViewBag.Project = project;
             ViewBag.Board = board;
             ViewBag.Column = column;
-            ViewBag.Users =
-                await _userService.GetActiveUsersAsync(
-                    cancellationToken);
 
-            model.AvailableTags =
-                await _tagService.GetActiveAsync(cancellationToken);
+            ViewBag.Users = await _userService.GetActiveUsersAsync(
+                cancellationToken);
+
+            model.AvailableTags = await _tagService.GetActiveAsync(
+                cancellationToken);
 
             return View(model);
         }
 
-        await _workItemService.CreateAsync(
+        var workItem = await _workItemService.CreateAsync(
             model.ProjectId,
             model.BoardColumnId,
             model.Title,
@@ -283,11 +284,42 @@ public class WorkItemsController : Controller
             model.Priority,
             model.DueDate,
             model.AssignedToUserId,
-            User.FindFirstValue(
-                ClaimTypes.NameIdentifier),
+            User.FindFirstValue(ClaimTypes.NameIdentifier),
             cancellationToken,
             assignedUserIds: model.AssignedUserIds,
-                tagIds: model.TagIds);
+            tagIds: model.TagIds);
+
+        await _alertService.CreateForWorkItemAsync(
+            workItem.Id,
+            workItem.AssignedToUserId,
+            workItem.AssignedUserIds,
+            cancellationToken);
+
+        var assignedUserIds = new HashSet<string>(
+            StringComparer.Ordinal);
+
+        if (!string.IsNullOrWhiteSpace(workItem.AssignedToUserId))
+            assignedUserIds.Add(workItem.AssignedToUserId);
+
+        foreach (var userId in workItem.AssignedUserIds)
+        {
+            if (!string.IsNullOrWhiteSpace(userId))
+                assignedUserIds.Add(userId);
+        }
+
+        foreach (var userId in assignedUserIds)
+        {
+            var count = await _alertService.GetUnreadCountAsync(
+                userId,
+                cancellationToken);
+
+            await _hubContext.Clients
+                .Group(WorkItemAlertHub.GetUserGroup(userId))
+                .SendAsync(
+                    "UnreadCountChanged",
+                    count,
+                    cancellationToken);
+        }
 
         return RedirectToAction(
             "Index",
@@ -652,6 +684,7 @@ public class WorkItemsController : Controller
             });
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Policy = "Permission:WorkItems.Edit")]
@@ -665,9 +698,7 @@ public class WorkItemsController : Controller
                 cancellationToken);
 
         if (project is null)
-        {
             return NotFound();
-        }
 
         var board =
             await _boardService.GetByIdAsync(
@@ -676,9 +707,7 @@ public class WorkItemsController : Controller
 
         if (board is null ||
             board.ProjectId != model.ProjectId)
-        {
             return NotFound();
-        }
 
         var workItem =
             await _workItemService.GetByIdAsync(
@@ -687,9 +716,7 @@ public class WorkItemsController : Controller
 
         if (workItem is null ||
             workItem.ProjectId != model.ProjectId)
-        {
             return NotFound();
-        }
 
         if (!ModelState.IsValid)
         {
@@ -698,7 +725,8 @@ public class WorkItemsController : Controller
                     cancellationToken);
 
             model.AvailableTags =
-                await _tagService.GetActiveAsync(cancellationToken);
+                await _tagService.GetActiveAsync(
+                    cancellationToken);
 
             return View(model);
         }
@@ -711,9 +739,23 @@ public class WorkItemsController : Controller
                     "Permission:WorkItems.ManageStatus");
 
             if (!statusAuthorization.Succeeded)
-            {
                 return Forbid();
-            }
+        }
+
+        // Snapshot of users assigned before the update.
+        var previouslyAssignedUserIds =
+            new HashSet<string>(StringComparer.Ordinal);
+
+        if (!string.IsNullOrWhiteSpace(workItem.AssignedToUserId))
+        {
+            previouslyAssignedUserIds.Add(
+                workItem.AssignedToUserId);
+        }
+
+        foreach (var userId in workItem.AssignedUserIds)
+        {
+            if (!string.IsNullOrWhiteSpace(userId))
+                previouslyAssignedUserIds.Add(userId);
         }
 
         var changedByUserId =
@@ -735,9 +777,7 @@ public class WorkItemsController : Controller
                 tagIds: model.TagIds);
 
         if (updated is null)
-        {
             return NotFound();
-        }
 
         if (model.IsCompleted != updated.IsCompleted)
         {
@@ -757,6 +797,52 @@ public class WorkItemsController : Controller
             }
         }
 
+        // Collect the users assigned after the update.
+        var currentlyAssignedUserIds =
+            new HashSet<string>(StringComparer.Ordinal);
+
+        if (!string.IsNullOrWhiteSpace(updated.AssignedToUserId))
+        {
+            currentlyAssignedUserIds.Add(
+                updated.AssignedToUserId);
+        }
+
+        foreach (var userId in updated.AssignedUserIds)
+        {
+            if (!string.IsNullOrWhiteSpace(userId))
+                currentlyAssignedUserIds.Add(userId);
+        }
+
+        // Only users newly assigned in this edit should receive alerts.
+        var newlyAssignedUserIds =
+    currentlyAssignedUserIds
+        .Except(previouslyAssignedUserIds)
+        .ToHashSet(StringComparer.Ordinal);
+
+        if (newlyAssignedUserIds.Count > 0)
+        {
+            await _alertService.CreateForWorkItemAsync(
+                updated.Id,
+                null,
+                newlyAssignedUserIds,
+                cancellationToken);
+
+            foreach (var userId in newlyAssignedUserIds)
+            {
+                var count =
+                    await _alertService.GetUnreadCountAsync(
+                        userId,
+                        cancellationToken);
+
+                await _hubContext.Clients
+                    .Group(WorkItemAlertHub.GetUserGroup(userId))
+                    .SendAsync(
+                        "UnreadCountChanged",
+                        count,
+                        cancellationToken);
+            }
+        }
+
         return RedirectToAction(
             "Index",
             "Boards",
@@ -767,6 +853,7 @@ public class WorkItemsController : Controller
                 boardId = model.BoardId
             });
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]

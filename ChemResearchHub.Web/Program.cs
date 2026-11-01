@@ -62,6 +62,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using ChemResearchHub.Application.WorkItemUserAlerts.Interfaces;
+using ChemResearchHub.Application.WorkItemUserAlerts.Repositories;
+using ChemResearchHub.Application.WorkItemUserAlerts.Services;
+using ChemResearchHub.Web.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -235,6 +240,13 @@ builder.Services.AddScoped<AiToolExecutor>();
 builder.Services.AddScoped<IAiPromptProvider, AiSystemPrompt>();
 builder.Services.AddScoped<AiToolSelector>();
 
+// Work Item Alerts
+builder.Services.AddScoped<IWorkItemUserAlertRepository, WorkItemUserAlertRepository>();
+builder.Services.AddScoped<IWorkItemUserAlertService, WorkItemUserAlertService>();
+
+// SignalR
+builder.Services.AddSignalR();
+
 
 builder.Services.AddHttpClient<IOllamaClient, OllamaClient>(client =>
 {
@@ -298,6 +310,8 @@ app.MapControllerRoute(
 
 
 app.MapRazorPages();
+
+app.MapHub<WorkItemAlertHub>(WorkItemAlertHub.HubUrl);
 
 using (var scope = app.Services.CreateScope())
 {

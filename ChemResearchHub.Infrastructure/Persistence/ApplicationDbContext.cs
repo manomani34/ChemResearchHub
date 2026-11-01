@@ -6,11 +6,12 @@ using ChemResearchHub.Domain.Entities.Project;
 using ChemResearchHub.Domain.Entities.Result;
 using ChemResearchHub.Domain.Entities.Sample;
 using ChemResearchHub.Domain.Entities.Tag;
-using ChemResearchHub.Domain.Entities.WorkItemTag;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Entities.WorkItemAssignment;
 using ChemResearchHub.Domain.Entities.WorkItemBlock;
+using ChemResearchHub.Domain.Entities.WorkItemTag;
 using ChemResearchHub.Domain.Entities.WorkItemTransition;
+using ChemResearchHub.Domain.Entities.WorkItemUserAlert;
 using ChemResearchHub.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,8 @@ public class ApplicationDbContext
     public DbSet<Board> Boards => Set<Board>();
 
     public DbSet<BoardColumn> BoardColumns => Set<BoardColumn>();
+
+    public DbSet<WorkItemUserAlert> WorkItemUserAlerts=> Set<WorkItemUserAlert>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
