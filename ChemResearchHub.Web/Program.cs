@@ -71,6 +71,11 @@ using ChemResearchHub.Application.Bale.Interfaces;
 using ChemResearchHub.Infrastructure.Bale.Clients;
 using ChemResearchHub.Infrastructure.Bale.Configuration;
 using ChemResearchHub.Infrastructure.Bale.Services;
+using ChemResearchHub.Application.Notifications.Interfaces;
+using ChemResearchHub.Application.Notifications.Services;
+using ChemResearchHub.Infrastructure.Notifications.Channels;
+using ChemResearchHub.Infrastructure.Notifications.Services;
+using ChemResearchHub.Web.Notifications;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -206,6 +211,21 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProv
 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+
+// Bale Account Linking
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<IBaleAccountLinkingService, BaleAccountLinkingService>();
+
+// Notifications
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationChannel, InAppNotificationChannel>();
+builder.Services.AddScoped<INotificationChannel, BaleNotificationChannel>();
+builder.Services.AddScoped<NotificationDispatcher>();
+
+// SignalR notification publisher
+builder.Services.AddScoped<
+    INotificationRealtimePublisher,
+    SignalRNotificationRealtimePublisher>();
 
 
 builder.Services.AddScoped<IAttachmentStorage>(sp =>

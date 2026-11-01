@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Data\" />
+    <Folder Include="Areas\User\Views\Shared\" />
   </ItemGroup>
 
   <PropertyGroup>

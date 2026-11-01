@@ -15,6 +15,7 @@ using ChemResearchHub.Domain.Entities.WorkItemUserAlert;
 using ChemResearchHub.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ChemResearchHub.Domain.Entities.Notification;
 
 namespace ChemResearchHub.Infrastructure.Persistence;
 
@@ -49,10 +50,14 @@ public class ApplicationDbContext
 
     public DbSet<WorkItemUserAlert> WorkItemUserAlerts=> Set<WorkItemUserAlert>();
 
+    public DbSet<Notification> Notifications => Set<Notification>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.HasDefaultSchema("pubbo");
 
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(ApplicationDbContext).Assembly);

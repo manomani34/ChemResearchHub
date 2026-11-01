@@ -287,6 +287,56 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                     b.ToTable("Experiments", (string)null);
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.Notification.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActionUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("UserId", "ReadAt");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.Project.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -503,6 +553,45 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                     b.ToTable("Samples", (string)null);
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.Tag.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Tags", "pubbo");
+                });
+
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItem.WorkItem", b =>
                 {
                     b.Property<int>("Id")
@@ -562,6 +651,47 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                     b.ToTable("WorkItems", (string)null);
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemAssignment.WorkItemAssignment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AssignedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("WorkItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkItemId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("WorkItemAssignments", (string)null);
+                });
+
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemBlock.WorkItemBlock", b =>
                 {
                     b.Property<int>("Id")
@@ -617,6 +747,21 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                     b.ToTable("WorkItemBlocks", (string)null);
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemTag.WorkItemTag", b =>
+                {
+                    b.Property<int>("WorkItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WorkItemId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("WorkItemTags", "pubbo");
+                });
+
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemTransition.WorkItemTransition", b =>
                 {
                     b.Property<int>("Id")
@@ -662,6 +807,41 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                     b.ToTable("WorkItemTransitions", (string)null);
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemUserAlert.WorkItemUserAlert", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("WorkItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "ReadAt");
+
+                    b.HasIndex("WorkItemId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("WorkItemUserAlerts", (string)null);
+                });
+
             modelBuilder.Entity("ChemResearchHub.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -669,6 +849,9 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<long?>("BaleChatId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -722,6 +905,10 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BaleChatId")
+                        .IsUnique()
+                        .HasFilter("[BaleChatId] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -913,6 +1100,15 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.Notification.Notification", b =>
+                {
+                    b.HasOne("ChemResearchHub.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.ResearchReview.ResearchReview", b =>
                 {
                     b.HasOne("ChemResearchHub.Domain.Entities.WorkItem.WorkItem", "WorkItem")
@@ -961,6 +1157,26 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemAssignment.WorkItemAssignment", b =>
+                {
+                    b.HasOne("ChemResearchHub.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ChemResearchHub.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ChemResearchHub.Domain.Entities.WorkItem.WorkItem", null)
+                        .WithMany()
+                        .HasForeignKey("WorkItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemBlock.WorkItemBlock", b =>
                 {
                     b.HasOne("ChemResearchHub.Infrastructure.Identity.ApplicationUser", null)
@@ -980,6 +1196,21 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkItem");
+                });
+
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemTag.WorkItemTag", b =>
+                {
+                    b.HasOne("ChemResearchHub.Domain.Entities.Tag.Tag", null)
+                        .WithMany("WorkItemTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ChemResearchHub.Domain.Entities.WorkItem.WorkItem", null)
+                        .WithMany("WorkItemTags")
+                        .HasForeignKey("WorkItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemTransition.WorkItemTransition", b =>
@@ -1007,6 +1238,21 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkItem");
+                });
+
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItemUserAlert.WorkItemUserAlert", b =>
+                {
+                    b.HasOne("ChemResearchHub.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ChemResearchHub.Domain.Entities.WorkItem.WorkItem", null)
+                        .WithMany()
+                        .HasForeignKey("WorkItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1063,6 +1309,16 @@ namespace ChemResearchHub.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ChemResearchHub.Domain.Entities.Board.Board", b =>
                 {
                     b.Navigation("Columns");
+                });
+
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.Tag.Tag", b =>
+                {
+                    b.Navigation("WorkItemTags");
+                });
+
+            modelBuilder.Entity("ChemResearchHub.Domain.Entities.WorkItem.WorkItem", b =>
+                {
+                    b.Navigation("WorkItemTags");
                 });
 #pragma warning restore 612, 618
         }
