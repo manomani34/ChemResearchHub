@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
     <ProjectReference Include="..\ChemResearchHub.Application\ChemResearchHub.Application.csproj" />
@@ -29,6 +29,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>e7cc2e1b-b5d9-404f-9e11-ee47897b2f1e</UserSecretsId>
   </PropertyGroup>
 
 </Project>

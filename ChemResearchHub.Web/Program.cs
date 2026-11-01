@@ -67,6 +67,10 @@ using ChemResearchHub.Application.WorkItemUserAlerts.Repositories;
 using ChemResearchHub.Application.WorkItemUserAlerts.Services;
 using ChemResearchHub.Web.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using ChemResearchHub.Application.Bale.Interfaces;
+using ChemResearchHub.Infrastructure.Bale.Clients;
+using ChemResearchHub.Infrastructure.Bale.Configuration;
+using ChemResearchHub.Infrastructure.Bale.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -256,6 +260,14 @@ builder.Services.AddHttpClient<IOllamaClient, OllamaClient>(client =>
     client.Timeout =
         TimeSpan.FromMinutes(5);
 });
+
+// Bale Bot
+builder.Services.Configure<BaleBotOptions>(
+    builder.Configuration.GetSection(BaleBotOptions.SectionName));
+
+builder.Services.AddHttpClient<IBaleBotClient, BaleBotClient>();
+
+builder.Services.AddHostedService<BalePollingService>();
 
 var app = builder.Build();
 
