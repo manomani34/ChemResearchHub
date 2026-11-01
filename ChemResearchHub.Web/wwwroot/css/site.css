@@ -3236,3 +3236,130 @@ textarea.form-control {
         color: #fff;
         cursor: pointer;
     }
+
+/* Work Items - Stable multi-tag filter layout */
+.workitems-tag-filter {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
+
+.workitems-tag-filter-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.workitems-tag-selector {
+    flex: 0 0 280px;
+    width: 280px;
+    min-width: 0;
+}
+
+.workitems-selected-tags {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    gap: 8px;
+    min-width: 0;
+    min-height: 38px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: thin;
+}
+
+.workitems-selected-tags .badge {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 767.98px) {
+    .workitems-tag-filter-control {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .workitems-tag-selector {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .workitems-selected-tags {
+        min-height: 38px;
+    }
+}
+
+/* Work Items - Custom searchable tag dropdown */
+.workitems-tag-dropdown {
+    position: relative;
+    flex: 0 0 280px;
+    width: 280px;
+}
+
+.workitems-tag-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: right;
+    background: #fff;
+}
+
+.workitems-tag-dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+    top: calc(100% + 5px);
+    right: 0;
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid var(--crh-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.workitems-tag-dropdown-menu[hidden] {
+    display: none;
+}
+
+.workitems-tag-options {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.workitems-tag-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    text-align: right;
+}
+
+.workitems-tag-option:hover {
+    background: #f1f5f9;
+}
+
+.workitems-tag-option[aria-pressed="true"] {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.workitems-tag-option[hidden] {
+    display: none;
+}
+
+.workitems-tag-option-check {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .workitems-tag-dropdown {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+}

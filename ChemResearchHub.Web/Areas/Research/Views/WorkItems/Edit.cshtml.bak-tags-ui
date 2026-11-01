@@ -1,0 +1,304 @@
+@model ChemResearchHub.Web.Models.WorkItems.EditWorkItemViewModel
+
+@{
+    ViewData["Title"] = "Edit Work Item";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <div class="text-muted mb-1">
+            Research Work Item
+        </div>
+
+        <h1 class="h3 mb-1">
+            Edit Work Item
+        </h1>
+
+        <p class="text-muted mb-0">
+            Update the work item details and status.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="BoardId" type="hidden" />
+                <input asp-for="BoardColumnId" type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Title"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="Title"
+                           class="form-control" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="5">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="Type"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="Type"
+                                asp-items="Html.GetEnumSelectList<ChemResearchHub.Domain.Enums.WorkItemType>()"
+                                class="form-select">
+                        </select>
+
+                        <span asp-validation-for="Type"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="Priority"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Priority"
+                               type="number"
+                               class="form-control"
+                               min="0"
+                               max="10" />
+
+                        <span asp-validation-for="Priority"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="DueDate"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="DueDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="DueDate"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+    <label asp-for="AssignedToUserId"
+           class="form-label">
+        Assigned To
+    </label>
+
+    <select asp-for="AssignedToUserId"
+            class="form-select">
+
+        <option value="">
+            Unassigned
+        </option>
+
+        @foreach (var user in ViewBag.Users)
+        {
+            <option value="@user.Id">
+                @(string.IsNullOrWhiteSpace(user.FullName)
+                    ? user.Email ?? user.Id
+                    : user.FullName)
+            </option>
+        }
+
+    </select>
+
+    <span asp-validation-for="AssignedToUserId"
+          class="text-danger">
+    </span>
+
+</div>
+<div class="mb-3">
+    <label class="form-label">Additional Collaborators</label>
+
+    <div id="availableCollaborators"
+         class="list-group border rounded mb-3"
+         style="max-height: 180px; overflow-y: auto;">
+        @foreach (var user in ViewBag.Users)
+        {
+            var displayName = string.IsNullOrWhiteSpace(user.FullName)
+                ? (user.Email ?? user.Id)
+                : user.FullName;
+
+            <button type="button"
+                    class="list-group-item list-group-item-action collaborator-option"
+                    data-user-id="@user.Id"
+                    data-user-name="@displayName">
+                <i class="bi bi-plus-circle me-2"></i>@displayName
+            </button>
+        }
+    </div>
+
+    <div class="form-label">Selected Collaborators</div>
+
+    <div id="selectedCollaborators" class="d-flex flex-wrap align-items-center gap-2 mb-2">
+        <div id="noCollaboratorsMessage" class="text-muted small">
+            No additional collaborators selected.
+        </div>
+    </div>
+
+    <div id="collaboratorHiddenInputs"></div>
+
+    <span asp-validation-for="AssignedUserIds"
+          class="text-danger"></span>
+</div>
+
+<script>
+(() => {
+    const primarySelect = document.getElementById('AssignedToUserId');
+    const available = document.getElementById('availableCollaborators');
+    const selected = document.getElementById('selectedCollaborators');
+    const hiddenInputs = document.getElementById('collaboratorHiddenInputs');
+    const emptyMessage = document.getElementById('noCollaboratorsMessage');
+
+    if (!primarySelect || !available || !selected || !hiddenInputs) return;
+
+    const chosen = new Map();
+
+    const initialIds = @Html.Raw(
+        System.Text.Json.JsonSerializer.Serialize(
+            Model.AssignedUserIds ?? new List<string>()));
+
+    available.querySelectorAll('.collaborator-option').forEach(button => {
+        const id = button.dataset.userId;
+        if (initialIds.includes(id) && id !== primarySelect.value) {
+            chosen.set(id, button.dataset.userName);
+        }
+    });
+
+    function render() {
+        selected.querySelectorAll('.selected-collaborator').forEach(x => x.remove());
+        hiddenInputs.replaceChildren();
+
+        if (emptyMessage) emptyMessage.hidden = chosen.size > 0;
+
+        available.querySelectorAll('.collaborator-option').forEach(button => {
+            const id = button.dataset.userId;
+            button.hidden = id === primarySelect.value || chosen.has(id);
+        });
+
+        for (const [id, name] of chosen) {
+            const row = document.createElement('div');
+            row.className = 'selected-collaborator badge rounded-pill bg-light text-dark border d-inline-flex align-items-center gap-2 px-2 py-2';
+
+            const label = document.createElement('span');
+            label.textContent = name;
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn btn-sm p-0 border-0 text-danger lh-1';
+            remove.textContent = '×';
+            remove.style.fontSize = '14px';
+            remove.style.minWidth = '14px';
+            remove.setAttribute('aria-label', 'Remove ' + name);
+            remove.addEventListener('click', () => {
+                chosen.delete(id);
+                render();
+            });
+
+            row.append(label, remove);
+            selected.appendChild(row);
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'AssignedUserIds';
+            input.value = id;
+            hiddenInputs.appendChild(input);
+        }
+    }
+
+    available.querySelectorAll('.collaborator-option').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.userId;
+            const name = button.dataset.userName;
+
+            if (id && id !== primarySelect.value && !chosen.has(id)) {
+                chosen.set(id, name);
+                render();
+            }
+        });
+    });
+
+    primarySelect.addEventListener('change', render);
+    render();
+})();
+</script><div class="form-check mb-4">
+
+                    <input asp-for="IsCompleted"
+                           class="form-check-input" />
+
+                    <label asp-for="IsCompleted"
+                           class="form-check-label">
+                        Completed
+                    </label>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Save Changes
+                    </button>
+
+                    <a asp-area="Research" asp-controller="Boards"
+                       asp-action="Index"
+                       asp-route-projectId="@Model.ProjectId"
+                       asp-route-boardId="@Model.BoardId"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

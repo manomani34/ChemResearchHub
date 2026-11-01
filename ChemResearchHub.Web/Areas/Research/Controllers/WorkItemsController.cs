@@ -9,6 +9,7 @@ using ChemResearchHub.Application.Samples.Dtos;
 using ChemResearchHub.Application.Samples.Interfaces;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
+using ChemResearchHub.Application.Tags.Interfaces;
 using ChemResearchHub.Application.WorkItemTransitions.Interfaces;
 using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
 using System.Security.Claims;
@@ -23,6 +24,7 @@ namespace ChemResearchHub.Web.Areas.Research.Controllers;
 public class WorkItemsController : Controller
 {
     private readonly IWorkItemService _workItemService;
+    private readonly ITagService _tagService;
     private readonly IBoardService _boardService;
     private readonly IProjectService _projectService;
     private readonly IUserService _userService;
@@ -35,6 +37,7 @@ public class WorkItemsController : Controller
     private readonly IWorkItemFlowMetricsService _workItemFlowMetricsService;
     private readonly IWorkItemFlowSummaryService _workItemFlowSummaryService;
     private readonly IWorkItemBlockService _workItemBlockService;
+    private readonly IAuthorizationService _authorizationService;
 
     public WorkItemsController(
         IWorkItemService workItemService,
@@ -49,9 +52,10 @@ public class WorkItemsController : Controller
         IWorkItemTransitionService workItemTransitionService,
         IWorkItemFlowMetricsService workItemFlowMetricsService,
         IWorkItemFlowSummaryService workItemFlowSummaryService,
-        IWorkItemBlockService workItemBlockService)
+        IWorkItemBlockService workItemBlockService, IAuthorizationService authorizationService, ITagService tagService)
     {
         _workItemService = workItemService;
+        _tagService = tagService;
         _boardService = boardService;
         _projectService = projectService;
         _userService = userService;
@@ -64,6 +68,7 @@ public class WorkItemsController : Controller
         _workItemFlowMetricsService = workItemFlowMetricsService;
         _workItemFlowSummaryService = workItemFlowSummaryService;
         _workItemBlockService = workItemBlockService;
+        _authorizationService = authorizationService;
     }
 
     [HttpGet]
@@ -71,6 +76,7 @@ public class WorkItemsController : Controller
         string? search,
         string status = "all",
         string? assignedToUserId = null,
+        int[]? tagIds = null,
         CancellationToken cancellationToken = default)
     {
         status =
@@ -86,12 +92,20 @@ public class WorkItemsController : Controller
                 _ => null
             };
 
+        var availableTags = await _tagService.GetActiveAsync(cancellationToken);
+        var activeTagIds = availableTags.Select(x => x.Id).ToHashSet();
+        var selectedTagIds = (tagIds ?? Array.Empty<int>())
+            .Where(activeTagIds.Contains)
+            .Distinct()
+            .ToList();
+
         var workItems =
             await _workItemService.GetAllAsync(
                 search,
                 isCompleted,
                 assignedToUserId,
-                cancellationToken);
+                cancellationToken,
+                tagIds: selectedTagIds);
 
         var users =
             await _userService.GetActiveUsersAsync(
@@ -113,7 +127,8 @@ public class WorkItemsController : Controller
                             DueDate = x.DueDate,
                             IsCompleted = x.IsCompleted,
                             AssignedToUserName =
-                                x.AssignedToUserName
+                                x.AssignedToUserName,
+                            Tags = x.Tags
                         })
                 .ToList();
 
@@ -138,6 +153,8 @@ public class WorkItemsController : Controller
                 Search = search,
                 Status = status,
                 AssignedToUserId = assignedToUserId,
+                TagIds = selectedTagIds,
+                AvailableTags = availableTags,
                 Items = items,
                 Assignees = assignees
             };
@@ -146,7 +163,7 @@ public class WorkItemsController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.Create")]
     public async Task<IActionResult> Create(
         int projectId,
         int boardId,
@@ -187,6 +204,9 @@ public class WorkItemsController : Controller
             await _userService.GetActiveUsersAsync(
                 cancellationToken);
 
+        var availableTags =
+            await _tagService.GetActiveAsync(cancellationToken);
+
         ViewBag.Project = project;
         ViewBag.Board = board;
         ViewBag.Column = column;
@@ -197,13 +217,14 @@ public class WorkItemsController : Controller
             {
                 ProjectId = projectId,
                 BoardId = boardId,
-                BoardColumnId = boardColumnId
+                BoardColumnId = boardColumnId,
+                AvailableTags = availableTags
             });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.Create")]
     public async Task<IActionResult> Create(
         CreateWorkItemViewModel model,
         CancellationToken cancellationToken)
@@ -247,6 +268,9 @@ public class WorkItemsController : Controller
                 await _userService.GetActiveUsersAsync(
                     cancellationToken);
 
+            model.AvailableTags =
+                await _tagService.GetActiveAsync(cancellationToken);
+
             return View(model);
         }
 
@@ -262,7 +286,8 @@ public class WorkItemsController : Controller
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier),
             cancellationToken,
-            assignedUserIds: model.AssignedUserIds);
+            assignedUserIds: model.AssignedUserIds,
+                tagIds: model.TagIds);
 
         return RedirectToAction(
             "Index",
@@ -406,7 +431,7 @@ public class WorkItemsController : Controller
                 SortOrder = workItem.SortOrder,
                 AssignedToUserId = workItem.AssignedToUserId,
                 AssignedToUserName = workItem.AssignedToUserName,
-
+                Tags = workItem.Tags,
                 Experiments = experiments,
                 SamplesByExperimentId = samplesByExperimentId,
                 ResultsBySampleId = resultsBySampleId,
@@ -479,7 +504,7 @@ public class WorkItemsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.ManageBlock")]
     public async Task<IActionResult> Block(
         int id,
         int boardId,
@@ -517,7 +542,7 @@ public class WorkItemsController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.ManageBlock")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Unblock(
         int id,
@@ -556,7 +581,7 @@ public class WorkItemsController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.Edit")]
     public async Task<IActionResult> Edit(
         int id,
         int boardId,
@@ -602,6 +627,9 @@ public class WorkItemsController : Controller
             await _userService.GetActiveUsersAsync(
                 cancellationToken);
 
+        var availableTags =
+            await _tagService.GetActiveAsync(cancellationToken);
+
         ViewBag.Users = users;
 
         return View(
@@ -618,13 +646,15 @@ public class WorkItemsController : Controller
                 DueDate = workItem.DueDate,
                 AssignedToUserId = workItem.AssignedToUserId,
                 AssignedUserIds = workItem.AssignedUserIds.ToList(),
+                TagIds = workItem.Tags.Select(x => x.Id).ToList(),
+                AvailableTags = availableTags,
                 IsCompleted = workItem.IsCompleted
             });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.Edit")]
     public async Task<IActionResult> Edit(
         EditWorkItemViewModel model,
         CancellationToken cancellationToken)
@@ -667,7 +697,23 @@ public class WorkItemsController : Controller
                 await _userService.GetActiveUsersAsync(
                     cancellationToken);
 
+            model.AvailableTags =
+                await _tagService.GetActiveAsync(cancellationToken);
+
             return View(model);
+        }
+
+        if (model.IsCompleted != workItem.IsCompleted)
+        {
+            var statusAuthorization =
+                await _authorizationService.AuthorizeAsync(
+                    User,
+                    "Permission:WorkItems.ManageStatus");
+
+            if (!statusAuthorization.Succeeded)
+            {
+                return Forbid();
+            }
         }
 
         var changedByUserId =
@@ -685,7 +731,8 @@ public class WorkItemsController : Controller
                 model.AssignedToUserId,
                 changedByUserId,
                 cancellationToken,
-                assignedUserIds: model.AssignedUserIds);
+                assignedUserIds: model.AssignedUserIds,
+                tagIds: model.TagIds);
 
         if (updated is null)
         {
@@ -723,7 +770,7 @@ public class WorkItemsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.Move")]
     public async Task<IActionResult> Move(
         int id,
         int boardId,
@@ -764,7 +811,7 @@ public class WorkItemsController : Controller
                 StringComparison.OrdinalIgnoreCase))
         {
             TempData["ErrorMessage"] =
-                "این ستون به حداکثر تعداد کارهای مجاز رسیده است.";
+                "Ø§ÛŒÙ† Ø³ØªÙˆÙ† Ø¨Ù‡ Ø­Ø¯Ø§Ú©Ø«Ø± ØªØ¹Ø¯Ø§Ø¯ Ú©Ø§Ø±Ù‡Ø§ÛŒ Ù…Ø¬Ø§Ø² Ø±Ø³ÛŒØ¯Ù‡ Ø§Ø³Øª.";
 
             return RedirectToAction(
                 "Index",
@@ -780,7 +827,7 @@ public class WorkItemsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.ManageStatus")]
     public async Task<IActionResult> Complete(
         int id,
         int boardId,
@@ -815,7 +862,7 @@ public class WorkItemsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Researcher")]
+    [Authorize(Policy = "Permission:WorkItems.ManageStatus")]
     public async Task<IActionResult> Reopen(
         int id,
         int boardId,
@@ -850,6 +897,7 @@ public class WorkItemsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Permission:WorkItems.Delete")]
     public async Task<IActionResult> Delete(
         int id,
         int boardId,

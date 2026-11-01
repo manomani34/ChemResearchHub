@@ -1,6 +1,7 @@
 ﻿
 using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.Projects.Interfaces;
+using ChemResearchHub.Application.Tags.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Models.Boards;
 using Microsoft.AspNetCore.Authorization;
@@ -16,20 +17,21 @@ public class BoardsController : Controller
     private readonly IBoardService _boardService;
     private readonly IProjectService _projectService;
     private readonly IWorkItemService _workItemService;
+    private readonly ITagService _tagService;
 
-    public BoardsController(
-        IBoardService boardService,
-        IProjectService projectService,
-        IWorkItemService workItemService)
+    public BoardsController(IBoardService boardService,
+                            IProjectService projectService,
+                            IWorkItemService workItemService,
+                            ITagService tagService)
     {
         _boardService = boardService;
         _projectService = projectService;
         _workItemService = workItemService;
+        _tagService = tagService;
     }
 
     [HttpGet("List")]
-    public async Task<IActionResult> List(
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> List(CancellationToken cancellationToken)
     {
         var projects =
             await _projectService.GetAllAsync(cancellationToken);
@@ -42,9 +44,8 @@ public class BoardsController : Controller
         foreach (var project in projects)
         {
             var boards =
-                await _boardService.GetByProjectIdAsync(
-                    project.Id,
-                    cancellationToken);
+                await _boardService.GetByProjectIdAsync(project.Id,
+                                                        cancellationToken);
 
             foreach (var board in boards)
             {
@@ -53,9 +54,8 @@ public class BoardsController : Controller
                     Id = board.Id,
                     ProjectId = board.ProjectId,
                     ProjectName =
-                        projectNames.TryGetValue(
-                            board.ProjectId,
-                            out var projectName)
+                        projectNames.TryGetValue(board.ProjectId,
+                                                 out var projectName)
                             ? projectName
                             : $"پروژه #{board.ProjectId}",
                     Name = board.Name,
@@ -73,10 +73,9 @@ public class BoardsController : Controller
     }
 
     [HttpGet("Index")]
-    public async Task<IActionResult> Index(
-        int projectId,
-        int? boardId,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int projectId,
+                                           int? boardId,
+                                           CancellationToken cancellationToken)
     {
         var project =
             await _projectService.GetByIdAsync(
@@ -125,6 +124,9 @@ public class BoardsController : Controller
         ViewBag.Project = project;
         ViewBag.Boards = boards;
 
+        var availableTags = await _tagService.GetActiveAsync(cancellationToken);
+        ViewBag.AvailableTags = availableTags;
+
         return View(new KanbanViewModel
         {
             Board = selectedBoard,
@@ -134,9 +136,8 @@ public class BoardsController : Controller
 
     [HttpGet("Create")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create(
-        int projectId,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(int projectId,
+                                            CancellationToken cancellationToken)
     {
         var project =
             await _projectService.GetByIdAsync(
@@ -157,9 +158,8 @@ public class BoardsController : Controller
     [HttpPost("Create")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create(
-        CreateBoardViewModel model,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CreateBoardViewModel model,
+                                            CancellationToken cancellationToken)
     {
         var project =
             await _projectService.GetByIdAsync(

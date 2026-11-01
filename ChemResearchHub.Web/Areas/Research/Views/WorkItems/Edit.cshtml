@@ -101,6 +101,33 @@
 
                 </div>
 
+                <div class="mb-4">
+                    <label class="form-label">Tags</label>
+
+                    @if (Model.AvailableTags.Count == 0)
+                    {
+                        <div class="text-muted small">No active tags available.</div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var tag in Model.AvailableTags)
+                            {
+                                <label class="form-check border rounded px-3 py-2 d-flex align-items-center gap-2">
+                                    <input class="form-check-input mt-0"
+                                           type="checkbox"
+                                           name="TagIds"
+                                           value="@tag.Id"
+                                           checked="@Model.TagIds.Contains(tag.Id)" />
+                                    <span class="badge"
+                                          style="background-color: @tag.Color; color: white;">
+                                        @tag.Name
+                                    </span>
+                                </label>
+                            }
+                        </div>
+                    }
+                </div>
                 <div class="mb-3">
 
                     <label asp-for="DueDate"

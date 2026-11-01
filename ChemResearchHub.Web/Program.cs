@@ -1,4 +1,4 @@
-using ChemResearchHub.Application.AI;
+﻿using ChemResearchHub.Application.AI;
 using ChemResearchHub.Application.AI.Experiment;
 using ChemResearchHub.Application.AI.Ollama;
 using ChemResearchHub.Application.AI.Prompting;
@@ -152,6 +152,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 // Work Items
 builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
 builder.Services.AddScoped<IWorkItemService, WorkItemService>();
+
+// Tags
+builder.Services.AddScoped<ChemResearchHub.Application.Tags.Repositories.ITagRepository, ChemResearchHub.Infrastructure.Persistence.Repositories.TagRepository>();
+builder.Services.AddScoped<ChemResearchHub.Application.Tags.Repositories.IWorkItemTagRepository, ChemResearchHub.Infrastructure.Persistence.Repositories.WorkItemTagRepository>();
+builder.Services.AddScoped<ChemResearchHub.Application.Tags.Interfaces.ITagService, ChemResearchHub.Application.Tags.Services.TagService>();
 
 // Work Item Transitions
 builder.Services.AddScoped<IWorkItemTransitionRepository, WorkItemTransitionRepository>();

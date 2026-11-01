@@ -6,6 +6,7 @@ using ChemResearchHub.Application.Experiments.Dtos;
 using ChemResearchHub.Application.Results.Dtos;
 using ChemResearchHub.Application.Samples.Dtos;
 using ChemResearchHub.Domain.Enums;
+using ChemResearchHub.Application.Tags.Dtos;
 
 
 namespace ChemResearchHub.Web.Models.WorkItems;
@@ -39,6 +40,8 @@ public class WorkItemDetailsViewModel
     public string? AssignedToUserId { get; set; }
 
     public string? AssignedToUserName { get; set; }
+
+    public IReadOnlyList<TagDto> Tags { get; set; } = Array.Empty<TagDto>();
 
     public IReadOnlyList<ExperimentDto> Experiments { get; set; }
         = Array.Empty<ExperimentDto>();

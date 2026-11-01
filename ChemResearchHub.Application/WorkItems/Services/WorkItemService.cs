@@ -1,4 +1,4 @@
-﻿using ChemResearchHub.Application.AuditLogs.Interfaces;
+using ChemResearchHub.Application.AuditLogs.Interfaces;
 using ChemResearchHub.Application.Boards.Repositories;
 using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Interfaces;
@@ -6,6 +6,7 @@ using ChemResearchHub.Application.WorkItemAssignments.Repositories;
 using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Application.WorkItems.Repositories;
+using ChemResearchHub.Application.Tags.Repositories;
 using ChemResearchHub.Application.WorkItemTransitions.Repositories;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Enums;
@@ -20,6 +21,7 @@ public class WorkItemService : IWorkItemService
     private readonly IWorkItemTransitionRepository _workItemTransitionRepository;
     private readonly IAuditLogService _auditLogService;
     private readonly IWorkItemAssignmentRepository _workItemAssignmentRepository;
+    private readonly IWorkItemTagRepository _workItemTagRepository;
 
     public WorkItemService(
         IWorkItemRepository workItemRepository,
@@ -27,7 +29,8 @@ public class WorkItemService : IWorkItemService
         IUserService userService,
         IWorkItemTransitionRepository workItemTransitionRepository,
         IAuditLogService auditLogService,
-        IWorkItemAssignmentRepository workItemAssignmentRepository)
+        IWorkItemAssignmentRepository workItemAssignmentRepository,
+        IWorkItemTagRepository workItemTagRepository)
     {
         _workItemRepository = workItemRepository;
         _boardRepository = boardRepository;
@@ -35,6 +38,7 @@ public class WorkItemService : IWorkItemService
         _workItemTransitionRepository = workItemTransitionRepository;
         _auditLogService = auditLogService;
         _workItemAssignmentRepository = workItemAssignmentRepository;
+        _workItemTagRepository = workItemTagRepository;
     }
 
     
@@ -54,8 +58,11 @@ public class WorkItemService : IWorkItemService
                 workItems.Select(x => x.Id).ToArray(),
                 cancellationToken);
 
+        var tags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
+            workItems.Select(x => x.Id).ToArray(), cancellationToken);
+
         return workItems
-            .Select(x => MapToDto(x, usersById, assignments))
+            .Select(x => MapToDto(x, usersById, assignments, tags))
             .ToList();
     }
 
@@ -63,13 +70,15 @@ public class WorkItemService : IWorkItemService
         string? search = null,
         bool? isCompleted = null,
         string? assignedToUserId = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<int>? tagIds = null)
     {
         var workItems = await _workItemRepository.GetAllAsync(
             search,
             isCompleted,
             assignedToUserId,
-            cancellationToken);
+            cancellationToken,
+            tagIds: tagIds);
 
         var users = await _userService.GetAllAsync(cancellationToken);
         var usersById = users.ToDictionary(x => x.Id, x => x);
@@ -79,8 +88,11 @@ public class WorkItemService : IWorkItemService
                 workItems.Select(x => x.Id).ToArray(),
                 cancellationToken);
 
+        var tags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
+            workItems.Select(x => x.Id).ToArray(), cancellationToken);
+
         return workItems
-            .Select(x => MapToDto(x, usersById, assignments))
+            .Select(x => MapToDto(x, usersById, assignments, tags))
             .ToList();
     }
 
@@ -103,13 +115,17 @@ public class WorkItemService : IWorkItemService
         var assignments = await _workItemAssignmentRepository
             .GetUserIdsByWorkItemIdAsync(id, cancellationToken);
 
+        var tags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
+            new[] { id }, cancellationToken);
+
         return MapToDto(
             workItem,
             usersById,
             new Dictionary<int, IReadOnlyList<string>>
             {
                 [id] = assignments
-            });
+            },
+            tags);
     }
 
     public async Task<WorkItemDto?> UpdateAsync(
@@ -122,7 +138,8 @@ public class WorkItemService : IWorkItemService
         string? assignedToUserId,
         string? changedByUserId,
         CancellationToken cancellationToken = default,
-        IReadOnlyCollection<string>? assignedUserIds = null)
+        IReadOnlyCollection<string>? assignedUserIds = null,
+        IReadOnlyCollection<int>? tagIds = null)
     {
         var workItem = await _workItemRepository.GetByIdAsync(
             id,
@@ -178,6 +195,12 @@ public class WorkItemService : IWorkItemService
             changedByUserId,
             cancellationToken);
 
+        if (tagIds is not null)
+        {
+            await _workItemTagRepository.ReplaceActiveTagsAsync(
+                workItem.Id, tagIds, cancellationToken);
+        }
+
         // Both repositories use the same scoped DbContext.
         await _workItemRepository.SaveChangesAsync(cancellationToken);
 
@@ -197,13 +220,17 @@ public class WorkItemService : IWorkItemService
                 workItem.Id,
                 cancellationToken);
 
+        var savedTags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
+            new[] { workItem.Id }, cancellationToken);
+
         return MapToDto(
             workItem,
             usersById,
             new Dictionary<int, IReadOnlyList<string>>
             {
                 [workItem.Id] = savedCollaboratorIds
-            });
+            },
+            savedTags);
     }
 
     public async Task<WorkItemDto> CreateAsync(
@@ -217,7 +244,8 @@ public class WorkItemService : IWorkItemService
         string? assignedToUserId,
         string? changedByUserId,
         CancellationToken cancellationToken = default,
-        IReadOnlyCollection<string>? assignedUserIds = null)
+        IReadOnlyCollection<string>? assignedUserIds = null,
+        IReadOnlyCollection<int>? tagIds = null)
     {
         var board = await _boardRepository.GetByColumnIdAsync(
             boardColumnId,
@@ -314,6 +342,14 @@ public class WorkItemService : IWorkItemService
             await _workItemRepository.SaveChangesAsync(cancellationToken);
         }
 
+        if (tagIds is { Count: > 0 })
+        {
+            await _workItemTagRepository.ReplaceActiveTagsAsync(
+                workItem.Id, tagIds, cancellationToken);
+
+            await _workItemRepository.SaveChangesAsync(cancellationToken);
+        }
+
         await _auditLogService.AddAsync(
             changedByUserId,
             "Created",
@@ -330,13 +366,17 @@ public class WorkItemService : IWorkItemService
                 workItem.Id,
                 cancellationToken);
 
+        var savedTags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
+            new[] { workItem.Id }, cancellationToken);
+
         return MapToDto(
             workItem,
             usersById,
             new Dictionary<int, IReadOnlyList<string>>
             {
                 [workItem.Id] = savedCollaboratorIds
-            });
+            },
+            savedTags);
     }
 
     public async Task<bool> MoveAsync(
@@ -658,7 +698,8 @@ public class WorkItemService : IWorkItemService
     private static WorkItemDto MapToDto(
         WorkItem workItem,
         IReadOnlyDictionary<string, UserDto> usersById,
-        IReadOnlyDictionary<int, IReadOnlyList<string>> assignmentsByWorkItemId)
+        IReadOnlyDictionary<int, IReadOnlyList<string>> assignmentsByWorkItemId,
+        IReadOnlyDictionary<int, IReadOnlyList<ChemResearchHub.Application.Tags.Dtos.TagDto>>? tagsByWorkItemId = null)
     {
         usersById.TryGetValue(
             workItem.AssignedToUserId ?? string.Empty,
@@ -699,14 +740,18 @@ public class WorkItemService : IWorkItemService
             workItem,
             primaryUser,
             additionalIds,
-            additionalNames);
+            additionalNames,
+            tagsByWorkItemId is not null && tagsByWorkItemId.TryGetValue(workItem.Id, out var itemTags)
+                ? itemTags
+                : Array.Empty<ChemResearchHub.Application.Tags.Dtos.TagDto>());
     }
 
     private static WorkItemDto MapToDto(
         WorkItem workItem,
         UserDto? assignedUser,
         IReadOnlyList<string>? assignedUserIds = null,
-        IReadOnlyList<string>? assignedUserNames = null)
+        IReadOnlyList<string>? assignedUserNames = null,
+        IReadOnlyList<ChemResearchHub.Application.Tags.Dtos.TagDto>? tags = null)
     {
         var assignedUserName = assignedUser is null
             ? null
@@ -718,6 +763,7 @@ public class WorkItemService : IWorkItemService
         {
             Id = workItem.Id,
             ReferenceCode = $"CRH-{workItem.Id:D6}",
+            Tags = tags ?? Array.Empty<ChemResearchHub.Application.Tags.Dtos.TagDto>(),
             ProjectId = workItem.ProjectId,
             BoardColumnId = workItem.BoardColumnId,
             AssignedToUserId = workItem.AssignedToUserId,
@@ -734,6 +780,7 @@ public class WorkItemService : IWorkItemService
         };
     }
 }
+
 
 
 

@@ -1,4 +1,5 @@
 ﻿using ChemResearchHub.Domain.Enums;
+using ChemResearchHub.Application.Tags.Dtos;
 
 namespace ChemResearchHub.Application.WorkItems.Dtos;
 
@@ -35,4 +36,6 @@ public class WorkItemDto
     public int SortOrder { get; init; }
 
     public string ReferenceCode { get; init; } = string.Empty;
+
+    public IReadOnlyList<TagDto> Tags { get; init; } = Array.Empty<TagDto>();
 }

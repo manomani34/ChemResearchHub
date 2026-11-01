@@ -5,6 +5,8 @@ using ChemResearchHub.Domain.Entities.Experiment;
 using ChemResearchHub.Domain.Entities.Project;
 using ChemResearchHub.Domain.Entities.Result;
 using ChemResearchHub.Domain.Entities.Sample;
+using ChemResearchHub.Domain.Entities.Tag;
+using ChemResearchHub.Domain.Entities.WorkItemTag;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Entities.WorkItemAssignment;
 using ChemResearchHub.Domain.Entities.WorkItemBlock;
@@ -30,6 +32,9 @@ public class ApplicationDbContext
     public DbSet<Sample> Samples => Set<Sample>();
     public DbSet<Experiment> Experiments => Set<Experiment>();
     public DbSet<Project> Projects => Set<Project>();
+    public DbSet<Tag> Tags => Set<Tag>();
+
+    public DbSet<WorkItemTag> WorkItemTags => Set<WorkItemTag>();
 
     public DbSet<WorkItem> WorkItems => Set<WorkItem>();
 

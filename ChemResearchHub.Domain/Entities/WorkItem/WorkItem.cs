@@ -1,5 +1,6 @@
 ﻿using ChemResearchHub.Domain.Common;
 using ChemResearchHub.Domain.Enums;
+using WorkItemTagEntity = ChemResearchHub.Domain.Entities.WorkItemTag.WorkItemTag;
 
 namespace ChemResearchHub.Domain.Entities.WorkItem;
 
@@ -26,6 +27,8 @@ public class WorkItem : BaseEntity
         ProjectId = projectId;
         Type = type;
     }
+
+    public ICollection<WorkItemTagEntity> WorkItemTags { get; private set; } = new List<WorkItemTagEntity>();
 
     public int ProjectId { get; private set; }
 
@@ -133,3 +136,6 @@ public class WorkItem : BaseEntity
         Title = title.Trim();
     }
 }
+
+
+

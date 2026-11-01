@@ -1,0 +1,116 @@
+﻿using ChemResearchHub.Domain.Common;
+using WorkItemTagEntity = ChemResearchHub.Domain.Entities.WorkItemTag.WorkItemTag;
+
+namespace ChemResearchHub.Domain.Entities.Tag;
+
+public class Tag : BaseEntity
+{
+    private Tag()
+    {
+    }
+
+    public Tag(
+        string name,
+        string color = "#64748B",
+        string? description = null)
+    {
+        SetName(name);
+        SetColor(color);
+        SetDescription(description);
+        IsActive = true;
+    }
+
+    public string Name { get; private set; } = null!;
+
+    public string? Description { get; private set; }
+
+    public string Color { get; private set; } = null!;
+
+    public ICollection<WorkItemTagEntity> WorkItemTags { get; private set; } = new List<WorkItemTag>();
+
+    public bool IsActive { get; private set; }
+
+    public void Update(
+        string name,
+        string color,
+        string? description)
+    {
+        SetName(name);
+        SetColor(color);
+        SetDescription(description);
+
+        ModifiedAt = DateTime.UtcNow;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+            return;
+
+        IsActive = false;
+        ModifiedAt = DateTime.UtcNow;
+    }
+
+    public void Activate()
+    {
+        if (IsActive)
+            return;
+
+        IsActive = true;
+        ModifiedAt = DateTime.UtcNow;
+    }
+
+    private void SetName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException(
+                "Tag name is required.",
+                nameof(name));
+        }
+
+        name = name.Trim();
+
+        if (name.Length > 100)
+        {
+            throw new ArgumentException(
+                "Tag name cannot exceed 100 characters.",
+                nameof(name));
+        }
+
+        Name = name;
+    }
+
+    private void SetColor(string color)
+    {
+        if (string.IsNullOrWhiteSpace(color) ||
+            !System.Text.RegularExpressions.Regex.IsMatch(
+                color,
+                "^#[0-9A-Fa-f]{6}$"))
+        {
+            throw new ArgumentException(
+                "Tag color must be a valid HEX color, e.g. #2563EB.",
+                nameof(color));
+        }
+
+        Color = color.ToUpperInvariant();
+    }
+
+    private void SetDescription(string? description)
+    {
+        description = string.IsNullOrWhiteSpace(description)
+            ? null
+            : description.Trim();
+
+        if (description?.Length > 500)
+        {
+            throw new ArgumentException(
+                "Tag description cannot exceed 500 characters.",
+                nameof(description));
+        }
+
+        Description = description;
+    }
+}
+
+

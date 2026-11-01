@@ -49,8 +49,14 @@ public static class PermissionCatalog
             "Edit research decisions."),
         new("DecisionLogs.Delete", "Delete decision logs", "Decision Logs",
             "Delete research decisions."),
+        new("WorkItems.View", "View work items", "Work Items", "View research work items."),
+        new("WorkItems.Create", "Create work items", "Work Items", "Create research work items."),
+        new("WorkItems.Edit", "Edit work items", "Work Items", "Edit research work items."),
+        new("WorkItems.Delete", "Delete work items", "Work Items", "Delete research work items."),
+        new("WorkItems.Move", "Move work items", "Work Items", "Move work items between board columns."),
+        new("WorkItems.ManageStatus", "Manage work item status", "Work Items", "Complete and reopen work items."),
+        new("WorkItems.ManageBlock", "Manage work item blocks", "Work Items", "Block and unblock work items."),
     ];
-
     public static bool Exists(string permission) =>
         All.Any(x => string.Equals(
             x.Name,
@@ -63,3 +69,5 @@ public static class PermissionCatalog
             permission,
             StringComparison.OrdinalIgnoreCase));
 }
+
+

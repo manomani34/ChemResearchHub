@@ -1,10 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+using ChemResearchHub.Application.Tags.Dtos;
+using System.ComponentModel.DataAnnotations;
 using ChemResearchHub.Domain.Enums;
 
 namespace ChemResearchHub.Web.Models.WorkItems;
 
 public class CreateWorkItemViewModel
 {
+    [Display(Name = "Tags")]
+    public List<int> TagIds { get; set; } = new();
+
+    public IReadOnlyList<TagDto> AvailableTags { get; set; }
+        = Array.Empty<TagDto>();
+
     public int ProjectId { get; set; }
 
     public int BoardId { get; set; }

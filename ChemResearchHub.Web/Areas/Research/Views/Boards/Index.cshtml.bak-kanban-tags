@@ -1,0 +1,1107 @@
+@model ChemResearchHub.Web.Models.Boards.KanbanViewModel
+
+@{
+    ViewData["Title"] = "Research Board";
+
+    var project =
+        (ChemResearchHub.Application.Projects.Dtos.ProjectDto)ViewBag.Project;
+
+    var boards =
+        (IReadOnlyList<ChemResearchHub.Application.Boards.Dtos.BoardDto>)ViewBag.Boards;
+
+    var currentUserName = User.Identity?.Name ?? string.Empty;
+
+    var allWorkItems = Model.WorkItemsByColumn
+        .SelectMany(x => x.Value)
+        .ToList();
+
+    var assignees = allWorkItems
+        .Where(x => !string.IsNullOrWhiteSpace(x.AssignedToUserName))
+        .Select(x => x.AssignedToUserName!)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(x => x)
+        .ToList();
+
+    var priorities = allWorkItems
+        .Select(x => x.Priority.ToString())
+        .Where(x => !string.IsNullOrWhiteSpace(x))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(x => x)
+        .ToList();
+}
+
+<style>
+    .board-page {
+        --board-bg: #f6f8fb;
+        --board-border: #e5e7eb;
+        --board-text: #1f2937;
+        --board-muted: #6b7280;
+        --board-primary: #4f46e5;
+        background: var(--board-bg);
+        border-radius: 18px;
+        padding: 1.25rem;
+    }
+
+    .board-header,
+    .board-filter-panel {
+        background: #fff;
+        border: 1px solid var(--board-border);
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, .04);
+    }
+
+    .board-header {
+        padding: 1.25rem 1.4rem;
+    }
+
+    .board-title {
+        color: var(--board-text);
+        font-weight: 700;
+        letter-spacing: -.3px;
+    }
+
+    .board-subtitle {
+        color: var(--board-muted);
+    }
+
+    .board-filter-panel {
+        padding: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .filter-label {
+        font-size: .78rem;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: .35rem;
+    }
+
+    .filter-control {
+        border: 1px solid #dbe1ea;
+        border-radius: 10px;
+        min-height: 40px;
+        font-size: .88rem;
+    }
+
+        .filter-control:focus {
+            border-color: #a5b4fc;
+            box-shadow: 0 0 0 .2rem rgba(99, 102, 241, .10);
+        }
+
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .kanban-column {
+        min-width: 0;
+    }
+
+    .kanban-column-card {
+        border: 1px solid var(--board-border);
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, .045);
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .kanban-column-card.wip-column-full {
+            border-color: #fca5a5;
+            box-shadow: 0 5px 18px rgba(220, 38, 38, .08);
+        }
+
+    .kanban-column-header {
+        padding: .85rem .95rem;
+        border-bottom: 1px solid rgba(0, 0, 0, .05);
+    }
+
+    .kanban-column-title {
+        font-size: .92rem;
+        font-weight: 700;
+        color: #374151;
+        overflow-wrap: anywhere;
+    }
+
+    .kanban-column-count {
+        min-width: 28px;
+        text-align: center;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .72rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, .75);
+        color: #374151;
+        border: 1px solid rgba(0, 0, 0, .06);
+    }
+
+    /* WIP capacity */
+    .wip-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .35rem;
+        margin-top: .55rem;
+        font-size: .72rem;
+        color: #4b5563;
+    }
+
+    .wip-capacity-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        border: 1px solid #dbeafe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+        .wip-capacity-badge.wip-near-limit {
+            border-color: #fde68a;
+            background: #fffbeb;
+            color: #92400e;
+        }
+
+        .wip-capacity-badge.wip-full {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+    .wip-progress {
+        width: 100%;
+        height: 4px;
+        overflow: hidden;
+        margin-top: .45rem;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, .22);
+    }
+
+    .wip-progress-bar {
+        height: 100%;
+        width: 0;
+        border-radius: inherit;
+        background: #3b82f6;
+        transition: width .2s ease, background-color .2s ease;
+    }
+
+        .wip-progress-bar.wip-near-limit {
+            background: #f59e0b;
+        }
+
+        .wip-progress-bar.wip-full {
+            background: #dc2626;
+        }
+
+    .status-color-0 {
+        background: #eef2ff;
+    }
+
+    .status-color-1 {
+        background: #ecfeff;
+    }
+
+    .status-color-2 {
+        background: #fef3c7;
+    }
+
+    .status-color-3 {
+        background: #fce7f3;
+    }
+
+    .status-color-4 {
+        background: #dcfce7;
+    }
+
+    .status-color-5 {
+        background: #f3e8ff;
+    }
+
+    .status-color-6 {
+        background: #e0f2fe;
+    }
+
+    .status-color-7 {
+        background: #f1f5f9;
+    }
+
+    .kanban-drop-zone {
+        min-height: 220px;
+        padding: .15rem;
+        border-radius: 10px;
+        transition: background-color .15s ease, outline .15s ease;
+    }
+
+        .kanban-drop-zone.drag-over {
+            background-color: #e0ecff;
+            outline: 2px dashed #8daef5;
+            outline-offset: -4px;
+        }
+
+    .kanban-card {
+        cursor: grab;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 12px;
+        transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+        background: #fff;
+    }
+
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .08) !important;
+        }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        .kanban-card.dragging {
+            opacity: .45;
+            transform: rotate(1deg);
+        }
+
+        .kanban-card.completed {
+            opacity: .78;
+        }
+
+            .kanban-card.completed .card-title {
+                text-decoration: line-through;
+            }
+
+    .work-item-reference {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        width: fit-content;
+        margin-bottom: 7px;
+        padding: 3px 5px 3px 7px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: .65rem;
+        font-weight: 700;
+        letter-spacing: .35px;
+        direction: ltr;
+        line-height: 1.2;
+    }
+
+    .reference-copy-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 21px;
+        height: 21px;
+        padding: 0;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 11px;
+        transition: background-color .15s ease, color .15s ease;
+    }
+
+        .reference-copy-button:hover {
+            background: #e2e8f0;
+            color: #4f46e5;
+        }
+
+        .reference-copy-button.copied {
+            color: #16a34a;
+            background: #dcfce7;
+        }
+
+    .work-item-title {
+        color: #1f2937;
+        font-weight: 650;
+    }
+
+        .work-item-title:hover {
+            color: #4f46e5;
+        }
+
+    .work-item-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .item-meta {
+        border-top: 1px solid #f0f2f5;
+        padding-top: .65rem;
+    }
+
+    .item-meta-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: .76rem;
+        margin-bottom: .35rem;
+    }
+
+    .item-meta-label {
+        color: #9ca3af;
+    }
+
+    .item-meta-value {
+        color: #4b5563;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .empty-column {
+        padding: 3rem 1rem;
+        color: #9ca3af;
+    }
+
+    .empty-column-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #f3f4f6;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: .65rem;
+    }
+
+    .board-filter-empty {
+        display: none;
+        background: #fff;
+        border: 1px dashed #d1d5db;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        color: #9ca3af;
+        margin-top: 1rem;
+    }
+
+    .filter-result-count {
+        font-size: .78rem;
+        color: #6b7280;
+    }
+
+    .my-task-active {
+        background: #eef2ff !important;
+        color: #4338ca !important;
+        border-color: #c7d2fe !important;
+    }
+
+    @@media (max-width: 1400px) {
+        .kanban-board {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 1100px) {
+        .kanban-board {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 800px) {
+        .kanban-board {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .board-page {
+            padding: .75rem;
+        }
+
+        .kanban-board {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container-fluid py-4 board-page">
+    <div class="board-header mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <div class="small text-muted mb-1">Research Project</div>
+                <h1 class="h3 mb-1 board-title">@project.Name</h1>
+                <div class="board-subtitle">@Model.Board.Name</div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a asp-action="List" class="btn btn-outline-secondary">Boards</a>
+
+                <a asp-action="Create"
+                   asp-route-projectId="@project.Id"
+                   class="btn btn-primary">
+                    + New Board
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (boards.Count > 1)
+    {
+        <div class="mb-4">
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var board in boards)
+                {
+                    <a asp-action="Index"
+                       asp-route-projectId="@project.Id"
+                       asp-route-boardId="@board.Id"
+                       class="btn @(board.Id == Model.Board.Id ? "btn-primary" : "btn-outline-secondary")">
+                        @board.Name
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="board-filter-panel">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <div>
+                <strong>فیلتر تسک‌ها</strong>
+                <div class="small text-muted">
+                    تسک‌های نمایش داده شده را بر اساس معیارهای مختلف فیلتر کنید.
+                </div>
+            </div>
+
+            <div class="filter-result-count">
+                نمایش <strong id="visibleWorkItemsCount">@allWorkItems.Count</strong> تسک
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="filter-label" for="workItemSearch">
+                    جستجو
+                    <span class="text-muted">(عنوان، توضیحات یا شناسه)</span>
+                </label>
+
+                <input type="text"
+                       id="workItemSearch"
+                       class="form-control filter-control"
+                       placeholder="عنوان، توضیحات یا CRH-000124..." />
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="filter-label" for="assigneeFilter">کاربر</label>
+
+                <select id="assigneeFilter" class="form-select filter-control">
+                    <option value="">همه کاربران</option>
+                    <option value="__unassigned__">بدون مسئول</option>
+
+                    @foreach (var assignee in assignees)
+                    {
+                        <option value="@assignee">@assignee</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="filter-label" for="statusFilter">وضعیت</label>
+
+                <select id="statusFilter" class="form-select filter-control">
+                    <option value="">همه وضعیت‌ها</option>
+
+                    @foreach (var column in Model.Board.Columns.OrderBy(x => x.Order))
+                    {
+                        <option value="@column.Id">@column.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <label class="filter-label" for="priorityFilter">اولویت</label>
+
+                <select id="priorityFilter" class="form-select filter-control">
+                    <option value="">همه اولویت‌ها</option>
+
+                    @foreach (var priority in priorities)
+                    {
+                        <option value="@priority">@priority</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+            <button type="button"
+                    id="myTasksButton"
+                    class="btn btn-sm btn-outline-primary">
+                فقط تسک‌های من
+            </button>
+
+            <button type="button"
+                    id="clearFiltersButton"
+                    class="btn btn-sm btn-outline-secondary">
+                پاک کردن فیلترها
+            </button>
+        </div>
+    </div>
+
+    <div class="kanban-board">
+        @{
+            var columnIndex = 0;
+        }
+
+        @foreach (var column in Model.Board.Columns.OrderBy(x => x.Order))
+        {
+            var workItems = Model.WorkItemsByColumn.TryGetValue(column.Id, out var items)
+                ? items
+                : Array.Empty<ChemResearchHub.Application.WorkItems.Dtos.WorkItemDto>();
+
+            var statusColorClass = $"status-color-{columnIndex % 8}";
+            var actualCount = workItems.Count;
+            var wipLimit = column.WipLimit;
+            var hasWipLimit = wipLimit.HasValue && wipLimit.Value > 0;
+            var isWipFull = hasWipLimit && actualCount >= wipLimit!.Value;
+            var isWipNearLimit = hasWipLimit
+                && !isWipFull
+                && actualCount >= Math.Ceiling(wipLimit!.Value * 0.8);
+            var remainingCapacity = hasWipLimit
+                ? Math.Max(0, wipLimit!.Value - actualCount)
+                : (int?)null;
+            var wipPercent = hasWipLimit
+                ? Math.Min(100, (int)Math.Round(actualCount * 100.0 / wipLimit!.Value))
+                : 0;
+
+            <div class="kanban-column"
+                 data-column-id="@column.Id"
+                 data-wip-limit="@(hasWipLimit ? wipLimit!.Value.ToString() : "")">
+
+                <div class="kanban-column-card @(isWipFull ? "wip-column-full" : "")">
+                    <div class="kanban-column-header @statusColorClass">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <div class="kanban-column-title">@column.Name</div>
+
+                            <span class="kanban-column-count column-visible-count"
+                                  title="تعداد تسک‌های قابل‌مشاهده">
+                                @actualCount
+                            </span>
+                        </div>
+
+                        <div class="wip-summary">
+                            @if (hasWipLimit)
+                            {
+                                <span class="wip-capacity-badge @(isWipFull ? "wip-full" : isWipNearLimit ? "wip-near-limit" : "")"
+                                      data-wip-badge>
+                                    <span class="wip-usage">@actualCount / @wipLimit</span>
+                                    <span>کار در جریان</span>
+                                </span>
+
+                                <span class="wip-remaining" data-wip-remaining>
+                                    @(isWipFull ? "ظرفیت تکمیل است" : $"ظرفیت باقی‌مانده: {remainingCapacity}")
+                                </span>
+
+                                <div class="wip-progress"
+                                     role="progressbar"
+                                     aria-label="درصد استفاده از ظرفیت WIP"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100"
+                                     aria-valuenow="@wipPercent">
+                                    <div class="wip-progress-bar @(isWipFull ? "wip-full" : isWipNearLimit ? "wip-near-limit" : "")"
+                                         data-wip-progress
+                                         style="width: @(wipPercent)%"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted" data-wip-unlimited>بدون محدودیت WIP</span>
+                                <span class="wip-unlimited-usage" data-wip-usage>@actualCount کار</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-body p-3">
+                        <div class="d-grid mb-3">
+                            <a asp-area="Research" asp-controller="WorkItems"
+                               asp-action="Create"
+                               asp-route-projectId="@project.Id"
+                               asp-route-boardId="@Model.Board.Id"
+                               asp-route-boardColumnId="@column.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                + Add Work Item
+                            </a>
+                        </div>
+
+                        <div class="kanban-drop-zone" data-column-id="@column.Id">
+                            @if (workItems.Count == 0)
+                            {
+                                <div class="empty-column">
+                                    <div class="text-center">
+                                        <div class="empty-column-icon">+</div>
+                                        <div class="mb-1">No work items</div>
+                                        <small>Drag a card here or add a new item.</small>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var item in workItems)
+                                {
+                                    var assigneeName = item.AssignedToUserName ?? string.Empty;
+                                    var priorityValue = item.Priority.ToString();
+                                    var searchableText = $"{item.ReferenceCode} {item.Title} {item.Description}";
+
+                                    <div class="card mb-3 kanban-card @(item.IsCompleted ? "completed" : "")"
+                                         draggable="true"
+                                         data-work-item-id="@item.Id"
+                                         data-column-id="@column.Id"
+                                         data-assignee="@assigneeName"
+                                         data-priority="@priorityValue"
+                                         data-search="@searchableText">
+
+                                        <div class="card-body p-3">
+                                            <div class="work-item-reference">
+                                                <span>@item.ReferenceCode</span>
+
+                                                <button type="button"
+                                                        class="reference-copy-button"
+                                                        data-reference="@item.ReferenceCode"
+                                                        title="کپی شناسه"
+                                                        aria-label="کپی شناسه @item.ReferenceCode">
+                                                    📋
+                                                </button>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <h6 class="card-title mb-0">
+                                                            <a asp-area="Research" asp-controller="WorkItems"
+                                                               asp-action="Details"
+                                                               asp-route-id="@item.Id"
+                                                               asp-route-projectId="@project.Id"
+                                                               asp-route-boardId="@Model.Board.Id"
+                                                               class="text-decoration-none work-item-title">
+                                                                @item.Title
+                                                            </a>
+                                                        </h6>
+
+                                                        @if (item.IsCompleted)
+                                                        {
+                                                            <span class="badge bg-success-subtle text-success">
+                                                                Completed
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <span class="badge bg-light text-dark border">@item.Type</span>
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                                            {
+                                                <p class="card-text text-muted small mb-3 work-item-description">
+                                                    @item.Description
+                                                </p>
+                                            }
+
+                                            <div class="item-meta mb-3">
+                                                <div class="item-meta-row">
+                                                    <span class="item-meta-label">Priority</span>
+                                                    <span class="item-meta-value">@item.Priority</span>
+                                                </div>
+
+                                                @if (item.DueDate.HasValue)
+                                                {
+                                                    <div class="item-meta-row">
+                                                        <span class="item-meta-label">Due</span>
+                                                        <span class="item-meta-value">
+                                                            @item.DueDate.Value.ToString("yyyy-MM-dd")
+                                                        </span>
+                                                    </div>
+                                                }
+
+                                                <div class="item-meta-row">
+                                                    <span class="item-meta-label">Assigned to</span>
+                                                    <span class="item-meta-value">
+                                                        @if (!string.IsNullOrWhiteSpace(item.AssignedToUserName))
+                                                        {
+                                                            @item.AssignedToUserName
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">Unassigned</span>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-grid gap-2">
+                                                <a asp-area="Research" asp-controller="WorkItems"
+                                                   asp-action="Details"
+                                                   asp-route-id="@item.Id"
+                                                   asp-route-projectId="@project.Id"
+                                                   asp-route-boardId="@Model.Board.Id"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Details
+                                                </a>
+
+                                                <a asp-area="Research" asp-controller="WorkItems"
+                                                   asp-action="Edit"
+                                                   asp-route-id="@item.Id"
+                                                   asp-route-projectId="@project.Id"
+                                                   asp-route-boardId="@Model.Board.Id"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    Edit
+                                                </a>
+
+                                                @if (item.IsCompleted)
+                                                {
+                                                    <form asp-area="Research" asp-controller="WorkItems" asp-action="Reopen" method="post">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <input type="hidden" name="boardId" value="@Model.Board.Id" />
+                                                        <input type="hidden" name="projectId" value="@project.Id" />
+                                                        @Html.AntiForgeryToken()
+
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-warning w-100">
+                                                            Reopen
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-area="Research" asp-controller="WorkItems" asp-action="Complete" method="post">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <input type="hidden" name="boardId" value="@Model.Board.Id" />
+                                                        <input type="hidden" name="projectId" value="@project.Id" />
+                                                        @Html.AntiForgeryToken()
+
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-success w-100">
+                                                            Complete
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            columnIndex++;
+        }
+    </div>
+
+    <div id="boardFilterEmpty" class="board-filter-empty">
+        <div class="mb-2">هیچ تسکی با فیلترهای انتخاب شده پیدا نشد.</div>
+        <small>فیلترها را تغییر دهید یا پاک کنید.</small>
+    </div>
+</div>
+
+<form id="kanbanMoveForm"
+      asp-area="Research" asp-controller="WorkItems"
+      asp-action="Move"
+      method="post"
+      class="d-none">
+
+    <input type="hidden" id="moveWorkItemId" name="id" />
+    <input type="hidden" name="boardId" value="@Model.Board.Id" />
+    <input type="hidden" name="projectId" value="@project.Id" />
+    <input type="hidden" id="moveBoardColumnId" name="boardColumnId" />
+    <input type="hidden" id="moveSortOrder" name="sortOrder" value="0" />
+
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let draggedCard = null;
+
+            const cards = Array.from(document.querySelectorAll(".kanban-card"));
+            const dropZones = document.querySelectorAll(".kanban-drop-zone");
+
+            const moveForm = document.getElementById("kanbanMoveForm");
+            const moveWorkItemId = document.getElementById("moveWorkItemId");
+            const moveBoardColumnId = document.getElementById("moveBoardColumnId");
+            const moveSortOrder = document.getElementById("moveSortOrder");
+
+            const searchInput = document.getElementById("workItemSearch");
+            const assigneeFilter = document.getElementById("assigneeFilter");
+            const statusFilter = document.getElementById("statusFilter");
+            const priorityFilter = document.getElementById("priorityFilter");
+            const myTasksButton = document.getElementById("myTasksButton");
+            const clearFiltersButton = document.getElementById("clearFiltersButton");
+            const visibleCount = document.getElementById("visibleWorkItemsCount");
+            const emptyMessage = document.getElementById("boardFilterEmpty");
+
+            let myTasksOnly = false;
+
+            function normalize(value) {
+                return (value || "").toString().trim().toLocaleLowerCase();
+            }
+
+            function updateColumnWipDisplay(columnElement, actualCount) {
+                const limitText = columnElement.dataset.wipLimit;
+                const limit = limitText ? Number(limitText) : null;
+                const count = Number(actualCount) || 0;
+
+                const badge = columnElement.querySelector("[data-wip-badge]");
+                const remaining = columnElement.querySelector("[data-wip-remaining]");
+                const progress = columnElement.querySelector("[data-wip-progress]");
+                const columnCard = columnElement.querySelector(".kanban-column-card");
+
+                if (!limit || !Number.isFinite(limit) || limit <= 0) {
+                    const usage = columnElement.querySelector("[data-wip-usage]");
+                    if (usage) usage.textContent = count + " کار";
+                    return;
+                }
+
+                const full = count >= limit;
+                const near = !full && count >= Math.ceil(limit * 0.8);
+                const percent = Math.min(100, Math.round((count / limit) * 100));
+
+                if (badge) {
+                    badge.classList.toggle("wip-full", full);
+                    badge.classList.toggle("wip-near-limit", near);
+
+                    const usage = badge.querySelector(".wip-usage");
+                    if (usage) usage.textContent = count + " / " + limit;
+                }
+
+                if (remaining) {
+                    remaining.textContent = full
+                        ? "ظرفیت تکمیل است"
+                        : "ظرفیت باقی‌مانده: " + Math.max(0, limit - count);
+                }
+
+                if (progress) {
+                    progress.style.width = percent + "%";
+                    progress.classList.toggle("wip-full", full);
+                    progress.classList.toggle("wip-near-limit", near);
+
+                    const progressContainer = progress.parentElement;
+                    if (progressContainer) {
+                        progressContainer.setAttribute("aria-valuenow", percent.toString());
+                    }
+                }
+
+                if (columnCard) {
+                    columnCard.classList.toggle("wip-column-full", full);
+                }
+            }
+
+            function applyFilters() {
+                const search = normalize(searchInput.value);
+                const assignee = normalize(assigneeFilter.value);
+                const status = normalize(statusFilter.value);
+                const priority = normalize(priorityFilter.value);
+
+                const currentUser = normalize(
+                    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(currentUserName))
+                );
+
+                let visibleTotal = 0;
+
+                cards.forEach(function(card) {
+                    const searchableText = normalize(card.dataset.search);
+                    const cardAssignee = normalize(card.dataset.assignee);
+                    const cardColumn = normalize(card.dataset.columnId);
+                    const cardPriority = normalize(card.dataset.priority);
+
+                    const matchesSearch =
+                        !search || searchableText.includes(search);
+
+                    let matchesAssignee = true;
+
+                    if (assignee === "__unassigned__") {
+                        matchesAssignee = !cardAssignee;
+                    } else if (assignee) {
+                        matchesAssignee = cardAssignee === assignee;
+                    }
+
+                    const matchesStatus = !status || cardColumn === status;
+                    const matchesPriority = !priority || cardPriority === priority;
+
+                    const matchesMyTasks = !myTasksOnly ||
+                        (currentUser.length > 0 && cardAssignee === currentUser);
+
+                    const visible = matchesSearch &&
+                        matchesAssignee &&
+                        matchesStatus &&
+                        matchesPriority &&
+                        matchesMyTasks;
+
+                    card.style.display = visible ? "" : "none";
+
+                    if (visible) {
+                        visibleTotal++;
+                    }
+                });
+
+                document.querySelectorAll(".kanban-column").forEach(function(column) {
+                    const columnCards = column.querySelectorAll(".kanban-card");
+                    let visibleInColumn = 0;
+                    let actualInColumn = 0;
+
+                    columnCards.forEach(function(card) {
+                        actualInColumn++;
+
+                        if (card.style.display !== "none") {
+                            visibleInColumn++;
+                        }
+                    });
+
+                    const countElement = column.querySelector(".column-visible-count");
+
+                    if (countElement) {
+                        countElement.textContent = visibleInColumn;
+                        countElement.title =
+                            "نمایش " + visibleInColumn + " از " + actualInColumn + " تسک";
+                    }
+
+                    // ظرفیت WIP بر اساس تعداد واقعی آیتم‌ها محاسبه می‌شود،
+                    // نه تعداد آیتم‌هایی که پس از فیلتر باقی مانده‌اند.
+                    updateColumnWipDisplay(column, actualInColumn);
+                });
+
+                visibleCount.textContent = visibleTotal;
+                emptyMessage.style.display = visibleTotal === 0 ? "block" : "none";
+
+                myTasksButton.classList.toggle("my-task-active", myTasksOnly);
+            }
+
+            // Copy Reference ID
+            document.querySelectorAll(".reference-copy-button").forEach(function(button) {
+                button.addEventListener("click", async function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const referenceCode = button.dataset.reference;
+                    if (!referenceCode) return;
+
+                    try {
+                        await navigator.clipboard.writeText(referenceCode);
+
+                        const originalText = button.textContent;
+
+                        button.textContent = "✓";
+                        button.classList.add("copied");
+                        button.title = "کپی شد";
+
+                        setTimeout(function() {
+                            button.textContent = originalText;
+                            button.classList.remove("copied");
+                            button.title = "کپی شناسه";
+                        }, 1200);
+                    } catch (error) {
+                        console.error("Could not copy reference code:", error);
+                    }
+                });
+            });
+
+            searchInput.addEventListener("input", applyFilters);
+            assigneeFilter.addEventListener("change", applyFilters);
+            statusFilter.addEventListener("change", applyFilters);
+            priorityFilter.addEventListener("change", applyFilters);
+
+            myTasksButton.addEventListener("click", function() {
+                myTasksOnly = !myTasksOnly;
+                applyFilters();
+            });
+
+            clearFiltersButton.addEventListener("click", function() {
+                searchInput.value = "";
+                assigneeFilter.value = "";
+                statusFilter.value = "";
+                priorityFilter.value = "";
+                myTasksOnly = false;
+
+                applyFilters();
+            });
+
+            cards.forEach(function(card) {
+                card.addEventListener("dragstart", function(event) {
+                    draggedCard = card;
+                    card.classList.add("dragging");
+
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", card.dataset.workItemId);
+                });
+
+                card.addEventListener("dragend", function() {
+                    card.classList.remove("dragging");
+                    draggedCard = null;
+
+                    dropZones.forEach(function(zone) {
+                        zone.classList.remove("drag-over");
+                    });
+                });
+            });
+
+            function calculateSortOrder(zone, mouseY) {
+                const zoneCards = Array.from(
+                    zone.querySelectorAll(".kanban-card")
+                ).filter(function(card) {
+                    return card.style.display !== "none";
+                });
+
+                let sortOrder = 0;
+
+                for (const card of zoneCards) {
+                    if (draggedCard && card === draggedCard) {
+                        continue;
+                    }
+
+                    const rect = card.getBoundingClientRect();
+                    const cardMiddle = rect.top + (rect.height / 2);
+
+                    if (mouseY > cardMiddle) {
+                        sortOrder++;
+                    }
+                }
+
+                return sortOrder;
+            }
+
+            dropZones.forEach(function(zone) {
+                zone.addEventListener("dragover", function(event) {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                    zone.classList.add("drag-over");
+                });
+
+                zone.addEventListener("dragleave", function(event) {
+                    if (!zone.contains(event.relatedTarget)) {
+                        zone.classList.remove("drag-over");
+                    }
+                });
+
+                zone.addEventListener("drop", function(event) {
+                    event.preventDefault();
+                    zone.classList.remove("drag-over");
+
+                    const workItemId = event.dataTransfer.getData("text/plain");
+                    const targetColumnId = zone.dataset.columnId;
+
+                    if (!workItemId || !targetColumnId || !moveForm) {
+                        return;
+                    }
+
+                    const sortOrder = calculateSortOrder(zone, event.clientY);
+
+                    moveWorkItemId.value = workItemId;
+                    moveBoardColumnId.value = targetColumnId;
+                    moveSortOrder.value = sortOrder;
+
+                    // اعتبارسنجی نهایی WIP در سمت سرور انجام می‌شود.
+                    moveForm.submit();
+                });
+            });
+
+            applyFilters();
+        });
+    </script>
+}

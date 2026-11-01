@@ -143,6 +143,76 @@
                 </div>
 
 
+                <!-- Tags -->
+                <div class="workitems-filter-field workitems-tag-filter">
+                    <label for="tagDropdownToggle">برچسب‌ها</label>
+
+                    @if (Model.AvailableTags.Count == 0)
+                    {
+                        <span class="text-muted small">برچسب فعالی وجود ندارد.</span>
+                    }
+                    else
+                    {
+                        <div class="workitems-tag-filter-control">
+                            <div class="workitems-tag-dropdown">
+                                <button type="button"
+                                        id="tagDropdownToggle"
+                                        class="form-control workitems-tag-dropdown-toggle"
+                                        aria-expanded="false"
+                                        aria-controls="tagDropdownMenu">
+                                    <span>انتخاب برچسب...</span>
+                                    <span>▾</span>
+                                </button>
+
+                                <div id="tagDropdownMenu" class="workitems-tag-dropdown-menu" hidden>
+                                    <input type="text"
+                                           id="tagSearchInput"
+                                           class="form-control"
+                                           placeholder="جستجوی برچسب..."
+                                           autocomplete="off" />
+
+                                    <div class="workitems-tag-options" id="tagOptions">
+                                        @foreach (var tag in Model.AvailableTags)
+                                        {
+                                            <button type="button"
+                                                    class="workitems-tag-option"
+                                                    data-tag-id="@tag.Id"
+                                                    data-tag-name="@tag.Name"
+                                                    data-tag-color="@tag.Color"
+                                                    aria-pressed="@Model.TagIds.Contains(tag.Id).ToString().ToLowerInvariant()">
+                                                <span class="badge"
+                                                      style="background-color:@tag.Color;color:white;">
+                                                    @tag.Name
+                                                </span>
+                                                <span class="workitems-tag-option-check">
+                                                    @(Model.TagIds.Contains(tag.Id) ? "✓" : "")
+                                                </span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="selectedTags" class="workitems-selected-tags">
+                                @foreach (var tag in Model.AvailableTags.Where(x => Model.TagIds.Contains(x.Id)))
+                                {
+                                    <span class="badge d-inline-flex align-items-center gap-2"
+                                          data-tag-id="@tag.Id"
+                                          style="background-color:@tag.Color;color:white;">
+                                        @tag.Name
+                                        <button type="button"
+                                                class="btn-close btn-close-white"
+                                                aria-label="حذف @tag.Name"
+                                                style="font-size:.55rem;"
+                                                onclick="removeWorkItemTag(@tag.Id)"></button>
+                                    </span>
+                                    <input type="hidden" name="tagIds" value="@tag.Id" data-tag-input="@tag.Id" />
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
                 <!-- Actions -->
 
                 <div class="workitems-filter-actions">
@@ -272,7 +342,18 @@
                                             @item.Description
                                         </div>
                                     }
-
+                                    @if (item.Tags.Count > 0)
+                                    {
+                                        <div class="d-flex flex-wrap gap-1 mt-2">
+                                            @foreach (var tag in item.Tags)
+                                            {
+                                                <span class="badge"
+                                                      style="background-color: @tag.Color; color: white;">
+                                                    @tag.Name
+                                                </span>
+                                            }
+                                        </div>
+                                    }
                                 </td>
 
 
@@ -405,3 +486,105 @@
     </div>
 
 </div>
+
+<script>
+    (() => {
+        const toggle = document.getElementById("tagDropdownToggle");
+        const menu = document.getElementById("tagDropdownMenu");
+        const search = document.getElementById("tagSearchInput");
+        const options = document.getElementById("tagOptions");
+        const selected = document.getElementById("selectedTags");
+
+        if (!toggle || !menu || !search || !options || !selected) return;
+
+        const closeMenu = () => {
+            menu.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+        };
+
+        toggle.addEventListener("click", () => {
+            menu.hidden = !menu.hidden;
+            toggle.setAttribute("aria-expanded", String(!menu.hidden));
+
+            if (!menu.hidden) {
+                search.focus();
+            }
+        });
+
+        search.addEventListener("input", () => {
+            const term = search.value.trim().toLocaleLowerCase();
+
+            options.querySelectorAll(".workitems-tag-option").forEach(option => {
+                option.hidden = !option.dataset.tagName
+                    .toLocaleLowerCase()
+                    .includes(term);
+            });
+        });
+
+        options.addEventListener("click", event => {
+            const option = event.target.closest(".workitems-tag-option");
+            if (!option) return;
+
+            const id = option.dataset.tagId;
+            const name = option.dataset.tagName;
+            const color = option.dataset.tagColor;
+
+            if (selected.querySelector(`[data-tag-id="${id}"]`)) return;
+
+            const badge = document.createElement("span");
+            badge.className = "badge d-inline-flex align-items-center gap-2";
+            badge.dataset.tagId = id;
+            badge.style.backgroundColor = color;
+            badge.style.color = "white";
+
+            const text = document.createElement("span");
+            text.textContent = name;
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn-close btn-close-white";
+            remove.style.fontSize = ".55rem";
+            remove.setAttribute("aria-label", "حذف " + name);
+            remove.addEventListener("click", () => window.removeWorkItemTag(id));
+
+            badge.append(text, remove);
+            selected.appendChild(badge);
+
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "tagIds";
+            input.value = id;
+            input.dataset.tagInput = id;
+            selected.appendChild(input);
+
+            option.setAttribute("aria-pressed", "true");
+            option.querySelector(".workitems-tag-option-check").textContent = "✓";
+
+            search.value = "";
+            search.dispatchEvent(new Event("input"));
+            closeMenu();
+        });
+
+        window.removeWorkItemTag = id => {
+            selected.querySelector(`[data-tag-id="${id}"]`)?.remove();
+            selected.querySelector(`[data-tag-input="${id}"]`)?.remove();
+
+            const option = options.querySelector(`[data-tag-id="${id}"]`);
+            option?.setAttribute("aria-pressed", "false");
+
+            if (option) {
+                option.querySelector(".workitems-tag-option-check").textContent = "";
+            }
+        };
+
+        document.addEventListener("click", event => {
+            if (!event.target.closest(".workitems-tag-dropdown")) {
+                closeMenu();
+            }
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape") closeMenu();
+        });
+    })();
+</script>

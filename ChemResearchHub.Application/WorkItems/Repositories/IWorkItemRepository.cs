@@ -1,4 +1,4 @@
-﻿using ChemResearchHub.Domain.Entities.WorkItem;
+using ChemResearchHub.Domain.Entities.WorkItem;
 
 namespace ChemResearchHub.Application.WorkItems.Repositories;
 
@@ -12,7 +12,8 @@ public interface IWorkItemRepository
         string? search = null,
         bool? isCompleted = null,
         string? assignedToUserId = null,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<int>? tagIds = null);
 
     Task<WorkItem?> GetByIdAsync(
         int id,

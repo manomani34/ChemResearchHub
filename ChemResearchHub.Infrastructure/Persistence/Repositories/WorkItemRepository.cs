@@ -1,4 +1,4 @@
-﻿using ChemResearchHub.Application.WorkItems.Repositories;
+using ChemResearchHub.Application.WorkItems.Repositories;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +31,8 @@ public class WorkItemRepository : IWorkItemRepository
         string? search = null,
         bool? isCompleted = null,
         string? assignedToUserId = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<int>? tagIds = null)
     {
         var query =
             _dbContext.WorkItems
@@ -67,6 +68,15 @@ public class WorkItemRepository : IWorkItemRepository
                     x =>
                         x.AssignedToUserId ==
                         assignedToUserId);
+        }
+
+        if (tagIds is { Count: > 0 })
+        {
+            var selectedTagIds = tagIds.Distinct().ToArray();
+
+            query = query.Where(
+                x => x.WorkItemTags.Any(
+                    workItemTag => selectedTagIds.Contains(workItemTag.TagId)));
         }
 
         return await query

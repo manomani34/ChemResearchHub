@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using ChemResearchHub.Application.Tags.Dtos;
 
 namespace ChemResearchHub.Web.Models.WorkItems;
 
@@ -10,6 +11,11 @@ public class WorkItemsIndexViewModel
         = "all";
 
     public string? AssignedToUserId { get; init; }
+
+    public List<int> TagIds { get; init; } = new();
+
+    public IReadOnlyList<TagDto> AvailableTags { get; init; }
+        = Array.Empty<TagDto>();
 
     public IReadOnlyList<WorkItemListItemViewModel> Items { get; init; }
         = Array.Empty<WorkItemListItemViewModel>();
@@ -42,6 +48,8 @@ public class WorkItemListItemViewModel
     public bool IsCompleted { get; init; }
 
     public string? AssignedToUserName { get; init; }
+
+    public IReadOnlyList<TagDto> Tags { get; init; } = Array.Empty<TagDto>();
 }
 
 

@@ -1,4 +1,4 @@
-﻿
+
 using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Domain.Enums;
 
@@ -14,7 +14,8 @@ public interface IWorkItemService
         string? search = null,
         bool? isCompleted = null,
         string? assignedToUserId = null,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default,
+        IReadOnlyCollection<int>? tagIds = null);
 
     Task<WorkItemDto?> GetByIdAsync(
         int id,
@@ -30,7 +31,8 @@ public interface IWorkItemService
         string? assignedToUserId,
         string? changedByUserId,
         CancellationToken cancellationToken = default,
-        IReadOnlyCollection<string>? assignedUserIds = null);
+        IReadOnlyCollection<string>? assignedUserIds = null,
+        IReadOnlyCollection<int>? tagIds = null);
 
     Task<WorkItemDto> CreateAsync(
         int projectId,
@@ -43,7 +45,8 @@ public interface IWorkItemService
         string? assignedToUserId,
         string? changedByUserId,
         CancellationToken cancellationToken = default,
-        IReadOnlyCollection<string>? assignedUserIds = null);
+        IReadOnlyCollection<string>? assignedUserIds = null,
+        IReadOnlyCollection<int>? tagIds = null);
 
     Task<bool> MoveAsync(
         int id,
@@ -67,3 +70,4 @@ public interface IWorkItemService
         string? changedByUserId,
         CancellationToken cancellationToken = default);
 }
+

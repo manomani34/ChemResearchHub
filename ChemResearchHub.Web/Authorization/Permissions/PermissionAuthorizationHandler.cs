@@ -34,6 +34,17 @@ public sealed class PermissionAuthorizationHandler
 
         var roleNames = await _userManager.GetRolesAsync(user);
 
+        // Admin has full access to all permission-based policies.
+        if (roleNames.Any(roleName =>
+            string.Equals(
+                roleName,
+                "Admin",
+                StringComparison.OrdinalIgnoreCase)))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
         foreach (var roleName in roleNames)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
@@ -58,4 +69,6 @@ public sealed class PermissionAuthorizationHandler
         }
     }
 }
+
+
 
