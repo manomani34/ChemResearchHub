@@ -45,8 +45,6 @@ public class WorkItemsController : Controller
     private readonly IAuthorizationService _authorizationService;
     private readonly IWorkItemUserAlertService _alertService;
     private readonly IHubContext<WorkItemAlertHub> _hubContext;
-    private readonly INotificationService _notificationService;
-    private readonly ILogger<WorkItemsController> _logger;
 
     public WorkItemsController(IWorkItemService workItemService,
                                IBoardService boardService,
@@ -64,9 +62,7 @@ public class WorkItemsController : Controller
                                IAuthorizationService authorizationService,
                                ITagService tagService,
                                IWorkItemUserAlertService alertService,
-                               IHubContext<WorkItemAlertHub> hubContext,
-                               INotificationService notificationService,
-                               ILogger<WorkItemsController> logger)
+                               IHubContext<WorkItemAlertHub> hubContext)
     {
         _workItemService = workItemService;
         _tagService = tagService;
@@ -85,8 +81,6 @@ public class WorkItemsController : Controller
         _authorizationService = authorizationService;
         _alertService = alertService;
         _hubContext = hubContext;
-        _notificationService = notificationService;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -328,15 +322,7 @@ public class WorkItemsController : Controller
                     cancellationToken);
         }
 
-        // Send In-App and Bale notifications to all assigned users.
-        await SendWorkItemAssignmentNotificationsAsync(
-            workItem.Id,
-            workItem.Title,
-            workItem.ProjectId,
-            model.BoardId,
-            assignedUserIds,
-            cancellationToken);
-
+        // Send In-App and Bale notifications to all assigned users.  
         return RedirectToAction(
             "Index",
             "Boards",
@@ -779,18 +765,20 @@ public class WorkItemsController : Controller
                 ClaimTypes.NameIdentifier);
 
         var updated =
-            await _workItemService.UpdateAsync(
-                model.Id,
-                model.Title,
-                model.Description,
-                model.Type,
-                model.Priority,
-                model.DueDate,
-                model.AssignedToUserId,
-                changedByUserId,
-                cancellationToken,
-                assignedUserIds: model.AssignedUserIds,
-                tagIds: model.TagIds);
+     await _workItemService.UpdateAsync(
+         model.Id,
+         model.Title,
+         model.Description,
+         model.Type,
+         model.Priority,
+         model.DueDate,
+         model.AssignedToUserId,
+         changedByUserId,
+         cancellationToken,
+         assignedUserIds: model.AssignedUserIds,
+         tagIds: model.TagIds,
+         suppressBaleEditNotification:
+             model.IsCompleted != workItem.IsCompleted);
 
         if (updated is null)
             return NotFound();
@@ -857,15 +845,6 @@ public class WorkItemsController : Controller
                         count,
                         cancellationToken);
             }
-
-            // Notify only users who were newly assigned.
-            await SendWorkItemAssignmentNotificationsAsync(
-                updated.Id,
-                updated.Title,
-                updated.ProjectId,
-                model.BoardId,
-                newlyAssignedUserIds,
-                cancellationToken);
         }
 
         return RedirectToAction(
@@ -1005,67 +984,7 @@ public class WorkItemsController : Controller
                 projectId,
                 boardId
             });
-    }
-
-    private async Task SendWorkItemAssignmentNotificationsAsync(
-    int workItemId,
-    string workItemTitle,
-    int projectId,
-    int boardId,
-    IEnumerable<string> userIds,
-    CancellationToken cancellationToken)
-    {
-        var actionUrl = Url.Action(
-            "Details",
-            "WorkItems",
-            new
-            {
-                area = "Research",
-                id = workItemId,
-                boardId,
-                projectId
-            });
-
-        foreach (var userId in userIds
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct(StringComparer.Ordinal))
-        {
-            try
-            {
-                var result = await _notificationService.SendAsync(
-                    new NotificationMessage
-                    {
-                        UserId = userId,
-                        Type = "WorkItemAssigned",
-                        Title = "تخصیص فعالیت پژوهشی جدید",
-                        Message = $"فعالیت «{workItemTitle}» به شما تخصیص داده شد.",
-                        ActionUrl = actionUrl
-                    },
-                    cancellationToken);
-
-                foreach (var channel in result.Channels)
-                {
-                    if (!channel.Succeeded)
-                    {
-                        _logger.LogWarning(
-                            "Notification delivery failed. WorkItemId: {WorkItemId}, UserId: {UserId}, Channel: {Channel}, Error: {Error}",
-                            workItemId,
-                            userId,
-                            channel.Channel,
-                            channel.Error);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Unexpected error while sending assignment notification. WorkItemId: {WorkItemId}, UserId: {UserId}",
-                    workItemId,
-                    userId);
-            }
-        }
-    }
+    }    
 
     [HttpPost]
     [ValidateAntiForgeryToken]

@@ -76,6 +76,7 @@ using ChemResearchHub.Application.Notifications.Services;
 using ChemResearchHub.Infrastructure.Notifications.Channels;
 using ChemResearchHub.Infrastructure.Notifications.Services;
 using ChemResearchHub.Web.Notifications;
+using ChemResearchHub.Application.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -285,6 +286,9 @@ builder.Services.AddHttpClient<IOllamaClient, OllamaClient>(client =>
 // Bale Bot
 builder.Services.Configure<BaleBotOptions>(
     builder.Configuration.GetSection(BaleBotOptions.SectionName));
+
+builder.Services.Configure<ApplicationOptions>(
+    builder.Configuration.GetSection("Application"));
 
 builder.Services.AddHttpClient<IBaleBotClient, BaleBotClient>();
 

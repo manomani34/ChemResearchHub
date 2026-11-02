@@ -1,6 +1,7 @@
 
 using ChemResearchHub.Application.AuditLogs.Interfaces;
 using ChemResearchHub.Application.Boards.Repositories;
+using ChemResearchHub.Application.Configuration;
 using ChemResearchHub.Application.Notifications.Interfaces;
 using ChemResearchHub.Application.Notifications.Models;
 using ChemResearchHub.Application.Tags.Repositories;
@@ -14,6 +15,7 @@ using ChemResearchHub.Application.WorkItemTransitions.Repositories;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ChemResearchHub.Application.WorkItems.Services;
 
@@ -28,6 +30,7 @@ public class WorkItemService : IWorkItemService
     private readonly IWorkItemTagRepository _workItemTagRepository;
     private readonly INotificationDispatcher _notificationDispatcher;
     private readonly ILogger<WorkItemService> _logger;
+    private readonly ApplicationOptions _applicationOptions;
 
     public WorkItemService(
         IWorkItemRepository workItemRepository,
@@ -38,7 +41,8 @@ public class WorkItemService : IWorkItemService
         IWorkItemAssignmentRepository workItemAssignmentRepository,
         IWorkItemTagRepository workItemTagRepository,
         INotificationDispatcher notificationDispatcher,
-        ILogger<WorkItemService> logger)
+        ILogger<WorkItemService> logger,
+        IOptions<ApplicationOptions> applicationOptions)
     {
         _workItemRepository = workItemRepository;
         _boardRepository = boardRepository;
@@ -49,53 +53,71 @@ public class WorkItemService : IWorkItemService
         _workItemTagRepository = workItemTagRepository;
         _notificationDispatcher = notificationDispatcher;
         _logger = logger;
+        _applicationOptions = applicationOptions.Value;
     }
 
     #region Notifications
 
     private async Task NotifyAssignedUserAsync(
-        string userId,
-        string workItemTitle,
-        int workItemId,
-        CancellationToken cancellationToken)
+    string userId,
+    string workItemTitle,
+    int workItemId,
+    int boardId,
+    int projectId,
+    CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
             _logger.LogWarning(
                 "Assignment notification skipped because UserId is empty. WorkItemId: {WorkItemId}",
                 workItemId);
-
             return;
         }
 
         userId = userId.Trim();
 
+        // Get the assigned user's display name.
+        var users = await _userService.GetAllAsync(cancellationToken);
+
+        var assignedUser = users.FirstOrDefault(
+            x => string.Equals(x.Id, userId, StringComparison.Ordinal));
+
+        var assignedUserName =
+            !string.IsNullOrWhiteSpace(assignedUser?.FullName)
+                ? assignedUser.FullName
+                : !string.IsNullOrWhiteSpace(assignedUser?.Email)
+                    ? assignedUser.Email
+                    : userId;
+
         _logger.LogInformation(
-            "Starting assignment notification. WorkItemId: {WorkItemId}, UserId: {UserId}",
+            "Starting assignment notification. WorkItemId: {WorkItemId}, UserId: {UserId}, UserName: {UserName}",
             workItemId,
-            userId);
+            userId,
+            assignedUserName);
+
+        var baseUrl = _applicationOptions.PublicBaseUrl.TrimEnd('/');
+
+        var actionUrl =
+            $"{baseUrl}/Research/WorkItems/Details/{workItemId}" +
+            $"?boardId={boardId}&projectId={projectId}";
 
         var notification = new NotificationMessage
         {
             UserId = userId,
             Type = "WorkItemAssigned",
             Title = "انتساب فعالیت جدید",
-            Message = $"فعالیت «{workItemTitle}» به شما واگذار شد.",
-            ActionUrl = $"/User/WorkItems/Details/{workItemId}"
+            Message = $"فعالیت «{workItemTitle}» به {assignedUserName} واگذار شد.",
+            ActionUrl = actionUrl
         };
 
-        // In-App: فقط برای کاربر اصلی Assigned To
+        // Dispatch In-App notification.
         try
         {
-            var inAppResult =
-                await _notificationDispatcher.DispatchInAppAsync(
-                    notification,
-                    cancellationToken);
+            var inAppResult = await _notificationDispatcher.DispatchInAppAsync(
+                notification,
+                cancellationToken);
 
-            LogChannelResults(
-                inAppResult,
-                workItemId,
-                userId);
+            LogChannelResults(inAppResult, workItemId, userId);
         }
         catch (OperationCanceledException)
             when (cancellationToken.IsCancellationRequested)
@@ -106,23 +128,18 @@ public class WorkItemService : IWorkItemService
         {
             _logger.LogError(
                 ex,
-                "Unexpected In-App notification error. WorkItemId: {WorkItemId}, UserId: {UserId}",
-                workItemId,
-                userId);
+                "Failed to dispatch In-App assignment notification. WorkItemId: {WorkItemId}",
+                workItemId);
         }
 
-        // Bale: یک پیام در گروه مشترک
+        // Dispatch Bale notification.
         try
         {
-            var baleResult =
-                await _notificationDispatcher.DispatchBaleAsync(
-                    notification,
-                    cancellationToken);
+            var baleResult = await _notificationDispatcher.DispatchBaleAsync(
+                notification,
+                cancellationToken);
 
-            LogChannelResults(
-                baleResult,
-                workItemId,
-                userId);
+            LogChannelResults(baleResult, workItemId, userId);
         }
         catch (OperationCanceledException)
             when (cancellationToken.IsCancellationRequested)
@@ -133,10 +150,170 @@ public class WorkItemService : IWorkItemService
         {
             _logger.LogError(
                 ex,
-                "Unexpected Bale group notification error. WorkItemId: {WorkItemId}, UserId: {UserId}",
-                workItemId,
-                userId);
+                "Failed to dispatch Bale assignment notification. WorkItemId: {WorkItemId}",
+                workItemId);
         }
+    }
+
+    private async Task NotifyWorkItemEventToBaleAsync(
+    WorkItem workItem,
+    string notificationType,
+    string notificationTitle,
+    string eventMessage,
+    string? changedByUserId,
+    CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!workItem.BoardColumnId.HasValue)
+            {
+                _logger.LogWarning(
+                    "Bale event notification skipped because Work Item has no BoardColumnId. WorkItemId: {WorkItemId}, Event: {Event}",
+                    workItem.Id,
+                    notificationType);
+
+                return;
+            }
+
+            var board = await _boardRepository.GetByColumnIdAsync(
+                workItem.BoardColumnId.Value,
+                cancellationToken);
+
+            if (board is null)
+            {
+                _logger.LogWarning(
+                    "Bale event notification skipped because Board was not found. WorkItemId: {WorkItemId}, Event: {Event}",
+                    workItem.Id,
+                    notificationType);
+
+                return;
+            }
+
+            var users = await _userService.GetAllAsync(cancellationToken);
+
+            var usersById = users.ToDictionary(
+                x => x.Id,
+                x => x);
+
+            var actorName = ResolveUserName(
+                changedByUserId,
+                usersById);
+
+            var assignedUserName = ResolveUserName(
+                workItem.AssignedToUserId,
+                usersById);
+
+            var collaboratorIds =
+                await _workItemAssignmentRepository.GetUserIdsByWorkItemIdAsync(
+                    workItem.Id,
+                    cancellationToken);
+
+            var additionalCollaboratorNames = collaboratorIds
+                .Where(userId =>
+                    !string.IsNullOrWhiteSpace(userId) &&
+                    !string.Equals(
+                        userId,
+                        workItem.AssignedToUserId,
+                        StringComparison.Ordinal))
+                .Distinct(StringComparer.Ordinal)
+                .Select(userId => ResolveUserName(userId, usersById))
+                .ToList();
+
+            var assignmentLines = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(assignedUserName))
+            {
+                assignmentLines.Add(
+                    $"👤 **Assigned To:** {assignedUserName}");
+            }
+            else
+            {
+                assignmentLines.Add(
+                    "👤 **Assigned To:** تعیین نشده");
+            }
+
+            if (additionalCollaboratorNames.Count > 0)
+            {
+                assignmentLines.Add(
+                    $"👥 **Additional Collaborators:** {string.Join("، ", additionalCollaboratorNames)}");
+            }
+            else
+            {
+                assignmentLines.Add(
+                    "👥 **Additional Collaborators:** ندارد");
+            }
+
+            var baseUrl = _applicationOptions.PublicBaseUrl.TrimEnd('/');
+
+            var actionUrl =
+                $"{baseUrl}/Research/WorkItems/Details/{workItem.Id}" +
+                $"?boardId={board.Id}&projectId={workItem.ProjectId}";
+
+            var message =
+                $"{eventMessage}\n\n" +
+                $"📌 **عنوان فعالیت:** {workItem.Title}\n" +
+                $"🧑‍💻 **انجام‌دهنده:** {actorName}\n\n" +
+                string.Join("\n", assignmentLines);
+
+            var notification = new NotificationMessage
+            {
+                // BaleNotificationChannel uses GroupChatId and does not use UserId.
+                UserId = string.Empty,
+                Type = notificationType,
+                Title = notificationTitle,
+                Message = message,
+                ActionUrl = actionUrl
+            };
+
+            var result = await _notificationDispatcher.DispatchBaleAsync(
+                notification,
+                cancellationToken);
+
+            LogChannelResults(
+                result,
+                workItem.Id,
+                "GROUP");
+        }
+        catch (OperationCanceledException)
+            when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Failed to send Bale Work Item event notification. WorkItemId: {WorkItemId}, Event: {Event}",
+                workItem.Id,
+                notificationType);
+        }
+    }
+
+    private static string ResolveUserName(
+        string? userId,
+        IReadOnlyDictionary<string, UserDto> usersById)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return "نامشخص";
+        }
+
+        if (!usersById.TryGetValue(userId, out var user))
+        {
+            return userId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(user.FullName))
+        {
+            return user.FullName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(user.Email))
+        {
+            return user.Email;
+        }
+
+        return userId;
     }
 
     private void LogChannelResults(
@@ -268,17 +445,18 @@ public class WorkItemService : IWorkItemService
     }
 
     public async Task<WorkItemDto?> UpdateAsync(
-        int id,
-        string title,
-        string? description,
-        WorkItemType type,
-        int priority,
-        DateTime? dueDate,
-        string? assignedToUserId,
-        string? changedByUserId,
-        CancellationToken cancellationToken = default,
-        IReadOnlyCollection<string>? assignedUserIds = null,
-        IReadOnlyCollection<int>? tagIds = null)
+    int id,
+    string title,
+    string? description,
+    WorkItemType type,
+    int priority,
+    DateTime? dueDate,
+    string? assignedToUserId,
+    string? changedByUserId,
+    CancellationToken cancellationToken = default,
+    IReadOnlyCollection<string>? assignedUserIds = null,
+    IReadOnlyCollection<int>? tagIds = null,
+    bool suppressBaleEditNotification = false)
     {
         var workItem = await _workItemRepository.GetByIdAsync(
             id,
@@ -289,7 +467,13 @@ public class WorkItemService : IWorkItemService
             return null;
         }
 
-        // Keep the previous primary assignee before updating the entity.
+        // Capture the previous values before updating the entity.
+        var previousTitle = workItem.Title;
+        var previousDescription = workItem.Description;
+        var previousType = workItem.Type;
+        var previousPriority = workItem.Priority;
+        var previousDueDate = workItem.DueDate;
+
         var previousAssignedToUserId =
             NormalizeUserId(workItem.AssignedToUserId);
 
@@ -297,8 +481,7 @@ public class WorkItemService : IWorkItemService
             assignedToUserId,
             cancellationToken);
 
-        // If callers omit the collaborator list, preserve existing assignments.
-        // An explicitly supplied empty list clears all additional assignments.
+        // Preserve existing collaborators when the caller omits the list.
         var collaboratorIds = assignedUserIds is null
             ? await _workItemAssignmentRepository.GetUserIdsByWorkItemIdAsync(
                 workItem.Id,
@@ -316,6 +499,7 @@ public class WorkItemService : IWorkItemService
                 cancellationToken);
         }
 
+        // Update the main Work Item properties.
         workItem.Update(
             title,
             description,
@@ -332,6 +516,30 @@ public class WorkItemService : IWorkItemService
             workItem.AssignTo(assignedToUserId.Trim());
         }
 
+        var newAssignedToUserId =
+            NormalizeUserId(workItem.AssignedToUserId);
+
+        // Detect actual changes in the main Work Item properties.
+        var hasEditChanges =
+            !string.Equals(
+                previousTitle,
+                workItem.Title,
+                StringComparison.Ordinal) ||
+
+            !string.Equals(
+                previousDescription,
+                workItem.Description,
+                StringComparison.Ordinal) ||
+
+            previousType != workItem.Type ||
+            previousPriority != workItem.Priority ||
+            previousDueDate != workItem.DueDate ||
+
+            !string.Equals(
+                previousAssignedToUserId,
+                newAssignedToUserId,
+                StringComparison.Ordinal);
+
         await _workItemAssignmentRepository.ReplaceAssignmentsAsync(
             workItem.Id,
             collaboratorIds,
@@ -347,7 +555,8 @@ public class WorkItemService : IWorkItemService
         }
 
         // Both repositories use the same scoped DbContext.
-        await _workItemRepository.SaveChangesAsync(cancellationToken);
+        await _workItemRepository.SaveChangesAsync(
+            cancellationToken);
 
         await _auditLogService.AddAsync(
             changedByUserId,
@@ -358,9 +567,6 @@ public class WorkItemService : IWorkItemService
             cancellationToken: cancellationToken);
 
         // Notify only when the primary assignee changes to a new user.
-        var newAssignedToUserId =
-            NormalizeUserId(assignedToUserId);
-
         var hasNewAssignee =
             !string.IsNullOrWhiteSpace(newAssignedToUserId) &&
             !string.Equals(
@@ -376,11 +582,36 @@ public class WorkItemService : IWorkItemService
                 previousAssignedToUserId,
                 newAssignedToUserId);
 
-            await NotifyAssignedUserAsync(
-                newAssignedToUserId!,
-                workItem.Title,
-                workItem.Id,
-                cancellationToken);
+            if (!workItem.BoardColumnId.HasValue)
+            {
+                _logger.LogWarning(
+                    "Assignment notification skipped because Work Item has no BoardColumnId. WorkItemId: {WorkItemId}",
+                    workItem.Id);
+            }
+            else
+            {
+                var board = await _boardRepository.GetByColumnIdAsync(
+                    workItem.BoardColumnId.Value,
+                    cancellationToken);
+
+                if (board is null)
+                {
+                    _logger.LogWarning(
+                        "Assignment notification skipped because Board was not found. WorkItemId: {WorkItemId}, BoardColumnId: {BoardColumnId}",
+                        workItem.Id,
+                        workItem.BoardColumnId.Value);
+                }
+                else
+                {
+                    await NotifyAssignedUserAsync(
+                        newAssignedToUserId!,
+                        workItem.Title,
+                        workItem.Id,
+                        board.Id,
+                        workItem.ProjectId,
+                        cancellationToken);
+                }
+            }
         }
         else
         {
@@ -389,8 +620,37 @@ public class WorkItemService : IWorkItemService
                 workItem.Id);
         }
 
-        var users = await _userService.GetAllAsync(cancellationToken);
-        var usersById = users.ToDictionary(x => x.Id, x => x);
+        // Send a general Bale notification only for an actual edit.
+        // Suppress it when this update is part of a Complete/Reopen operation.
+        if (hasEditChanges && !suppressBaleEditNotification)
+        {
+            await NotifyWorkItemEventToBaleAsync(
+                workItem,
+                "WorkItemEdited",
+                "ویرایش فعالیت",
+                "✏️ یک فعالیت ویرایش شد.",
+                changedByUserId,
+                cancellationToken);
+        }
+        else if (suppressBaleEditNotification)
+        {
+            _logger.LogInformation(
+                "Bale edit notification suppressed because the Work Item status is also changing. WorkItemId: {WorkItemId}",
+                workItem.Id);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "No actual Work Item changes detected. Bale edit notification skipped. WorkItemId: {WorkItemId}",
+                workItem.Id);
+        }
+
+        var users = await _userService.GetAllAsync(
+            cancellationToken);
+
+        var usersById = users.ToDictionary(
+            x => x.Id,
+            x => x);
 
         var savedCollaboratorIds =
             await _workItemAssignmentRepository.GetUserIdsByWorkItemIdAsync(
@@ -550,11 +810,12 @@ public class WorkItemService : IWorkItemService
                 workItem.Id,
                 normalizedAssigneeId);
 
-            await NotifyAssignedUserAsync(
-                normalizedAssigneeId,
-                workItem.Title,
-                workItem.Id,
-                cancellationToken);
+            await NotifyAssignedUserAsync(normalizedAssigneeId,
+                                          workItem.Title,
+                                          workItem.Id,
+                                          board.Id,
+                                          projectId,
+                                          cancellationToken);
         }
         else
         {
@@ -648,6 +909,19 @@ public class WorkItemService : IWorkItemService
 
         var currentColumnId =
             workItem.BoardColumnId;
+
+        string? currentColumnName = null;
+
+        if (currentColumnId.HasValue)
+        {
+            var sourceBoard = await _boardRepository.GetByColumnIdAsync(
+                currentColumnId.Value,
+                cancellationToken);
+
+            currentColumnName = sourceBoard?.Columns
+                .FirstOrDefault(x => x.Id == currentColumnId.Value)
+                ?.Name;
+        }
 
         // The Done workflow column is the source of truth for completion.
         // Moving to Done marks the Work Item completed;
@@ -753,6 +1027,35 @@ public class WorkItemService : IWorkItemService
                 cancellationToken: cancellationToken);
         }
 
+        if (isMovingToAnotherColumn)
+        {
+            var targetColumnName = targetColumn.Name;
+
+            var moveMessage =
+                $"🚚 فعالیت از ستون «{currentColumnName ?? "نامشخص"}» " +
+                $"به ستون «{targetColumnName}» منتقل شد.";
+
+            if (isDoneColumn)
+            {
+                moveMessage += "\nوضعیت فعالیت به تکمیل‌شده تغییر کرد.";
+            }
+            else if (string.Equals(
+                         currentColumnName?.Trim(),
+                         "Done",
+                         StringComparison.OrdinalIgnoreCase))
+            {
+                moveMessage += "\nوضعیت فعالیت به باز تغییر کرد.";
+            }
+
+            await NotifyWorkItemEventToBaleAsync(
+                workItem,
+                "WorkItemMoved",
+                "انتقال فعالیت",
+                moveMessage,
+                changedByUserId,
+                cancellationToken);
+        }
+
         return true;
     }
 
@@ -771,6 +1074,11 @@ public class WorkItemService : IWorkItemService
             return false;
         }
 
+        if (workItem.IsCompleted)
+        {
+            return true;
+        }
+
         workItem.Complete();
 
         await _workItemRepository.SaveChangesAsync(
@@ -783,6 +1091,14 @@ public class WorkItemService : IWorkItemService
             workItem.Id,
             $"Work Item '{workItem.Title}' was completed.",
             cancellationToken: cancellationToken);
+
+        await NotifyWorkItemEventToBaleAsync(
+    workItem,
+    "WorkItemCompleted",
+    "تکمیل فعالیت",
+    "✅ این فعالیت تکمیل شد.",
+    changedByUserId,
+    cancellationToken);
 
         return true;
     }
@@ -802,6 +1118,11 @@ public class WorkItemService : IWorkItemService
             return false;
         }
 
+        if (!workItem.IsCompleted)
+        {
+            return true;
+        }
+
         workItem.Reopen();
 
         await _workItemRepository.SaveChangesAsync(
@@ -814,6 +1135,14 @@ public class WorkItemService : IWorkItemService
             workItem.Id,
             $"Work Item '{workItem.Title}' was reopened.",
             cancellationToken: cancellationToken);
+
+        await NotifyWorkItemEventToBaleAsync(
+    workItem,
+    "WorkItemReopened",
+    "بازگشایی مجدد فعالیت",
+    "🔄 این فعالیت دوباره باز شد.",
+    changedByUserId,
+    cancellationToken);
 
         return true;
     }
