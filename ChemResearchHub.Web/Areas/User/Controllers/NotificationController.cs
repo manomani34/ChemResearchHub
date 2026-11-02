@@ -64,6 +64,12 @@ public class NotificationController : Controller
         });
     }
 
+    [HttpGet("all")]
+    public IActionResult All()
+    {
+        return View("~/Areas/User/Views/Notification/Index.cshtml");
+    }
+
     [HttpGet("unread-count")]
     public async Task<IActionResult> UnreadCount(
         CancellationToken cancellationToken)

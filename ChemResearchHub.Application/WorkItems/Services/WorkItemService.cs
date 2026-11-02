@@ -1,15 +1,19 @@
+
 using ChemResearchHub.Application.AuditLogs.Interfaces;
 using ChemResearchHub.Application.Boards.Repositories;
+using ChemResearchHub.Application.Notifications.Interfaces;
+using ChemResearchHub.Application.Notifications.Models;
+using ChemResearchHub.Application.Tags.Repositories;
 using ChemResearchHub.Application.Users.Dtos;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.WorkItemAssignments.Repositories;
 using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Application.WorkItems.Repositories;
-using ChemResearchHub.Application.Tags.Repositories;
 using ChemResearchHub.Application.WorkItemTransitions.Repositories;
 using ChemResearchHub.Domain.Entities.WorkItem;
 using ChemResearchHub.Domain.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace ChemResearchHub.Application.WorkItems.Services;
 
@@ -22,6 +26,8 @@ public class WorkItemService : IWorkItemService
     private readonly IAuditLogService _auditLogService;
     private readonly IWorkItemAssignmentRepository _workItemAssignmentRepository;
     private readonly IWorkItemTagRepository _workItemTagRepository;
+    private readonly INotificationDispatcher _notificationDispatcher;
+    private readonly ILogger<WorkItemService> _logger;
 
     public WorkItemService(
         IWorkItemRepository workItemRepository,
@@ -30,7 +36,9 @@ public class WorkItemService : IWorkItemService
         IWorkItemTransitionRepository workItemTransitionRepository,
         IAuditLogService auditLogService,
         IWorkItemAssignmentRepository workItemAssignmentRepository,
-        IWorkItemTagRepository workItemTagRepository)
+        IWorkItemTagRepository workItemTagRepository,
+        INotificationDispatcher notificationDispatcher,
+        ILogger<WorkItemService> logger)
     {
         _workItemRepository = workItemRepository;
         _boardRepository = boardRepository;
@@ -39,9 +47,137 @@ public class WorkItemService : IWorkItemService
         _auditLogService = auditLogService;
         _workItemAssignmentRepository = workItemAssignmentRepository;
         _workItemTagRepository = workItemTagRepository;
+        _notificationDispatcher = notificationDispatcher;
+        _logger = logger;
     }
 
-    
+    #region Notifications
+
+    private async Task NotifyAssignedUserAsync(
+        string userId,
+        string workItemTitle,
+        int workItemId,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            _logger.LogWarning(
+                "Assignment notification skipped because UserId is empty. WorkItemId: {WorkItemId}",
+                workItemId);
+
+            return;
+        }
+
+        userId = userId.Trim();
+
+        _logger.LogInformation(
+            "Starting assignment notification. WorkItemId: {WorkItemId}, UserId: {UserId}",
+            workItemId,
+            userId);
+
+        var notification = new NotificationMessage
+        {
+            UserId = userId,
+            Type = "WorkItemAssigned",
+            Title = "انتساب فعالیت جدید",
+            Message = $"فعالیت «{workItemTitle}» به شما واگذار شد.",
+            ActionUrl = $"/User/WorkItems/Details/{workItemId}"
+        };
+
+        // In-App: فقط برای کاربر اصلی Assigned To
+        try
+        {
+            var inAppResult =
+                await _notificationDispatcher.DispatchInAppAsync(
+                    notification,
+                    cancellationToken);
+
+            LogChannelResults(
+                inAppResult,
+                workItemId,
+                userId);
+        }
+        catch (OperationCanceledException)
+            when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Unexpected In-App notification error. WorkItemId: {WorkItemId}, UserId: {UserId}",
+                workItemId,
+                userId);
+        }
+
+        // Bale: یک پیام در گروه مشترک
+        try
+        {
+            var baleResult =
+                await _notificationDispatcher.DispatchBaleAsync(
+                    notification,
+                    cancellationToken);
+
+            LogChannelResults(
+                baleResult,
+                workItemId,
+                userId);
+        }
+        catch (OperationCanceledException)
+            when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Unexpected Bale group notification error. WorkItemId: {WorkItemId}, UserId: {UserId}",
+                workItemId,
+                userId);
+        }
+    }
+
+    private void LogChannelResults(
+        NotificationDispatchResult dispatchResult,
+        int workItemId,
+        string userId)
+    {
+        if (dispatchResult.Channels.Count == 0)
+        {
+            _logger.LogWarning(
+                "Notification dispatcher returned no channel results. WorkItemId: {WorkItemId}, UserId: {UserId}",
+                workItemId,
+                userId);
+
+            return;
+        }
+
+        foreach (var result in dispatchResult.Channels)
+        {
+            if (result.Succeeded)
+            {
+                _logger.LogInformation(
+                    "Notification sent successfully. Channel: {Channel}, WorkItemId: {WorkItemId}, UserId: {UserId}",
+                    result.Channel,
+                    workItemId,
+                    userId);
+            }
+            else
+            {
+                _logger.LogError(
+                    "Notification failed. Channel: {Channel}, WorkItemId: {WorkItemId}, UserId: {UserId}, Error: {Error}",
+                    result.Channel,
+                    workItemId,
+                    userId,
+                    result.Error);
+            }
+        }
+    }
+
+    #endregion
+
     public async Task<IReadOnlyList<WorkItemDto>> GetByBoardColumnIdAsync(
         int boardColumnId,
         CancellationToken cancellationToken = default)
@@ -59,7 +195,8 @@ public class WorkItemService : IWorkItemService
                 cancellationToken);
 
         var tags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
-            workItems.Select(x => x.Id).ToArray(), cancellationToken);
+            workItems.Select(x => x.Id).ToArray(),
+            cancellationToken);
 
         return workItems
             .Select(x => MapToDto(x, usersById, assignments, tags))
@@ -89,7 +226,8 @@ public class WorkItemService : IWorkItemService
                 cancellationToken);
 
         var tags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
-            workItems.Select(x => x.Id).ToArray(), cancellationToken);
+            workItems.Select(x => x.Id).ToArray(),
+            cancellationToken);
 
         return workItems
             .Select(x => MapToDto(x, usersById, assignments, tags))
@@ -116,7 +254,8 @@ public class WorkItemService : IWorkItemService
             .GetUserIdsByWorkItemIdAsync(id, cancellationToken);
 
         var tags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
-            new[] { id }, cancellationToken);
+            new[] { id },
+            cancellationToken);
 
         return MapToDto(
             workItem,
@@ -149,6 +288,10 @@ public class WorkItemService : IWorkItemService
         {
             return null;
         }
+
+        // Keep the previous primary assignee before updating the entity.
+        var previousAssignedToUserId =
+            NormalizeUserId(workItem.AssignedToUserId);
 
         await ValidateAssignedUserAsync(
             assignedToUserId,
@@ -198,7 +341,9 @@ public class WorkItemService : IWorkItemService
         if (tagIds is not null)
         {
             await _workItemTagRepository.ReplaceActiveTagsAsync(
-                workItem.Id, tagIds, cancellationToken);
+                workItem.Id,
+                tagIds,
+                cancellationToken);
         }
 
         // Both repositories use the same scoped DbContext.
@@ -212,6 +357,38 @@ public class WorkItemService : IWorkItemService
             $"Work Item '{workItem.Title}' was updated.",
             cancellationToken: cancellationToken);
 
+        // Notify only when the primary assignee changes to a new user.
+        var newAssignedToUserId =
+            NormalizeUserId(assignedToUserId);
+
+        var hasNewAssignee =
+            !string.IsNullOrWhiteSpace(newAssignedToUserId) &&
+            !string.Equals(
+                previousAssignedToUserId,
+                newAssignedToUserId,
+                StringComparison.Ordinal);
+
+        if (hasNewAssignee)
+        {
+            _logger.LogInformation(
+                "Work Item assignee changed. WorkItemId: {WorkItemId}, PreviousUserId: {PreviousUserId}, NewUserId: {NewUserId}",
+                workItem.Id,
+                previousAssignedToUserId,
+                newAssignedToUserId);
+
+            await NotifyAssignedUserAsync(
+                newAssignedToUserId!,
+                workItem.Title,
+                workItem.Id,
+                cancellationToken);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "No assignment notification required for Work Item update. WorkItemId: {WorkItemId}",
+                workItem.Id);
+        }
+
         var users = await _userService.GetAllAsync(cancellationToken);
         var usersById = users.ToDictionary(x => x.Id, x => x);
 
@@ -221,7 +398,8 @@ public class WorkItemService : IWorkItemService
                 cancellationToken);
 
         var savedTags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
-            new[] { workItem.Id }, cancellationToken);
+            new[] { workItem.Id },
+            cancellationToken);
 
         return MapToDto(
             workItem,
@@ -345,7 +523,9 @@ public class WorkItemService : IWorkItemService
         if (tagIds is { Count: > 0 })
         {
             await _workItemTagRepository.ReplaceActiveTagsAsync(
-                workItem.Id, tagIds, cancellationToken);
+                workItem.Id,
+                tagIds,
+                cancellationToken);
 
             await _workItemRepository.SaveChangesAsync(cancellationToken);
         }
@@ -358,6 +538,31 @@ public class WorkItemService : IWorkItemService
             $"Work Item '{workItem.Title}' was created.",
             cancellationToken: cancellationToken);
 
+        // Notify only the primary assignee.
+        // Additional collaborators do not receive assignment notifications.
+        var normalizedAssigneeId =
+            NormalizeUserId(assignedToUserId);
+
+        if (!string.IsNullOrWhiteSpace(normalizedAssigneeId))
+        {
+            _logger.LogInformation(
+                "New Work Item created with Assigned To. WorkItemId: {WorkItemId}, UserId: {UserId}",
+                workItem.Id,
+                normalizedAssigneeId);
+
+            await NotifyAssignedUserAsync(
+                normalizedAssigneeId,
+                workItem.Title,
+                workItem.Id,
+                cancellationToken);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "Work Item created without Assigned To. No assignment notification will be sent. WorkItemId: {WorkItemId}",
+                workItem.Id);
+        }
+
         var users = await _userService.GetAllAsync(cancellationToken);
         var usersById = users.ToDictionary(x => x.Id, x => x);
 
@@ -367,7 +572,8 @@ public class WorkItemService : IWorkItemService
                 cancellationToken);
 
         var savedTags = await _workItemTagRepository.GetTagsByWorkItemIdsAsync(
-            new[] { workItem.Id }, cancellationToken);
+            new[] { workItem.Id },
+            cancellationToken);
 
         return MapToDto(
             workItem,
@@ -551,9 +757,9 @@ public class WorkItemService : IWorkItemService
     }
 
     public async Task<bool> CompleteAsync(
-    int id,
-    string? changedByUserId,
-    CancellationToken cancellationToken = default)
+        int id,
+        string? changedByUserId,
+        CancellationToken cancellationToken = default)
     {
         var workItem =
             await _workItemRepository.GetByIdAsync(
@@ -613,9 +819,9 @@ public class WorkItemService : IWorkItemService
     }
 
     public async Task<bool> DeleteAsync(
-    int id,
-    string? changedByUserId,
-    CancellationToken cancellationToken = default)
+        int id,
+        string? changedByUserId,
+        CancellationToken cancellationToken = default)
     {
         var workItem =
             await _workItemRepository.GetByIdAsync(
@@ -658,7 +864,7 @@ public class WorkItemService : IWorkItemService
 
         var user =
             await _userService.GetByIdAsync(
-                assignedToUserId,
+                assignedToUserId.Trim(),
                 cancellationToken);
 
         if (user is null)
@@ -679,20 +885,36 @@ public class WorkItemService : IWorkItemService
         string? primaryUserId,
         CancellationToken cancellationToken)
     {
+        var normalizedPrimaryUserId =
+            NormalizeUserId(primaryUserId);
+
         var normalizedIds = (assignedUserIds ?? Array.Empty<string>())
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Select(x => x.Trim())
-            .Where(x => string.IsNullOrWhiteSpace(primaryUserId) ||
-                        !string.Equals(x, primaryUserId.Trim(), StringComparison.Ordinal))
+            .Where(x =>
+                string.IsNullOrWhiteSpace(normalizedPrimaryUserId) ||
+                !string.Equals(
+                    x,
+                    normalizedPrimaryUserId,
+                    StringComparison.Ordinal))
             .Distinct(StringComparer.Ordinal)
             .ToList();
 
         foreach (var userId in normalizedIds)
         {
-            await ValidateAssignedUserAsync(userId, cancellationToken);
+            await ValidateAssignedUserAsync(
+                userId,
+                cancellationToken);
         }
 
         return normalizedIds;
+    }
+
+    private static string? NormalizeUserId(string? userId)
+    {
+        return string.IsNullOrWhiteSpace(userId)
+            ? null
+            : userId.Trim();
     }
 
     private static WorkItemDto MapToDto(
@@ -712,11 +934,12 @@ public class WorkItemService : IWorkItemService
         collaboratorIds ??= Array.Empty<string>();
 
         var additionalIds = collaboratorIds
-            .Where(x => string.IsNullOrWhiteSpace(workItem.AssignedToUserId) ||
-                        !string.Equals(
-                            x,
-                            workItem.AssignedToUserId,
-                            StringComparison.Ordinal))
+            .Where(x =>
+                string.IsNullOrWhiteSpace(workItem.AssignedToUserId) ||
+                !string.Equals(
+                    x,
+                    workItem.AssignedToUserId,
+                    StringComparison.Ordinal))
             .Distinct(StringComparer.Ordinal)
             .ToList();
 
@@ -741,7 +964,8 @@ public class WorkItemService : IWorkItemService
             primaryUser,
             additionalIds,
             additionalNames,
-            tagsByWorkItemId is not null && tagsByWorkItemId.TryGetValue(workItem.Id, out var itemTags)
+            tagsByWorkItemId is not null &&
+            tagsByWorkItemId.TryGetValue(workItem.Id, out var itemTags)
                 ? itemTags
                 : Array.Empty<ChemResearchHub.Application.Tags.Dtos.TagDto>());
     }
@@ -780,7 +1004,3 @@ public class WorkItemService : IWorkItemService
         };
     }
 }
-
-
-
-

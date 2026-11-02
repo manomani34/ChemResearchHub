@@ -221,6 +221,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<INotificationChannel, InAppNotificationChannel>();
 builder.Services.AddScoped<INotificationChannel, BaleNotificationChannel>();
 builder.Services.AddScoped<NotificationDispatcher>();
+builder.Services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
 
 // SignalR notification publisher
 builder.Services.AddScoped<

@@ -21,6 +21,10 @@
           href="~/css/site.css"
           asp-append-version="true" />
 
+          <link rel="stylesheet"
+      href="~/css/notifications.css"
+      asp-append-version="true" />
+
     <link rel="stylesheet"
           href="~/ChemResearchHub.Web.styles.css"
           asp-append-version="true" />
@@ -457,13 +461,13 @@
 
                 <div class="app-topbar-right">
 
-                    <div class="app-topbar-title">
+    <div class="app-topbar-title">
+        @ViewData["Title"]
+    </div>
 
-                        @ViewData["Title"]
+    <partial name="_NotificationBell" />
 
-                    </div>
-
-                </div>
+</div>
 
             </header>
 
@@ -627,37 +631,49 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // با کلیک روی منوی کارهای پژوهشی، اعلان‌ها خوانده‌شده می‌شوند.
-    menuLink.addEventListener("click", async function () {
+    // Mark Work Item alerts as read before navigating.
+menuLink.addEventListener("click", async function (event) {
+    event.preventDefault();
 
-        try {
-           const tokenInput = document.querySelector(
-    '#antiForgeryForm input[name="__RequestVerificationToken"]'
-);
+    const destinationUrl = menuLink.href;
 
-            const headers = {
-                "Content-Type": "application/json"
-            };
+    try {
+        const tokenInput = document.querySelector(
+            '#antiForgeryForm input[name="__RequestVerificationToken"]'
+        );
 
-            if (tokenInput) {
-                headers["RequestVerificationToken"] =
-                    tokenInput.value;
-            }
+        const headers = {
+            "Content-Type": "application/json"
+        };
 
-            const response = await fetch(markAsReadUrl, {
-                method: "POST",
-                credentials: "same-origin",
-                headers: headers,
-                body: "{}"
-            });
-
-            if (response.ok) {
-                updateBadge(0);
-            }
-
-        } catch (error) {
-            console.error("Marking alerts as read failed:", error);
+        if (tokenInput) {
+            headers["RequestVerificationToken"] = tokenInput.value;
         }
-    });
+
+        const response = await fetch(markAsReadUrl, {
+            method: "POST",
+            credentials: "same-origin",
+            headers,
+            body: "{}"
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                `MarkAllAsRead failed with status ${response.status}`
+            );
+        }
+
+        updateBadge(0);
+
+    } catch (error) {
+        console.error(
+            "Marking work item alerts as read failed:",
+            error
+        );
+    } finally {
+        window.location.href = destinationUrl;
+    }
+});
 
 });
 </script>
@@ -863,6 +879,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 </script>
 
+<script src="~/js/notifications.js" asp-append-version="true"></script>
 </body>
 
 </html>

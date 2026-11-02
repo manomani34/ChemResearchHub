@@ -11,4 +11,5 @@ public sealed class BaleBotOptions
     public bool EnablePolling { get; set; } = true;
 
     public int PollingTimeoutSeconds { get; set; } = 30;
+    public long GroupChatId { get; set; }
 }

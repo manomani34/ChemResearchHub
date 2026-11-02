@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authorization;
 using ChemResearchHub.Application.WorkItemUserAlerts.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using ChemResearchHub.Web.Hubs;
+using ChemResearchHub.Application.Notifications.Interfaces;
+using ChemResearchHub.Application.Notifications.Models;
 
 namespace ChemResearchHub.Web.Areas.Research.Controllers;
 
@@ -43,25 +45,28 @@ public class WorkItemsController : Controller
     private readonly IAuthorizationService _authorizationService;
     private readonly IWorkItemUserAlertService _alertService;
     private readonly IHubContext<WorkItemAlertHub> _hubContext;
+    private readonly INotificationService _notificationService;
+    private readonly ILogger<WorkItemsController> _logger;
 
-    public WorkItemsController(
-        IWorkItemService workItemService,
-        IBoardService boardService,
-        IProjectService projectService,
-        IUserService userService,
-        IExperimentService experimentService,
-        ISampleService sampleService,
-        IResultService resultService,
-        IAttachmentService attachmentService,
-        IDecisionLogService decisionLogService,
-        IWorkItemTransitionService workItemTransitionService,
-        IWorkItemFlowMetricsService workItemFlowMetricsService,
-        IWorkItemFlowSummaryService workItemFlowSummaryService,
-        IWorkItemBlockService workItemBlockService,
-        IAuthorizationService authorizationService,
-        ITagService tagService,
-        IWorkItemUserAlertService alertService,
-        IHubContext<WorkItemAlertHub> hubContext)
+    public WorkItemsController(IWorkItemService workItemService,
+                               IBoardService boardService,
+                               IProjectService projectService,
+                               IUserService userService,
+                               IExperimentService experimentService,
+                               ISampleService sampleService,
+                               IResultService resultService,
+                               IAttachmentService attachmentService,
+                               IDecisionLogService decisionLogService,
+                               IWorkItemTransitionService workItemTransitionService,
+                               IWorkItemFlowMetricsService workItemFlowMetricsService,
+                               IWorkItemFlowSummaryService workItemFlowSummaryService,
+                               IWorkItemBlockService workItemBlockService,
+                               IAuthorizationService authorizationService,
+                               ITagService tagService,
+                               IWorkItemUserAlertService alertService,
+                               IHubContext<WorkItemAlertHub> hubContext,
+                               INotificationService notificationService,
+                               ILogger<WorkItemsController> logger)
     {
         _workItemService = workItemService;
         _tagService = tagService;
@@ -80,6 +85,8 @@ public class WorkItemsController : Controller
         _authorizationService = authorizationService;
         _alertService = alertService;
         _hubContext = hubContext;
+        _notificationService = notificationService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -320,6 +327,15 @@ public class WorkItemsController : Controller
                     count,
                     cancellationToken);
         }
+
+        // Send In-App and Bale notifications to all assigned users.
+        await SendWorkItemAssignmentNotificationsAsync(
+            workItem.Id,
+            workItem.Title,
+            workItem.ProjectId,
+            model.BoardId,
+            assignedUserIds,
+            cancellationToken);
 
         return RedirectToAction(
             "Index",
@@ -815,9 +831,9 @@ public class WorkItemsController : Controller
 
         // Only users newly assigned in this edit should receive alerts.
         var newlyAssignedUserIds =
-    currentlyAssignedUserIds
-        .Except(previouslyAssignedUserIds)
-        .ToHashSet(StringComparer.Ordinal);
+            currentlyAssignedUserIds
+                .Except(previouslyAssignedUserIds)
+                .ToHashSet(StringComparer.Ordinal);
 
         if (newlyAssignedUserIds.Count > 0)
         {
@@ -841,6 +857,15 @@ public class WorkItemsController : Controller
                         count,
                         cancellationToken);
             }
+
+            // Notify only users who were newly assigned.
+            await SendWorkItemAssignmentNotificationsAsync(
+                updated.Id,
+                updated.Title,
+                updated.ProjectId,
+                model.BoardId,
+                newlyAssignedUserIds,
+                cancellationToken);
         }
 
         return RedirectToAction(
@@ -980,6 +1005,66 @@ public class WorkItemsController : Controller
                 projectId,
                 boardId
             });
+    }
+
+    private async Task SendWorkItemAssignmentNotificationsAsync(
+    int workItemId,
+    string workItemTitle,
+    int projectId,
+    int boardId,
+    IEnumerable<string> userIds,
+    CancellationToken cancellationToken)
+    {
+        var actionUrl = Url.Action(
+            "Details",
+            "WorkItems",
+            new
+            {
+                area = "Research",
+                id = workItemId,
+                boardId,
+                projectId
+            });
+
+        foreach (var userId in userIds
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.Ordinal))
+        {
+            try
+            {
+                var result = await _notificationService.SendAsync(
+                    new NotificationMessage
+                    {
+                        UserId = userId,
+                        Type = "WorkItemAssigned",
+                        Title = "تخصیص فعالیت پژوهشی جدید",
+                        Message = $"فعالیت «{workItemTitle}» به شما تخصیص داده شد.",
+                        ActionUrl = actionUrl
+                    },
+                    cancellationToken);
+
+                foreach (var channel in result.Channels)
+                {
+                    if (!channel.Succeeded)
+                    {
+                        _logger.LogWarning(
+                            "Notification delivery failed. WorkItemId: {WorkItemId}, UserId: {UserId}, Channel: {Channel}, Error: {Error}",
+                            workItemId,
+                            userId,
+                            channel.Channel,
+                            channel.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Unexpected error while sending assignment notification. WorkItemId: {WorkItemId}, UserId: {UserId}",
+                    workItemId,
+                    userId);
+            }
+        }
     }
 
     [HttpPost]

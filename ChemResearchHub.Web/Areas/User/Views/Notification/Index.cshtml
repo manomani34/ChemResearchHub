@@ -1,0 +1,620 @@
+﻿@{
+    ViewData["Title"] = "اعلان‌ها";
+}
+
+<div class="notifications-page" dir="rtl">
+
+    <div class="notifications-hero">
+        <div>
+            <div class="notifications-eyebrow">مرکز اطلاع‌رسانی</div>
+            <h1>اعلان‌ها</h1>
+            <p>پیام‌ها و رویدادهای مرتبط با فعالیت‌های پژوهشی شما</p>
+        </div>
+
+        <button type="button"
+                class="notifications-mark-all"
+                id="pageMarkAll">
+            ✓ خواندن همه اعلان‌ها
+        </button>
+    </div>
+
+    <div class="notifications-stats">
+        <div class="notification-stat-card">
+            <span>کل اعلان‌ها</span>
+            <strong id="totalCount">۰</strong>
+        </div>
+
+        <div class="notification-stat-card">
+            <span>خوانده‌نشده</span>
+            <strong id="unreadCount">۰</strong>
+        </div>
+
+        <div class="notification-stat-card">
+            <span>خوانده‌شده</span>
+            <strong id="readCount">۰</strong>
+        </div>
+    </div>
+
+    <section class="notifications-content">
+
+        <div class="notifications-toolbar">
+            <div>
+                <h2>صندوق اعلان‌ها</h2>
+                <span id="resultDescription">در حال دریافت اطلاعات...</span>
+            </div>
+
+            <div class="notification-filters">
+                <button type="button" class="active" data-filter="all">همه</button>
+                <button type="button" data-filter="unread">خوانده‌نشده</button>
+                <button type="button" data-filter="read">خوانده‌شده</button>
+            </div>
+        </div>
+
+        <div id="notificationsList" class="notifications-list">
+            <div class="notifications-loading">
+                در حال دریافت اعلان‌ها...
+            </div>
+        </div>
+
+        <div class="notifications-pagination">
+            <button type="button" id="previousPage" disabled>
+                قبلی
+            </button>
+
+            <span id="pageInformation">صفحه ۱</span>
+
+            <button type="button" id="nextPage" disabled>
+                بعدی
+            </button>
+        </div>
+
+    </section>
+
+    <form id="notificationsPageAntiforgeryForm" hidden>
+        @Html.AntiForgeryToken()
+    </form>
+
+</div>
+
+<style>
+.notifications-page {
+    padding: 24px;
+    color: var(--crh-text);
+}
+
+.notifications-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.notifications-eyebrow {
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.notifications-hero h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.notifications-hero p {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.notifications-mark-all {
+    border: 0;
+    border-radius: 9px;
+    padding: 10px 16px;
+    background: #2563eb;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.notifications-mark-all:hover {
+    background: #1d4ed8;
+}
+
+.notifications-mark-all:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.notifications-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.notification-stat-card {
+    padding: 20px;
+    background: #fff;
+    border: 1px solid var(--crh-border);
+    border-radius: 13px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .03);
+}
+
+.notification-stat-card span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.notification-stat-card strong {
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.notifications-content {
+    background: #fff;
+    border: 1px solid var(--crh-border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.notifications-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    border-bottom: 1px solid var(--crh-border);
+}
+
+.notifications-toolbar h2 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.notifications-toolbar span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.notification-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.notification-filters button {
+    border: 1px solid var(--crh-border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: #fff;
+    color: #64748b;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.notification-filters button.active {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+.notifications-list {
+    min-height: 220px;
+}
+
+.notification-page-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 19px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background .15s ease;
+}
+
+.notification-page-item:hover {
+    background: #f8fafc;
+}
+
+.notification-page-item.unread {
+    background: #f5f9ff;
+}
+
+.notification-page-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 12px;
+    background: #eff6ff;
+    font-size: 19px;
+}
+
+.notification-page-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-page-title {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.notification-page-message {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.notification-page-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.notification-page-status {
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.notification-page-status.unread {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.notification-page-action {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.notification-page-action:hover {
+    text-decoration: underline;
+}
+
+.notifications-loading,
+.notifications-empty,
+.notifications-error {
+    padding: 55px 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.notifications-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 18px;
+    border-top: 1px solid var(--crh-border);
+}
+
+.notifications-pagination button {
+    border: 1px solid var(--crh-border);
+    border-radius: 8px;
+    padding: 7px 15px;
+    background: #fff;
+    color: var(--crh-text);
+    cursor: pointer;
+}
+
+.notifications-pagination button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.notifications-pagination span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+@@media (max-width: 768px) {
+    .notifications-page {
+        padding: 15px;
+    }
+
+    .notifications-hero,
+    .notifications-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .notifications-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .notification-stat-card {
+        padding: 14px;
+    }
+}
+</style>
+
+<script>
+(() => {
+    "use strict";
+
+    const listElement = document.getElementById("notificationsList");
+    if (!listElement) return;
+
+    const pageSize = 20;
+    const token = document.querySelector(
+        '#notificationsPageAntiforgeryForm input[name="__RequestVerificationToken"]'
+    )?.value ?? "";
+
+    let currentPage = 1;
+    let totalCount = 0;
+    let activeFilter = "all";
+    let notifications = [];
+
+    const elements = {
+        total: document.getElementById("totalCount"),
+        unread: document.getElementById("unreadCount"),
+        read: document.getElementById("readCount"),
+        description: document.getElementById("resultDescription"),
+        page: document.getElementById("pageInformation"),
+        previous: document.getElementById("previousPage"),
+        next: document.getElementById("nextPage"),
+        markAll: document.getElementById("pageMarkAll")
+    };
+
+    const value = (item, camel, pascal) =>
+        item?.[camel] ?? item?.[pascal];
+
+    async function api(url, options = {}) {
+        const response = await fetch(url, {
+            credentials: "same-origin",
+            ...options,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                ...(options.headers || {})
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.status === 204 ? null : response.json();
+    }
+
+    function formatDate(dateValue) {
+        if (!dateValue) return "";
+
+        const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) return "";
+
+        return new Intl.DateTimeFormat("fa-IR", {
+            dateStyle: "long",
+            timeStyle: "short"
+        }).format(date);
+    }
+
+    function updateStats() {
+        const unread = notifications.filter(
+            x => !value(x, "isRead", "IsRead")
+        ).length;
+
+        elements.total.textContent = totalCount.toLocaleString("fa-IR");
+        elements.unread.textContent = unread.toLocaleString("fa-IR");
+        elements.read.textContent =
+            Math.max(0, totalCount - unread).toLocaleString("fa-IR");
+
+        elements.markAll.disabled = unread === 0;
+    }
+
+    function createItem(item) {
+        const id = value(item, "id", "Id");
+        const type = value(item, "type", "Type") ?? "";
+        const title = value(item, "title", "Title") ?? "";
+        const message = value(item, "message", "Message") ?? "";
+        const actionUrl = value(item, "actionUrl", "ActionUrl");
+        const createdAt = value(item, "createdAt", "CreatedAt");
+        const isRead = Boolean(value(item, "isRead", "IsRead"));
+
+        const article = document.createElement("article");
+        article.className = `notification-page-item${isRead ? "" : " unread"}`;
+
+        const icon = document.createElement("div");
+        icon.className = "notification-page-icon";
+        icon.textContent = "🔔";
+
+        const body = document.createElement("div");
+        body.className = "notification-page-body";
+
+        const heading = document.createElement("div");
+        heading.className = "notification-page-title";
+        heading.textContent = title;
+
+        const text = document.createElement("div");
+        text.className = "notification-page-message";
+        text.textContent = message;
+
+        const meta = document.createElement("div");
+        meta.className = "notification-page-meta";
+
+        const typeLabel = document.createElement("span");
+        typeLabel.textContent = `نوع: ${type}`;
+
+        const dateLabel = document.createElement("span");
+        dateLabel.textContent = formatDate(createdAt);
+
+        const status = document.createElement("span");
+        status.className = `notification-page-status${isRead ? "" : " unread"}`;
+        status.textContent = isRead ? "خوانده‌شده" : "خوانده‌نشده";
+
+        meta.append(typeLabel, dateLabel, status);
+        body.append(heading, text, meta);
+
+        if (actionUrl) {
+            const link = document.createElement("a");
+            link.className = "notification-page-action";
+            link.textContent = "مشاهده جزئیات ←";
+
+            const target = new URL(actionUrl, window.location.origin);
+
+            if (target.origin === window.location.origin) {
+                link.href = target.href;
+                link.addEventListener("click", async event => {
+                    if (!isRead) {
+                        event.preventDefault();
+
+                        try {
+                            await markRead(id);
+                            window.location.assign(target.href);
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+            }
+
+            if (link.hasAttribute("href")) {
+                body.appendChild(link);
+            }
+        }
+
+        if (!isRead) {
+            article.style.cursor = "pointer";
+            article.addEventListener("click", async event => {
+                if (event.target.closest("a")) return;
+
+                try {
+                    await markRead(id);
+                    await loadPage(currentPage);
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        article.append(icon, body);
+        return article;
+    }
+
+    function render() {
+        listElement.replaceChildren();
+
+        const visible = notifications.filter(item => {
+            const isRead = Boolean(value(item, "isRead", "IsRead"));
+
+            if (activeFilter === "unread") return !isRead;
+            if (activeFilter === "read") return isRead;
+            return true;
+        });
+
+        if (visible.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "notifications-empty";
+            empty.textContent = notifications.length
+                ? "اعلانی با این فیلتر در این صفحه وجود ندارد."
+                : "هنوز اعلانی برای نمایش وجود ندارد.";
+
+            listElement.appendChild(empty);
+            return;
+        }
+
+        visible.forEach(item => listElement.appendChild(createItem(item)));
+    }
+
+    async function loadPage(page) {
+        listElement.textContent = "در حال دریافت اعلان‌ها...";
+
+        try {
+            const data = await api(`/User/Notifications?page=${page}`);
+
+            notifications = data.notifications ?? [];
+            currentPage = data.page ?? page;
+            totalCount = data.totalCount ?? 0;
+
+            updateStats();
+            render();
+
+            const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+            elements.page.textContent =
+                `صفحه ${currentPage.toLocaleString("fa-IR")} از ${totalPages.toLocaleString("fa-IR")}`;
+
+            elements.previous.disabled = currentPage <= 1;
+            elements.next.disabled = currentPage >= totalPages;
+
+            elements.description.textContent =
+                `${totalCount.toLocaleString("fa-IR")} اعلان ثبت شده است.`;
+        } catch (error) {
+            console.error("Notifications page error:", error);
+            listElement.textContent = "دریافت اعلان‌ها با خطا مواجه شد.";
+        }
+    }
+
+    async function markRead(id) {
+        await api(`/User/Notifications/${encodeURIComponent(id)}/read`, {
+            method: "POST",
+            headers: {
+                "RequestVerificationToken": token
+            }
+        });
+    }
+
+    async function markAllRead() {
+        elements.markAll.disabled = true;
+
+        try {
+            await api("/User/Notifications/read-all", {
+                method: "POST",
+                headers: {
+                    "RequestVerificationToken": token
+                }
+            });
+
+            await loadPage(currentPage);
+        } catch (error) {
+            console.error("Mark all error:", error);
+            elements.markAll.disabled = false;
+        }
+    }
+
+    elements.previous.addEventListener("click", () => {
+        if (currentPage > 1) loadPage(currentPage - 1);
+    });
+
+    elements.next.addEventListener("click", () => {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        if (currentPage < totalPages) loadPage(currentPage + 1);
+    });
+
+    elements.markAll.addEventListener("click", markAllRead);
+
+    document.querySelectorAll(".notification-filters button").forEach(button => {
+        button.addEventListener("click", () => {
+            document.querySelector(
+                ".notification-filters button.active"
+            )?.classList.remove("active");
+
+            button.classList.add("active");
+            activeFilter = button.dataset.filter;
+            render();
+        });
+    });
+
+    loadPage(1);
+})();
+</script>

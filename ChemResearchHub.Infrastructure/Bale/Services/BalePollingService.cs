@@ -1,4 +1,5 @@
-﻿using ChemResearchHub.Application.Bale.Interfaces;
+﻿
+using ChemResearchHub.Application.Bale.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,17 +28,25 @@ public sealed class BalePollingService : BackgroundService
     }
 
     protected override async Task ExecuteAsync(
-        CancellationToken stoppingToken)
+    CancellationToken stoppingToken)
     {
+        Console.WriteLine("========== BALE POLLING STARTED ==========");
+
+        _logger.LogInformation(
+            "Bale polling service started.");
+
         if (!_options.EnablePolling)
         {
-            _logger.LogInformation("Bale polling is disabled.");
+            Console.WriteLine("========== BALE POLLING DISABLED ==========");
             return;
         }
+
+        // ادامه کد فعلی بدون تغییر
 
         long? offset = null;
 
         _logger.LogInformation("Bale polling service started.");
+        Console.WriteLine(">>> BALE POLLING SERVICE STARTED <<<");
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -48,22 +57,46 @@ public sealed class BalePollingService : BackgroundService
                     _options.PollingTimeoutSeconds,
                     stoppingToken);
 
+                _logger.LogInformation(
+    "Bale received {Count} update(s).",
+    updates.Count);
+
                 foreach (var update in updates)
                 {
-                    offset = update.UpdateId + 1;
-
                     var message = update.Message;
 
-                    if (message?.Chat is null ||
-                        string.IsNullOrWhiteSpace(message.Text))
+                    if (message?.Chat is not null)
                     {
-                        continue;
+                        _logger.LogInformation(
+                            "Bale message received. ChatId: {ChatId}, ChatType: {ChatType}, Text: {Text}",
+                            message.Chat.Id,
+                            message.Chat.Type,
+                            message.Text);
                     }
+                }
+
+                foreach (var baleUpdate in updates)
+                {
+                    offset = baleUpdate.UpdateId + 1;
+
+                    var receivedMessage = baleUpdate.Message;
+
+                    if (receivedMessage?.Chat is null)
+                        continue;
+
+                    _logger.LogInformation(
+                        "Bale Update received. ChatId: {ChatId}, ChatType: {ChatType}, Text: {Text}",
+                        receivedMessage.Chat.Id,
+                        receivedMessage.Chat.Type,
+                        receivedMessage.Text);
+
+                    if (string.IsNullOrWhiteSpace(receivedMessage.Text))
+                        continue;
 
                     await ProcessMessageAsync(
-                        message.Chat.Id,
-                        message.Chat.Type,
-                        message.Text,
+                        receivedMessage.Chat.Id,
+                        receivedMessage.Chat.Type,
+                        receivedMessage.Text,
                         stoppingToken);
                 }
             }
@@ -95,18 +128,26 @@ public sealed class BalePollingService : BackgroundService
     {
         var normalizedText = text.Trim();
 
-        if (normalizedText.StartsWith("/start ", StringComparison.OrdinalIgnoreCase))
+        if (normalizedText.StartsWith(
+                "/start ",
+                StringComparison.OrdinalIgnoreCase))
         {
             normalizedText = normalizedText["/start ".Length..].Trim();
         }
 
-        if (normalizedText.StartsWith("/link ", StringComparison.OrdinalIgnoreCase))
+        if (normalizedText.StartsWith(
+                "/link ",
+                StringComparison.OrdinalIgnoreCase))
         {
             normalizedText = normalizedText["/link ".Length..].Trim();
         }
 
-        if (normalizedText.StartsWith("/start", StringComparison.OrdinalIgnoreCase) ||
-            normalizedText.StartsWith("/link", StringComparison.OrdinalIgnoreCase))
+        if (normalizedText.StartsWith(
+                "/start",
+                StringComparison.OrdinalIgnoreCase) ||
+            normalizedText.StartsWith(
+                "/link",
+                StringComparison.OrdinalIgnoreCase))
         {
             await SendReplyAsync(
                 chatId,
