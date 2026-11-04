@@ -32,7 +32,8 @@ public interface IWorkItemService
         string? changedByUserId,
         CancellationToken cancellationToken = default,
         IReadOnlyCollection<string>? assignedUserIds = null,
-        IReadOnlyCollection<int>? tagIds = null);
+        IReadOnlyCollection<int>? tagIds = null,
+        bool suppressBaleEditNotification = false);
 
     Task<WorkItemDto> CreateAsync(
         int projectId,
@@ -69,5 +70,6 @@ public interface IWorkItemService
         int id,
         string? changedByUserId,
         CancellationToken cancellationToken = default);
+
 }
 

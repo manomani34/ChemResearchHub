@@ -81,6 +81,7 @@ using ChemResearchHub.Application.Meetings.Repositories;
 using ChemResearchHub.Application.Meetings.Services;
 using ChemResearchHub.Infrastructure.Persistence.Repositories;
 using ChemResearchHub.Web.Areas.Research.Hubs;
+using ChemResearchHub.Application.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -292,6 +293,9 @@ builder.Services.AddHttpClient<IOllamaClient, OllamaClient>(client =>
 // Bale Bot
 builder.Services.Configure<BaleBotOptions>(
     builder.Configuration.GetSection(BaleBotOptions.SectionName));
+
+builder.Services.Configure<ApplicationOptions>(
+    builder.Configuration.GetSection("Application"));
 
 builder.Services.AddHttpClient<IBaleBotClient, BaleBotClient>();
 
