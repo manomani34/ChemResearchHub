@@ -1,0 +1,339 @@
+﻿.samples-page {
+    direction: rtl;
+    padding: 28px 0;
+    color: #334155;
+}
+
+    .samples-page .samples-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .samples-page .samples-eyebrow {
+        margin-bottom: 7px;
+        color: #8b83d8;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .samples-page .samples-header h1 {
+        margin: 0 0 7px;
+        color: #1e293b;
+        font-size: 1.65rem;
+        font-weight: 800;
+    }
+
+    .samples-page .samples-header p {
+        margin: 0;
+        color: #8490a3;
+        font-size: 0.88rem;
+    }
+
+    .samples-page .samples-count {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 17px;
+        border: 1px solid #e7e6f5;
+        border-radius: 12px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .samples-page .samples-count-number {
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+
+    .samples-page .samples-empty {
+        padding: 58px 24px;
+        border: 1px solid #e9eaf1;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 5px 20px rgba(31, 41, 55, 0.035);
+        text-align: center;
+    }
+
+    .samples-page .samples-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 20px;
+        border-radius: 22px;
+        background: #f0efff;
+        font-size: 2rem;
+    }
+
+    .samples-page .samples-empty h3 {
+        margin-bottom: 10px;
+        color: #263247;
+        font-size: 1.15rem;
+        font-weight: 750;
+    }
+
+    .samples-page .samples-empty p {
+        margin: 0 auto 22px;
+        color: #8490a3;
+        font-size: 0.87rem;
+        line-height: 1.9;
+    }
+
+    .samples-page .samples-primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 19px;
+        border: 1px solid #6558d3;
+        border-radius: 9px;
+        background: #6558d3;
+        color: #ffffff;
+        font-size: 0.83rem;
+        font-weight: 650;
+        text-decoration: none;
+        transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+        .samples-page .samples-primary-button:hover {
+            background: #5144bd;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+    .samples-page .samples-table-card {
+        overflow: hidden;
+        border: 1px solid #e9eaf1;
+        border-radius: 17px;
+        background: #ffffff;
+        box-shadow: 0 5px 20px rgba(31, 41, 55, 0.035);
+    }
+
+    .samples-page .samples-table-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 21px 23px;
+        border-bottom: 1px solid #eef0f5;
+    }
+
+        .samples-page .samples-table-heading h2 {
+            margin: 0 0 5px;
+            color: #263247;
+            font-size: 1rem;
+            font-weight: 750;
+        }
+
+        .samples-page .samples-table-heading p {
+            margin: 0;
+            color: #8a94a6;
+            font-size: 0.77rem;
+        }
+
+    .samples-page .samples-table-total {
+        padding: 6px 11px;
+        border-radius: 8px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .samples-page .samples-table {
+        min-width: 1120px;
+        margin: 0;
+        color: #475569;
+        font-size: 0.8rem;
+    }
+
+        .samples-page .samples-table thead th {
+            padding: 15px 13px;
+            border-bottom: 1px solid #e9eaf1;
+            background: #fafaff;
+            color: #7b8497;
+            font-size: 0.73rem;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .samples-page .samples-table tbody td {
+            padding: 16px 13px;
+            border-bottom: 1px solid #f0f1f5;
+            vertical-align: middle;
+        }
+
+        .samples-page .samples-table tbody tr {
+            transition: background-color 0.15s ease;
+        }
+
+            .samples-page .samples-table tbody tr:hover {
+                background: #fafaff;
+            }
+
+            .samples-page .samples-table tbody tr:last-child td {
+                border-bottom: 0;
+            }
+
+    .samples-page .sample-reference-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        direction: ltr;
+    }
+
+    .samples-page .sample-reference {
+        color: #6e63c5;
+        font-family: monospace;
+        font-size: 0.72rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .samples-page .sample-copy-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 23px;
+        height: 23px;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: #8b95a7;
+        cursor: pointer;
+        font-size: 11px;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+        .samples-page .sample-copy-button:hover {
+            background: #f0efff;
+            color: #6558d3;
+        }
+
+        .samples-page .sample-copy-button.copied {
+            background: #e7f7ed;
+            color: #16a34a;
+        }
+
+    .samples-page .sample-code {
+        color: #263247;
+        font-size: 0.83rem;
+        font-weight: 750;
+        direction: ltr;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .samples-page .sample-primary-text {
+        color: #344054;
+        font-weight: 650;
+        line-height: 1.7;
+    }
+
+    .samples-page .sample-secondary-text {
+        margin-top: 4px;
+        color: #9aa3b2;
+        font-size: 0.69rem;
+    }
+
+    .samples-page .sample-type-badge {
+        display: inline-flex;
+        padding: 5px 9px;
+        border: 1px solid #e7e6f5;
+        border-radius: 7px;
+        background: #f5f4ff;
+        color: #6558d3;
+        font-size: 0.72rem;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .samples-page .sample-matrix {
+        color: #64748b;
+        font-size: 0.77rem;
+    }
+
+    .samples-page .sample-date {
+        direction: ltr;
+        display: inline-block;
+        color: #64748b;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .samples-page .samples-muted {
+        color: #b0b7c4;
+    }
+
+    .samples-page .sample-details-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 7px 11px;
+        border: 1px solid #e2e0f5;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #6558d3;
+        font-size: 0.74rem;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+
+        .samples-page .sample-details-button:hover {
+            border-color: #6558d3;
+            background: #f5f4ff;
+            color: #5144bd;
+        }
+
+        .samples-page .sample-details-button span {
+            font-size: 0.9rem;
+        }
+
+@media (max-width: 768px) {
+    .samples-page {
+        padding: 18px 0;
+    }
+
+        .samples-page .samples-header {
+            align-items: flex-start;
+        }
+
+            .samples-page .samples-header h1 {
+                font-size: 1.4rem;
+            }
+
+        .samples-page .samples-count {
+            padding: 9px 11px;
+            font-size: 0.7rem;
+        }
+
+        .samples-page .samples-table-heading {
+            padding: 17px;
+        }
+}
+
+@media (max-width: 576px) {
+    .samples-page .samples-header {
+        flex-direction: column;
+    }
+
+    .samples-page .samples-count {
+        align-self: flex-start;
+    }
+
+    .samples-page .samples-empty {
+        padding: 40px 18px;
+    }
+}

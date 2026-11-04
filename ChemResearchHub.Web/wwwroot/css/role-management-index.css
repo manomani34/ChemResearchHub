@@ -1,0 +1,558 @@
+﻿
+.role-management-page {
+    --rm-primary: #6558d3;
+    --rm-primary-dark: #5144bd;
+    --rm-primary-soft: #f0efff;
+    --rm-border: #e9eaf1;
+    --rm-muted: #85899a;
+    --rm-text: #292b3a;
+    min-height: 100%;
+    padding: 30px 0 48px;
+    color: var(--rm-text);
+}
+
+    /* Header */
+
+    .role-management-page .role-management-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 25px;
+    }
+
+    .role-management-page .role-management-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 12px;
+        color: var(--rm-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.035em;
+    }
+
+    .role-management-page .role-management-eyebrow-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 29px;
+        height: 29px;
+        border-radius: 9px;
+        background: var(--rm-primary-soft);
+        font-size: 0.95rem;
+    }
+
+    .role-management-page .role-management-heading h1 {
+        margin: 0 0 7px;
+        color: var(--rm-text);
+        font-size: 1.8rem;
+        font-weight: 750;
+        letter-spacing: -0.035em;
+    }
+
+    .role-management-page .role-management-heading p {
+        margin: 0;
+        color: var(--rm-muted);
+        font-size: 0.94rem;
+    }
+
+    /* Create button */
+
+    .role-management-page .role-management-create-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 43px;
+        padding: 10px 18px;
+        border: 1px solid var(--rm-primary);
+        border-radius: 11px;
+        background: var(--rm-primary);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 650;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+
+        .role-management-page .role-management-create-button:hover {
+            border-color: var(--rm-primary-dark);
+            background: var(--rm-primary-dark);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(101, 88, 211, 0.2);
+        }
+
+    /* Summary */
+
+    .role-management-page .role-management-summary {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: fit-content;
+        min-width: 330px;
+        margin-bottom: 23px;
+        padding: 13px 17px;
+        border: 1px solid var(--rm-border);
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .role-management-page .role-management-summary-icon {
+        display: flex;
+        flex: 0 0 43px;
+        align-items: center;
+        justify-content: center;
+        width: 43px;
+        height: 43px;
+        border-radius: 12px;
+        background: var(--rm-primary-soft);
+        color: var(--rm-primary);
+        font-size: 1.15rem;
+    }
+
+    .role-management-page .role-management-summary-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+        .role-management-page .role-management-summary-content span {
+            color: var(--rm-muted);
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .role-management-page .role-management-summary-content strong {
+            color: var(--rm-text);
+            font-size: 1.25rem;
+            font-weight: 750;
+            line-height: 1.2;
+        }
+
+    .role-management-page .role-management-summary-divider {
+        width: 1px;
+        height: 34px;
+        margin: 0 4px;
+        background: var(--rm-border);
+    }
+
+    .role-management-page .role-management-summary-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .role-management-page .role-management-summary-detail span {
+            color: #55596b;
+            font-size: 0.78rem;
+            font-weight: 650;
+        }
+
+        .role-management-page .role-management-summary-detail small {
+            color: var(--rm-muted);
+            font-size: 0.7rem;
+        }
+
+    /* Alerts */
+
+    .role-management-page .role-management-alert {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 18px;
+        padding: 14px 17px;
+        border-radius: 11px;
+        font-size: 0.87rem;
+        font-weight: 550;
+    }
+
+    .role-management-page .role-management-alert-success {
+        border: 1px solid #ccebd9;
+        background: #effaf3;
+        color: #21834c;
+    }
+
+    .role-management-page .role-management-alert-error {
+        border: 1px solid #f4d2d5;
+        background: #fff1f2;
+        color: #bd3544;
+    }
+
+    .role-management-page .role-management-alert .btn-close {
+        margin-left: auto;
+        font-size: 0.7rem;
+    }
+
+    /* Main card */
+
+    .role-management-page .role-management-card {
+        overflow: hidden;
+        border: 1px solid var(--rm-border);
+        border-radius: 17px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(35, 38, 65, 0.035);
+    }
+
+    .role-management-page .role-management-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 21px 23px;
+        border-bottom: 1px solid var(--rm-border);
+    }
+
+        .role-management-page .role-management-card-header h2 {
+            margin: 0 0 5px;
+            color: var(--rm-text);
+            font-size: 1.02rem;
+            font-weight: 750;
+        }
+
+        .role-management-page .role-management-card-header p {
+            margin: 0;
+            color: var(--rm-muted);
+            font-size: 0.82rem;
+        }
+
+    .role-management-page .role-management-count {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 11px;
+        border: 1px solid #e5e2ff;
+        border-radius: 20px;
+        background: var(--rm-primary-soft);
+        color: var(--rm-primary);
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Table */
+
+    .role-management-page .role-management-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .role-management-page .role-management-table thead th {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--rm-border);
+            background: #fafaff;
+            color: #777b8e;
+            font-size: 0.76rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .role-management-page .role-management-table tbody td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0f1f5;
+            color: #505365;
+            font-size: 0.86rem;
+            vertical-align: middle;
+        }
+
+        .role-management-page .role-management-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .role-management-page .role-management-table tbody tr {
+            transition: background 0.18s ease;
+        }
+
+            .role-management-page .role-management-table tbody tr:hover {
+                background: #fafaff;
+            }
+
+    /* Role identity */
+
+    .role-management-page .role-management-identity {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 150px;
+    }
+
+    .role-management-page .role-management-role-icon {
+        display: flex;
+        flex: 0 0 36px;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid #e7e4ff;
+        border-radius: 11px;
+        background: var(--rm-primary-soft);
+        color: var(--rm-primary);
+        font-size: 1rem;
+    }
+
+    .role-management-page .role-management-role-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .role-management-page .role-management-role-info strong {
+            color: var(--rm-text);
+            font-size: 0.87rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+    .role-management-page .role-management-protected-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #9994bd;
+        font-size: 0.68rem;
+        font-weight: 600;
+    }
+
+    /* User count */
+
+    .role-management-page .role-management-user-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 44px;
+        padding: 6px 10px;
+        border: 1px solid #e5e6eb;
+        border-radius: 8px;
+        background: #f5f6f8;
+        color: #626779;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    /* Role type */
+
+    .role-management-page .role-management-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .role-management-page .role-management-type-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+    }
+
+    .role-management-page .role-management-type-system {
+        border-color: #dedaff;
+        background: #f1efff;
+        color: #6254c5;
+    }
+
+        .role-management-page .role-management-type-system .role-management-type-dot {
+            background: #7568d8;
+        }
+
+    .role-management-page .role-management-type-custom {
+        border-color: #d6eaf2;
+        background: #edf8fc;
+        color: #287b98;
+    }
+
+        .role-management-page .role-management-type-custom .role-management-type-dot {
+            background: #3a9dbb;
+        }
+
+    /* Actions */
+
+    .role-management-page .role-management-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .role-management-page .role-management-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 33px;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: all 0.18s ease;
+    }
+
+    .role-management-page .role-management-permissions-action {
+        border-color: #ccebd9;
+        color: #21834c;
+    }
+
+        .role-management-page .role-management-permissions-action:hover {
+            border-color: #21834c;
+            background: #effaf3;
+            color: #176c3d;
+        }
+
+    .role-management-page .role-management-edit-action {
+        border-color: #dedaff;
+        color: var(--rm-primary);
+    }
+
+        .role-management-page .role-management-edit-action:hover {
+            border-color: var(--rm-primary);
+            background: var(--rm-primary-soft);
+            color: var(--rm-primary-dark);
+        }
+
+    .role-management-page .role-management-delete-action {
+        border-color: #f3d1d5;
+        color: #c43d4b;
+    }
+
+        .role-management-page .role-management-delete-action:hover {
+            border-color: #c43d4b;
+            background: #fff0f1;
+            color: #a72e3c;
+        }
+
+    .role-management-page .role-management-delete-disabled {
+        border-color: #e8e9ed;
+        background: #f6f6f8;
+        color: #a2a5af;
+        opacity: 0.75;
+        cursor: not-allowed;
+    }
+
+    .role-management-page .role-management-protected-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 9px;
+        color: #9994bd;
+        font-size: 0.73rem;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    /* Empty state */
+
+    .role-management-page .role-management-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 275px;
+        padding: 35px 20px;
+        text-align: center;
+    }
+
+    .role-management-page .role-management-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 62px;
+        height: 62px;
+        margin-bottom: 16px;
+        border-radius: 18px;
+        background: var(--rm-primary-soft);
+        color: var(--rm-primary);
+        font-size: 1.65rem;
+    }
+
+    .role-management-page .role-management-empty h5 {
+        margin: 0 0 8px;
+        color: var(--rm-text);
+        font-size: 1.02rem;
+        font-weight: 750;
+    }
+
+    .role-management-page .role-management-empty p {
+        margin: 0 0 18px;
+        color: var(--rm-muted);
+        font-size: 0.86rem;
+    }
+
+    .role-management-page .role-management-empty-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 15px;
+        border: 1px solid #dedaff;
+        border-radius: 10px;
+        background: var(--rm-primary-soft);
+        color: var(--rm-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+        .role-management-page .role-management-empty-button:hover {
+            border-color: var(--rm-primary);
+            background: var(--rm-primary);
+            color: #fff;
+        }
+
+/* Responsive */
+
+@media (max-width: 767.98px) {
+    .role-management-page {
+        padding-top: 20px;
+    }
+
+        .role-management-page .role-management-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .role-management-page .role-management-heading h1 {
+            font-size: 1.5rem;
+        }
+
+        .role-management-page .role-management-create-button {
+            width: 100%;
+        }
+
+        .role-management-page .role-management-summary {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .role-management-page .role-management-summary-detail {
+            min-width: 0;
+        }
+
+        .role-management-page .role-management-card-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 18px;
+        }
+
+        .role-management-page .role-management-table thead th,
+        .role-management-page .role-management-table tbody td {
+            padding: 13px 14px;
+        }
+}
+
+@media (max-width: 420px) {
+    .role-management-page .role-management-summary-detail {
+        display: none;
+    }
+
+    .role-management-page .role-management-summary-divider {
+        display: none;
+    }
+}

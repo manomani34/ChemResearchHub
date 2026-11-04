@@ -4,39 +4,6 @@
     ViewData["Title"] = "پروژه‌های پژوهشی";
 }
 
-<style>
-    .project-reference-copy {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .project-copy-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 22px;
-        height: 22px;
-        padding: 0;
-        border: 0;
-        border-radius: 5px;
-        background: transparent;
-        color: #64748b;
-        cursor: pointer;
-        font-size: 11px;
-    }
-
-    .project-copy-button:hover {
-        background: #e2e8f0;
-        color: #4f46e5;
-    }
-
-    .project-copy-button.copied {
-        color: #16a34a;
-        background: #dcfce7;
-    }
-</style>
-
 <div class="projects-page">
 
     @if (TempData["SuccessMessage"] is string successMessage)
@@ -48,69 +15,56 @@
     }
 
     <div class="projects-header">
-
         <div>
-            <div class="projects-header-title">
-                پروژه‌های پژوهشی
-            </div>
-
-            <div class="projects-header-subtitle">
+            <div class="projects-eyebrow">Research Workspace</div>
+            <h1 class="projects-header-title">پروژه‌های پژوهشی</h1>
+            <p class="projects-header-subtitle">
                 مدیریت پروژه‌های تحقیقاتی و مشاهده فضای پژوهش
-            </div>
+            </p>
         </div>
 
-        <div>
-            <a asp-action="Create"
-               class="crh-btn crh-btn-primary">
-                + پروژه جدید
-            </a>
-        </div>
-
+        <a asp-action="Create" class="crh-btn crh-btn-primary">
+            <span class="projects-button-icon">+</span>
+            پروژه جدید
+        </a>
     </div>
 
     @if (Model.Count == 0)
     {
         <div class="projects-empty">
-
-            <div class="projects-empty-icon">
-                🧪
-            </div>
-
-            <div class="projects-empty-title">
-                هنوز پروژه‌ای ثبت نشده است
-            </div>
-
-            <div class="projects-empty-text">
+            <div class="projects-empty-icon">🧪</div>
+            <h2 class="projects-empty-title">هنوز پروژه‌ای ثبت نشده است</h2>
+            <p class="projects-empty-text">
                 برای شروع، اولین پروژه پژوهشی خود را ایجاد کنید.
-            </div>
-
-            <a asp-action="Create"
-               class="crh-btn crh-btn-primary">
+            </p>
+            <a asp-action="Create" class="crh-btn crh-btn-primary">
                 ایجاد اولین پروژه
             </a>
-
         </div>
     }
     else
     {
-        <div class="projects-grid">
+        <div class="projects-section-heading">
+            <div>
+                <h2>فضای پروژه‌ها</h2>
+                <p>پروژه‌های ثبت‌شده در سامانه پژوهشی</p>
+            </div>
+            <span class="projects-count">@Model.Count پروژه</span>
+        </div>
 
+        <div class="projects-grid">
             @foreach (var project in Model)
             {
-                <div class="project-card">
+                <article class="project-card">
 
                     <div class="project-card-header">
+                        <div class="project-card-icon">🧪</div>
 
-                        <div class="project-card-icon">
-                            🧪
-                        </div>
+                        <div class="project-card-id">
+                            <span class="project-reference-label">شناسه پروژه</span>
 
-                         <div class="project-card-id">
                             <div class="project-reference-copy">
-
-                                <span class="crh-id">
-                                    @project.ReferenceCode
-                                </span>
+                                <span class="crh-id">@project.ReferenceCode</span>
 
                                 <button type="button"
                                         class="project-copy-button"
@@ -119,48 +73,34 @@
                                         aria-label="کپی شناسه @project.ReferenceCode">
                                     📋
                                 </button>
-
                             </div>
                         </div>
 
-                        <div class="project-status
-                            @(project.IsActive
-                                ? "project-status-active"
-                                : "project-status-inactive")">
+                        <span class="project-status @(project.IsActive ? "project-status-active" : "project-status-inactive")">
+                            <span class="project-status-dot"></span>
+                            @(project.IsActive ? "فعال" : "غیرفعال")
+                        </span>
+                    </div>
 
-                            @(project.IsActive
-                                ? "فعال"
-                                : "غیرفعال")
+                    <div class="project-card-body">
+                        <h3 class="project-card-title">@project.Name</h3>
 
+                        <div class="project-card-description">
+                            @if (string.IsNullOrWhiteSpace(project.Description))
+                            {
+                                <span class="project-description-empty">
+                                    توضیحی برای این پروژه ثبت نشده است.
+                                </span>
+                            }
+                            else
+                            {
+                                @project.Description
+                            }
                         </div>
-
-                       
-
                     </div>
 
-                    <div class="project-card-title">
-                        @project.Name
-                    </div>
-
-                    <div class="project-card-description">
-
-                        @if (string.IsNullOrWhiteSpace(project.Description))
-                        {
-                            <span class="project-description-empty">
-                                توضیحی برای این پروژه ثبت نشده است.
-                            </span>
-                        }
-                        else
-                        {
-                            @project.Description
-                        }
-
-                    </div>
-
-                    <div class="project-card-footer">                        
-
+                    <div class="project-card-footer">
                         <div class="project-card-actions">
-
                             <a asp-action="Details"
                                asp-route-id="@project.Id"
                                class="crh-btn crh-btn-soft">
@@ -180,18 +120,21 @@
                                class="crh-btn crh-btn-soft">
                                 ویرایش
                             </a>
-
                         </div>
-
                     </div>
 
-                </div>
+                </article>
             }
-
         </div>
     }
 
 </div>
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/projects-index.css"
+          asp-append-version="true" />
+}
 
 @section Scripts {
     <script>
@@ -205,19 +148,15 @@
                         event.preventDefault();
                         event.stopPropagation();
 
-                        const referenceCode =
-                            button.dataset.reference;
+                        const referenceCode = button.dataset.reference;
 
                         if (!referenceCode)
                             return;
 
                         try {
-                            await navigator.clipboard.writeText(
-                                referenceCode
-                            );
+                            await navigator.clipboard.writeText(referenceCode);
 
-                            const originalText =
-                                button.textContent;
+                            const originalText = button.textContent;
 
                             button.textContent = "✓";
                             button.classList.add("copied");

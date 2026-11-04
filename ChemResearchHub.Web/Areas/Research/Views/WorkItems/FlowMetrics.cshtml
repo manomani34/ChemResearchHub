@@ -23,145 +23,217 @@
 
 @{
     ViewData["Title"] = "Board Flow Metrics";
+
     var boardName = ViewBag.BoardName as string ?? $"Board #{Model.BoardId}";
     var fromDate = Model.PeriodStartUtc.ToLocalTime().ToString("yyyy-MM-dd");
     var toDate = Model.PeriodEndUtc.AddDays(-1).ToLocalTime().ToString("yyyy-MM-dd");
 }
 
-<div class="container py-4">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/flow-metrics.css"
+          asp-append-version="true" />
+}
 
-    <div class="d-flex justify-content-between align-items-start mb-4">
-        <div>
-            <div class="text-muted mb-1">Research Flow</div>
-            <h1 class="h3 mb-1">Board Flow Metrics</h1>
-            <p class="text-muted mb-0">
-                @boardName · Board #@Model.BoardId
+<div class="flow-metrics-page">
+
+    <div class="flow-metrics-header">
+        <div class="flow-metrics-heading">
+            <div class="flow-metrics-eyebrow">Research Flow</div>
+            <h1>Board Flow Metrics</h1>
+            <p>
+                <span>@boardName</span>
+                <span class="flow-header-separator">·</span>
+                <span>Board #@Model.BoardId</span>
             </p>
         </div>
 
-        <a asp-action="Index" class="btn btn-outline-secondary">
+        <a asp-action="Index" class="flow-back-button">
+            <span aria-hidden="true">←</span>
             Back to Work Items
         </a>
     </div>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-            <strong>Measurement Period</strong>
-        </div>
-        <div class="card-body">
-            <form asp-action="FlowMetrics" method="get" class="row g-3 align-items-end">
-                <input type="hidden" name="boardId" value="@Model.BoardId" />
+    <section class="flow-period-card">
 
-                <div class="col-md-4">
-                    <label class="form-label">From</label>
-                    <input type="date"
-                           name="from"
-                           value="@fromDate"
-                           class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">To</label>
-                    <input type="date"
-                           name="to"
-                           value="@toDate"
-                           class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary">
-                        Apply Period
-                    </button>
-                </div>
-            </form>
-
-            <div class="small text-muted mt-3">
-                Throughput counts Work Items completed during this period.
-                Lead Time starts at Work Item creation; Cycle Time starts at its first workflow movement.
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted mb-1">Throughput</div>
-                    <div class="display-6 fw-semibold">@Model.Throughput</div>
-                    <div class="small text-muted">completed Work Items</div>
-                </div>
+        <div class="flow-period-heading">
+            <div class="flow-period-icon">📅</div>
+            <div>
+                <h2>Measurement Period</h2>
+                <p>Choose a date range to calculate board flow metrics</p>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted mb-1">Average Lead Time</div>
-                    <div class="h3 mb-1">@FormatDuration(Model.AverageLeadTime)</div>
-                    <div class="small text-muted">Median: @FormatDuration(Model.MedianLeadTime)</div>
-                </div>
+        <form asp-action="FlowMetrics"
+              method="get"
+              class="flow-period-form">
+
+            <input type="hidden" name="boardId" value="@Model.BoardId" />
+
+            <div class="flow-period-field">
+                <label for="flowFromDate">From</label>
+                <input type="date"
+                       id="flowFromDate"
+                       name="from"
+                       value="@fromDate"
+                       class="form-control" />
+            </div>
+
+            <div class="flow-period-field">
+                <label for="flowToDate">To</label>
+                <input type="date"
+                       id="flowToDate"
+                       name="to"
+                       value="@toDate"
+                       class="form-control" />
+            </div>
+
+            <div class="flow-period-action">
+                <button type="submit" class="flow-primary-button">
+                    Apply Period
+                </button>
+            </div>
+        </form>
+
+        <div class="flow-metric-explanation">
+            <div>
+                <strong>Throughput</strong>
+                <span>counts Work Items completed during this period.</span>
+            </div>
+            <div>
+                <strong>Lead Time</strong>
+                <span>starts at Work Item creation.</span>
+            </div>
+            <div>
+                <strong>Cycle Time</strong>
+                <span>starts at its first workflow movement.</span>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="small text-muted mb-1">Average Cycle Time</div>
-                    <div class="h3 mb-1">@FormatDuration(Model.AverageCycleTime)</div>
-                    <div class="small text-muted">Median: @FormatDuration(Model.MedianCycleTime)</div>
-                </div>
+    </section>
+
+    <section class="flow-kpi-grid">
+
+        <article class="flow-kpi-card flow-kpi-throughput">
+            <div class="flow-kpi-top">
+                <div class="flow-kpi-icon">✓</div>
+                <span class="flow-kpi-label">Throughput</span>
             </div>
-        </div>
-    </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <strong>Completed Work Items</strong>
-            <span class="badge bg-secondary">@Model.CompletedItems.Count</span>
+            <div class="flow-kpi-value">@Model.Throughput</div>
+            <div class="flow-kpi-description">completed Work Items</div>
+        </article>
+
+        <article class="flow-kpi-card flow-kpi-lead">
+            <div class="flow-kpi-top">
+                <div class="flow-kpi-icon">⏱</div>
+                <span class="flow-kpi-label">Average Lead Time</span>
+            </div>
+
+            <div class="flow-kpi-value flow-kpi-duration">
+                @FormatDuration(Model.AverageLeadTime)
+            </div>
+
+            <div class="flow-kpi-median">
+                <span>Median</span>
+                <strong>@FormatDuration(Model.MedianLeadTime)</strong>
+            </div>
+        </article>
+
+        <article class="flow-kpi-card flow-kpi-cycle">
+            <div class="flow-kpi-top">
+                <div class="flow-kpi-icon">↻</div>
+                <span class="flow-kpi-label">Average Cycle Time</span>
+            </div>
+
+            <div class="flow-kpi-value flow-kpi-duration">
+                @FormatDuration(Model.AverageCycleTime)
+            </div>
+
+            <div class="flow-kpi-median">
+                <span>Median</span>
+                <strong>@FormatDuration(Model.MedianCycleTime)</strong>
+            </div>
+        </article>
+
+    </section>
+
+    <section class="flow-completed-card">
+
+        <div class="flow-completed-header">
+            <div>
+                <h2>Completed Work Items</h2>
+                <p>Work Items completed within the selected period</p>
+            </div>
+
+            <span class="flow-completed-count">
+                @Model.CompletedItems.Count
+            </span>
         </div>
 
-        <div class="card-body p-0">
-            @if (Model.CompletedItems.Count == 0)
-            {
-                <div class="p-4 text-muted">
+        @if (Model.CompletedItems.Count == 0)
+        {
+            <div class="flow-empty-state">
+                <div class="flow-empty-icon">📋</div>
+                <h3>No completed Work Items</h3>
+                <p>
                     No Work Items were completed during this period.
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Work Item</th>
-                                <th>Completed</th>
-                                <th>Lead Time</th>
-                                <th>Cycle Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table flow-completed-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Work Item</th>
+                            <th>Completed</th>
+                            <th>Lead Time</th>
+                            <th>Cycle Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
                         @foreach (var item in Model.CompletedItems)
                         {
                             <tr>
                                 <td>
                                     <a asp-action="Details"
-                                       asp-route-id="@item.WorkItemId">
+                                       asp-route-id="@item.WorkItemId"
+                                       class="flow-work-item-link">
                                         @item.Title
                                     </a>
-                                    <div class="small text-muted">#@item.WorkItemId</div>
+
+                                    <div class="flow-work-item-id">
+                                        #@item.WorkItemId
+                                    </div>
                                 </td>
+
                                 <td>
-                                    @item.CompletedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                    <span class="flow-completed-date">
+                                        @item.CompletedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                    </span>
                                 </td>
-                                <td>@FormatDuration(item.LeadTime)</td>
-                                <td>@FormatDuration(item.CycleTime)</td>
+
+                                <td>
+                                    <span class="flow-duration-value">
+                                        @FormatDuration(item.LeadTime)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="flow-duration-value">
+                                        @FormatDuration(item.CycleTime)
+                                    </span>
+                                </td>
                             </tr>
                         }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
-    </div>
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </section>
 
 </div>

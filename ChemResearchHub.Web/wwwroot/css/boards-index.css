@@ -1,0 +1,267 @@
+﻿.boards-page {
+    --boards-primary: #6558d3;
+    --boards-primary-dark: #5144bd;
+    --boards-primary-soft: #f0efff;
+    --boards-border: #e9eaf1;
+    --boards-muted: #73798c;
+    --boards-text: #24263b;
+    direction: rtl;
+    color: var(--boards-text);
+    padding: 28px 0 40px;
+}
+
+    .boards-page .boards-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .boards-page .boards-eyebrow {
+        color: var(--boards-primary);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        margin-bottom: 8px;
+    }
+
+    .boards-page .boards-header-title {
+        font-size: 27px;
+        font-weight: 800;
+        margin: 0 0 8px;
+    }
+
+    .boards-page .boards-header-subtitle {
+        color: var(--boards-muted);
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .boards-page .boards-section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+        .boards-page .boards-section-heading h2 {
+            font-size: 17px;
+            font-weight: 800;
+            margin: 0 0 5px;
+        }
+
+        .boards-page .boards-section-heading p {
+            color: var(--boards-muted);
+            font-size: 12px;
+            margin: 0;
+        }
+
+    .boards-page .boards-count {
+        padding: 7px 12px;
+        border-radius: 9px;
+        background: var(--boards-primary-soft);
+        color: var(--boards-primary-dark);
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .boards-page .boards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 18px;
+    }
+
+    .boards-page .board-card {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid var(--boards-border);
+        border-radius: 17px;
+        box-shadow: 0 3px 12px rgba(30, 35, 70, .035);
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+        .boards-page .board-card:hover {
+            transform: translateY(-3px);
+            border-color: #d9d4ff;
+            box-shadow: 0 10px 25px rgba(45, 42, 100, .08);
+        }
+
+    .boards-page .board-card-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .boards-page .board-card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border-radius: 14px;
+        background: var(--boards-primary-soft);
+        font-size: 22px;
+    }
+
+    .boards-page .board-card-project {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+    }
+
+    .boards-page .board-card-project-label {
+        color: var(--boards-muted);
+        font-size: 10px;
+    }
+
+    .boards-page .board-card-project-name {
+        font-size: 13px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .boards-page .board-card-title {
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.7;
+        margin-bottom: 20px;
+        overflow-wrap: anywhere;
+    }
+
+    .boards-page .board-card-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: auto;
+        margin-bottom: 19px;
+    }
+
+    .boards-page .board-card-meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        padding: 12px;
+        border: 1px solid #f0f0f5;
+        border-radius: 11px;
+        background: #fafaff;
+    }
+
+    .boards-page .board-card-meta-label {
+        color: var(--boards-muted);
+        font-size: 11px;
+    }
+
+    .boards-page .board-card-meta-value {
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .boards-page .board-card-id {
+        direction: ltr;
+        text-align: right;
+        font-family: monospace;
+        font-size: 15px;
+    }
+
+    .boards-page .board-card-actions {
+        border-top: 1px solid #f0f0f5;
+        padding-top: 15px;
+    }
+
+    .boards-page .crh-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid transparent;
+        transition: all .2s ease;
+    }
+
+    .boards-page .crh-btn-primary {
+        width: 100%;
+        color: #fff;
+        background: var(--boards-primary);
+        border-color: var(--boards-primary);
+    }
+
+        .boards-page .crh-btn-primary:hover {
+            color: #fff;
+            background: var(--boards-primary-dark);
+            border-color: var(--boards-primary-dark);
+            box-shadow: 0 5px 14px rgba(101, 88, 211, .2);
+        }
+
+    .boards-page .board-enter-arrow {
+        font-size: 17px;
+        transition: transform .2s ease;
+    }
+
+    .boards-page .crh-btn-primary:hover .board-enter-arrow {
+        transform: translateX(-3px);
+    }
+
+    .boards-page .boards-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 340px;
+        padding: 45px 20px;
+        text-align: center;
+        background: #fff;
+        border: 1px dashed #d8d8e8;
+        border-radius: 18px;
+    }
+
+    .boards-page .boards-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 76px;
+        height: 76px;
+        margin-bottom: 20px;
+        border-radius: 22px;
+        background: var(--boards-primary-soft);
+        font-size: 34px;
+    }
+
+    .boards-page .boards-empty-title {
+        font-size: 18px;
+        font-weight: 800;
+        margin: 0 0 9px;
+    }
+
+    .boards-page .boards-empty-text {
+        color: var(--boards-muted);
+        font-size: 13px;
+        margin: 0 0 22px;
+        line-height: 1.8;
+    }
+
+@media (max-width: 768px) {
+    .boards-page {
+        padding-top: 18px;
+    }
+
+        .boards-page .boards-header-title {
+            font-size: 23px;
+        }
+
+        .boards-page .boards-grid {
+            grid-template-columns: 1fr;
+        }
+}

@@ -1,0 +1,267 @@
+﻿
+.role-form-page {
+    --rf-primary: #6558d3;
+    --rf-primary-dark: #5144bd;
+    --rf-soft: #f0efff;
+    --rf-border: #e9eaf1;
+    --rf-muted: #74798b;
+    padding: 28px;
+    color: #292d3a;
+}
+
+.role-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.role-form-eyebrow {
+    color: var(--rf-primary);
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+
+.role-form-title {
+    font-size: 1.65rem;
+    font-weight: 750;
+    letter-spacing: -.025em;
+    margin: 0 0 7px;
+}
+
+.role-form-subtitle {
+    color: var(--rf-muted);
+    font-size: .92rem;
+    margin: 0;
+}
+
+.role-form-header-icon {
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: var(--rf-soft);
+    color: var(--rf-primary);
+    font-size: 1.5rem;
+}
+
+.role-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 22px;
+    align-items: start;
+}
+
+.role-form-main {
+    min-width: 0;
+}
+
+.role-form-card {
+    background: #fff;
+    border: 1px solid var(--rf-border);
+    border-radius: 17px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(35, 38, 60, .025);
+}
+
+.role-form-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 21px 24px;
+    border-bottom: 1px solid var(--rf-border);
+    background: #fcfcff;
+}
+
+.role-form-card-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: var(--rf-soft);
+    color: var(--rf-primary);
+    border-radius: 12px;
+    font-size: 1.2rem;
+}
+
+.role-form-card-header h2 {
+    font-size: 1rem;
+    font-weight: 750;
+    margin: 0 0 4px;
+}
+
+.role-form-card-header p {
+    color: var(--rf-muted);
+    font-size: .82rem;
+    margin: 0;
+}
+
+.role-form-card-body {
+    padding: 26px 24px;
+}
+
+    .role-form-card-body .form-label {
+        display: block;
+        font-size: .88rem;
+        font-weight: 700;
+        margin-bottom: 9px;
+        color: #3d4050;
+    }
+
+.role-form-input {
+    min-height: 46px;
+    border: 1px solid #dfe1eb;
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: .9rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+    .role-form-input:focus {
+        border-color: var(--rf-primary);
+        box-shadow: 0 0 0 3px rgba(101, 88, 211, .12);
+    }
+
+    .role-form-input::placeholder {
+        color: #a0a3b1;
+    }
+
+.role-form-hint {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--rf-muted);
+    font-size: .78rem;
+    margin-top: 10px;
+}
+
+    .role-form-hint i {
+        color: var(--rf-primary);
+    }
+
+.role-form-field-error {
+    display: block;
+    font-size: .8rem;
+    margin-top: 6px;
+}
+
+.role-form-validation-summary:empty {
+    display: none;
+}
+
+.role-form-validation-summary {
+    font-size: .87rem;
+    margin-bottom: 18px;
+}
+
+.role-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rf-border);
+}
+
+    .role-form-actions .btn {
+        min-height: 42px;
+        padding: 9px 17px;
+        border-radius: 10px;
+        font-size: .87rem;
+        font-weight: 650;
+    }
+
+.role-form-submit {
+    background: var(--rf-primary);
+    border-color: var(--rf-primary);
+}
+
+    .role-form-submit:hover {
+        background: var(--rf-primary-dark);
+        border-color: var(--rf-primary-dark);
+    }
+
+.role-form-sidebar {
+    min-width: 0;
+}
+
+.role-form-info-card {
+    padding: 23px;
+    background: #fff;
+    border: 1px solid var(--rf-border);
+    border-radius: 16px;
+}
+
+.role-form-info-icon {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    background: var(--rf-soft);
+    color: var(--rf-primary);
+    border-radius: 12px;
+    font-size: 1.25rem;
+    margin-bottom: 17px;
+}
+
+.role-form-info-card h3 {
+    font-size: .98rem;
+    font-weight: 750;
+    margin-bottom: 9px;
+}
+
+.role-form-info-card p {
+    color: var(--rf-muted);
+    font-size: .83rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+@media (max-width: 992px) {
+    .role-form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .role-form-sidebar {
+        order: 2;
+    }
+}
+
+@media (max-width: 576px) {
+    .role-form-page {
+        padding: 18px 12px;
+    }
+
+    .role-form-title {
+        font-size: 1.4rem;
+    }
+
+    .role-form-header-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.25rem;
+    }
+
+    .role-form-card-header {
+        padding: 17px;
+    }
+
+    .role-form-card-body {
+        padding: 20px 17px;
+    }
+
+    .role-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+        .role-form-actions .btn {
+            width: 100%;
+        }
+}

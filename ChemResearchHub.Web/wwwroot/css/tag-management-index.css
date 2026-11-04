@@ -1,0 +1,547 @@
+﻿
+.tag-management-page {
+    --tm-primary: #6558d3;
+    --tm-primary-dark: #5144bd;
+    --tm-primary-soft: #f0efff;
+    --tm-border: #e9eaf1;
+    --tm-muted: #85899a;
+    --tm-text: #292b3a;
+    min-height: 100%;
+    padding: 30px 0 48px;
+    color: var(--tm-text);
+}
+
+    /* Header */
+
+    .tag-management-page .tag-management-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 25px;
+    }
+
+    .tag-management-page .tag-management-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 12px;
+        color: var(--tm-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.035em;
+    }
+
+    .tag-management-page .tag-management-eyebrow-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 29px;
+        height: 29px;
+        border-radius: 9px;
+        background: var(--tm-primary-soft);
+        font-size: 0.95rem;
+    }
+
+    .tag-management-page .tag-management-heading h1 {
+        margin: 0 0 7px;
+        color: var(--tm-text);
+        font-size: 1.8rem;
+        font-weight: 750;
+        letter-spacing: -0.035em;
+    }
+
+    .tag-management-page .tag-management-heading p {
+        margin: 0;
+        color: var(--tm-muted);
+        font-size: 0.94rem;
+    }
+
+    /* Create button */
+
+    .tag-management-page .tag-management-create-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 43px;
+        padding: 10px 18px;
+        border: 1px solid var(--tm-primary);
+        border-radius: 11px;
+        background: var(--tm-primary);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 650;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+
+        .tag-management-page .tag-management-create-button:hover {
+            border-color: var(--tm-primary-dark);
+            background: var(--tm-primary-dark);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(101, 88, 211, 0.2);
+        }
+
+    /* Summary */
+
+    .tag-management-page .tag-management-summary {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: fit-content;
+        min-width: 330px;
+        margin-bottom: 23px;
+        padding: 13px 17px;
+        border: 1px solid var(--tm-border);
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .tag-management-page .tag-management-summary-icon {
+        display: flex;
+        flex: 0 0 43px;
+        align-items: center;
+        justify-content: center;
+        width: 43px;
+        height: 43px;
+        border-radius: 12px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 1.15rem;
+    }
+
+    .tag-management-page .tag-management-summary-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+        .tag-management-page .tag-management-summary-content span {
+            color: var(--tm-muted);
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .tag-management-page .tag-management-summary-content strong {
+            color: var(--tm-text);
+            font-size: 1.25rem;
+            font-weight: 750;
+            line-height: 1.2;
+        }
+
+    .tag-management-page .tag-management-summary-divider {
+        width: 1px;
+        height: 34px;
+        margin: 0 4px;
+        background: var(--tm-border);
+    }
+
+    .tag-management-page .tag-management-summary-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .tag-management-page .tag-management-summary-detail span {
+            color: #55596b;
+            font-size: 0.78rem;
+            font-weight: 650;
+        }
+
+        .tag-management-page .tag-management-summary-detail small {
+            color: var(--tm-muted);
+            font-size: 0.7rem;
+        }
+
+    /* Alerts */
+
+    .tag-management-page .tag-management-alert {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 18px;
+        padding: 14px 17px;
+        border-radius: 11px;
+        font-size: 0.87rem;
+        font-weight: 550;
+    }
+
+    .tag-management-page .tag-management-alert-success {
+        border: 1px solid #ccebd9;
+        background: #effaf3;
+        color: #21834c;
+    }
+
+    .tag-management-page .tag-management-alert-error {
+        border: 1px solid #f4d2d5;
+        background: #fff1f2;
+        color: #bd3544;
+    }
+
+    .tag-management-page .tag-management-alert .btn-close {
+        margin-left: auto;
+        font-size: 0.7rem;
+    }
+
+    /* Main card */
+
+    .tag-management-page .tag-management-card {
+        overflow: hidden;
+        border: 1px solid var(--tm-border);
+        border-radius: 17px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(35, 38, 65, 0.035);
+    }
+
+    .tag-management-page .tag-management-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 21px 23px;
+        border-bottom: 1px solid var(--tm-border);
+    }
+
+        .tag-management-page .tag-management-card-header h2 {
+            margin: 0 0 5px;
+            color: var(--tm-text);
+            font-size: 1.02rem;
+            font-weight: 750;
+        }
+
+        .tag-management-page .tag-management-card-header p {
+            margin: 0;
+            color: var(--tm-muted);
+            font-size: 0.82rem;
+        }
+
+    .tag-management-page .tag-management-count {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 11px;
+        border: 1px solid #e5e2ff;
+        border-radius: 20px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Table */
+
+    .tag-management-page .tag-management-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .tag-management-page .tag-management-table thead th {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--tm-border);
+            background: #fafaff;
+            color: #777b8e;
+            font-size: 0.76rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tag-management-page .tag-management-table tbody td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0f1f5;
+            color: #505365;
+            font-size: 0.86rem;
+            vertical-align: middle;
+        }
+
+        .tag-management-page .tag-management-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .tag-management-page .tag-management-table tbody tr {
+            transition: background 0.18s ease;
+        }
+
+            .tag-management-page .tag-management-table tbody tr:hover {
+                background: #fafaff;
+            }
+
+    /* Tag identity */
+
+    .tag-management-page .tag-management-identity {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 130px;
+    }
+
+    .tag-management-page .tag-management-color-indicator {
+        display: inline-block;
+        flex: 0 0 11px;
+        width: 11px;
+        height: 11px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 50%;
+    }
+
+    .tag-management-page .tag-management-name {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        max-width: 220px;
+        padding: 6px 11px;
+        overflow-wrap: anywhere;
+        border: 1px solid var(--tm-border);
+        border-radius: 8px;
+        background: #f8f8fc;
+        color: var(--tm-text);
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .tag-management-page .tag-management-description {
+        display: inline-block;
+        max-width: 340px;
+        color: #666a7d;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    /* Color */
+
+    .tag-management-page .tag-management-color-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .tag-management-page .tag-management-color-swatch {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 7px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .tag-management-page .tag-management-color-info code {
+        padding: 4px 7px;
+        border: 1px solid #ececf2;
+        border-radius: 6px;
+        background: #f7f7fa;
+        color: #686b7c;
+        font-size: 0.74rem;
+    }
+
+    /* Status */
+
+    .tag-management-page .tag-management-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .tag-management-page .tag-management-status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+    }
+
+    .tag-management-page .tag-management-status-active {
+        border-color: #ccebd9;
+        background: #effaf3;
+        color: #21834c;
+    }
+
+        .tag-management-page .tag-management-status-active .tag-management-status-dot {
+            background: #28a45f;
+        }
+
+    .tag-management-page .tag-management-status-inactive {
+        border-color: #e5e6eb;
+        background: #f3f4f6;
+        color: #777b89;
+    }
+
+        .tag-management-page .tag-management-status-inactive .tag-management-status-dot {
+            background: #969aa7;
+        }
+
+    /* Actions */
+
+    .tag-management-page .tag-management-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .tag-management-page .tag-management-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 33px;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: all 0.18s ease;
+    }
+
+    .tag-management-page .tag-management-edit-action {
+        border-color: #dedaff;
+        color: var(--tm-primary);
+    }
+
+        .tag-management-page .tag-management-edit-action:hover {
+            border-color: var(--tm-primary);
+            background: var(--tm-primary-soft);
+            color: var(--tm-primary-dark);
+        }
+
+    .tag-management-page .tag-management-deactivate-action {
+        border-color: #f7e4bd;
+        color: #9b6810;
+    }
+
+        .tag-management-page .tag-management-deactivate-action:hover {
+            border-color: #d59a25;
+            background: #fff8e9;
+            color: #86590b;
+        }
+
+    .tag-management-page .tag-management-activate-action {
+        border-color: #ccebd9;
+        color: #21834c;
+    }
+
+        .tag-management-page .tag-management-activate-action:hover {
+            border-color: #21834c;
+            background: #effaf3;
+            color: #176c3d;
+        }
+
+    /* Empty state */
+
+    .tag-management-page .tag-management-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 275px;
+        padding: 35px 20px;
+        text-align: center;
+    }
+
+    .tag-management-page .tag-management-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 62px;
+        height: 62px;
+        margin-bottom: 16px;
+        border-radius: 18px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 1.65rem;
+    }
+
+    .tag-management-page .tag-management-empty h5 {
+        margin: 0 0 8px;
+        color: var(--tm-text);
+        font-size: 1.02rem;
+        font-weight: 750;
+    }
+
+    .tag-management-page .tag-management-empty p {
+        margin: 0 0 18px;
+        color: var(--tm-muted);
+        font-size: 0.86rem;
+    }
+
+    .tag-management-page .tag-management-empty-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 15px;
+        border: 1px solid #dedaff;
+        border-radius: 10px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+        .tag-management-page .tag-management-empty-button:hover {
+            border-color: var(--tm-primary);
+            background: var(--tm-primary);
+            color: #fff;
+        }
+
+/* Responsive */
+
+@media (max-width: 767.98px) {
+    .tag-management-page {
+        padding-top: 20px;
+    }
+
+        .tag-management-page .tag-management-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .tag-management-page .tag-management-heading h1 {
+            font-size: 1.5rem;
+        }
+
+        .tag-management-page .tag-management-create-button {
+            width: 100%;
+        }
+
+        .tag-management-page .tag-management-summary {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .tag-management-page .tag-management-summary-detail {
+            min-width: 0;
+        }
+
+        .tag-management-page .tag-management-card-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 18px;
+        }
+
+        .tag-management-page .tag-management-table thead th,
+        .tag-management-page .tag-management-table tbody td {
+            padding: 13px 14px;
+        }
+}
+
+@media (max-width: 420px) {
+    .tag-management-page .tag-management-summary-detail,
+    .tag-management-page .tag-management-summary-divider {
+        display: none;
+    }
+
+    .tag-management-page .tag-management-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

@@ -1,4 +1,4 @@
-﻿ @using ChemResearchHub.Domain.Enums.Meetings
+﻿@using ChemResearchHub.Domain.Enums.Meetings
 @using ChemResearchHub.Web.Areas.Research.Models.Meetings.ActionItems
 @model ActionItemsViewModel
 
@@ -24,6 +24,9 @@
     var cancelledItems = Model.Items
         .Where(x => x.Status == MeetingActionItemStatus.Cancelled)
         .ToList();
+
+    ViewData["WorkItems"] = Model.WorkItems;
+    ViewData["MeetingSessionId"] = Model.MeetingSessionId;
 }
 
 @section Styles {
@@ -58,6 +61,14 @@
         <div class="alert alert-success">
             <i class="bi bi-check-circle"></i>
             @successMessage
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i>
+            @errorMessage
         </div>
     }
 
@@ -310,6 +321,27 @@
 
                     <span asp-validation-for="CreateRequest.DecisionId"
                           class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.WorkItemId"
+                           class="form-label">
+                        اتصال به Work Item (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.WorkItemId"
+                            asp-items="Model.WorkItems"
+                            class="form-select">
+
+                        <option value="">بدون اتصال</option>
+
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.WorkItemId"
+                          class="text-danger"></span>
+
+                    <div class="form-text">
+                        هر Work Item فقط می‌تواند به یک Action Item متصل باشد.
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">

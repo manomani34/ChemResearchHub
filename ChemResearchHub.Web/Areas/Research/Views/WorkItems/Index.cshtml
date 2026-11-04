@@ -4,19 +4,17 @@
     ViewData["Title"] = "کارهای پژوهشی";
 }
 
-<div class="workitems-page"
-     dir="rtl">
+<div class="workitems-page" dir="rtl">
 
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
+    <!-- Header -->
 
     <div class="workitems-header">
 
-        <div>
+        <div class="workitems-header-content">
 
             <div class="workitems-eyebrow">
-                پژوهش
+                <i class="bi bi-kanban"></i>
+                Research Workspace
             </div>
 
             <h1 class="workitems-title">
@@ -30,233 +28,308 @@
         </div>
 
         <div class="workitems-count-card">
-
-            <div class="workitems-count-label">
-                تعداد نمایش
+            <div class="workitems-count-icon">
+                <i class="bi bi-list-task"></i>
             </div>
 
-            <div class="workitems-count-value">
-                @Model.Items.Count
-            </div>
+            <div>
+                <div class="workitems-count-label">
+                    تعداد نتایج
+                </div>
 
+                <div class="workitems-count-value">
+                    @Model.Items.Count
+                </div>
+            </div>
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         FILTERS
-         ===================================================== -->
+    <!-- Filters -->
 
-    <div class="workitems-filter-card">
+    <section class="workitems-filter-card">
 
-        <form asp-area="Research" method="get"
-              asp-controller="WorkItems"
-              asp-action="Index">
+        <div class="workitems-card-header">
 
-            <div class="workitems-filter-grid">
-
-                <!-- Search -->
-
-                <div class="workitems-filter-field">
-
-                    <label for="search">
-                        جستجو
-                    </label>
-
-                    <input type="text"
-                           id="search"
-                           name="search"
-                           value="@Model.Search"
-                           class="form-control"
-                           placeholder="عنوان یا توضیحات..." />
-
-                </div>
-
-
-                <!-- Status -->
-
-                <div class="workitems-filter-field">
-
-                    <label for="status">
-                        وضعیت
-                    </label>
-
-                    <select id="status"
-                            name="status"
-                            class="form-select">
-
-                        <option value="all"
-                                selected="@(Model.Status == "all")">
-
-                            همه
-
-                        </option>
-
-                        <option value="open"
-                                selected="@(Model.Status == "open")">
-
-                            باز
-
-                        </option>
-
-                        <option value="completed"
-                                selected="@(Model.Status == "completed")">
-
-                            تکمیل‌شده
-
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- Assignee -->
-
-                <div class="workitems-filter-field">
-
-                    <label for="assignedToUserId">
-                        مسئول
-                    </label>
-
-                    <select id="assignedToUserId"
-                            name="assignedToUserId"
-                            class="form-select">
-
-                        <option value="">
-                            همه
-                        </option>
-
-                        @foreach (var user in Model.Assignees)
-                        {
-                            <option value="@user.Id"
-                                    selected="@(Model.AssignedToUserId == user.Id)">
-
-                                @user.FullName
-
-                            </option>
-                        }
-
-                    </select>
-
-                </div>
-
-
-                <!-- Tags -->
-                <div class="workitems-filter-field workitems-tag-filter">
-                    <label for="tagDropdownToggle">برچسب‌ها</label>
-
-                    @if (Model.AvailableTags.Count == 0)
-                    {
-                        <span class="text-muted small">برچسب فعالی وجود ندارد.</span>
-                    }
-                    else
-                    {
-                        <div class="workitems-tag-filter-control">
-                            <div class="workitems-tag-dropdown">
-                                <button type="button"
-                                        id="tagDropdownToggle"
-                                        class="form-control workitems-tag-dropdown-toggle"
-                                        aria-expanded="false"
-                                        aria-controls="tagDropdownMenu">
-                                    <span>انتخاب برچسب...</span>
-                                    <span>▾</span>
-                                </button>
-
-                                <div id="tagDropdownMenu" class="workitems-tag-dropdown-menu" hidden>
-                                    <input type="text"
-                                           id="tagSearchInput"
-                                           class="form-control"
-                                           placeholder="جستجوی برچسب..."
-                                           autocomplete="off" />
-
-                                    <div class="workitems-tag-options" id="tagOptions">
-                                        @foreach (var tag in Model.AvailableTags)
-                                        {
-                                            <button type="button"
-                                                    class="workitems-tag-option"
-                                                    data-tag-id="@tag.Id"
-                                                    data-tag-name="@tag.Name"
-                                                    data-tag-color="@tag.Color"
-                                                    aria-pressed="@Model.TagIds.Contains(tag.Id).ToString().ToLowerInvariant()">
-                                                <span class="badge"
-                                                      style="background-color:@tag.Color;color:white;">
-                                                    @tag.Name
-                                                </span>
-                                                <span class="workitems-tag-option-check">
-                                                    @(Model.TagIds.Contains(tag.Id) ? "✓" : "")
-                                                </span>
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="selectedTags" class="workitems-selected-tags">
-                                @foreach (var tag in Model.AvailableTags.Where(x => Model.TagIds.Contains(x.Id)))
-                                {
-                                    <span class="badge d-inline-flex align-items-center gap-2"
-                                          data-tag-id="@tag.Id"
-                                          style="background-color:@tag.Color;color:white;">
-                                        @tag.Name
-                                        <button type="button"
-                                                class="btn-close btn-close-white"
-                                                aria-label="حذف @tag.Name"
-                                                style="font-size:.55rem;"
-                                                onclick="removeWorkItemTag(@tag.Id)"></button>
-                                    </span>
-                                    <input type="hidden" name="tagIds" value="@tag.Id" data-tag-input="@tag.Id" />
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-
-                <!-- Actions -->
-
-                <div class="workitems-filter-actions">
-
-                    <button type="submit"
-                            class="btn btn-primary">
-
-                        🔎 جستجو
-
-                    </button>
-
-                    <a asp-area="Research" asp-controller="WorkItems"
-                       asp-action="Index"
-                       class="btn btn-outline-secondary">
-
-                        پاک کردن فیلتر
-
-                    </a>
-
-                </div>
-
+            <div class="workitems-section-icon">
+                <i class="bi bi-funnel"></i>
             </div>
 
-        </form>
+            <div>
+                <h2>فیلتر و جستجو</h2>
+                <p>برای پیدا کردن Work Item موردنظر از فیلترها استفاده کنید.</p>
+            </div>
 
-    </div>
+        </div>
+
+        <div class="workitems-filter-body">
+
+            <form asp-area="Research"
+                  asp-controller="WorkItems"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="workitems-filter-grid">
+
+                    <!-- Search -->
+
+                    <div class="workitems-filter-field workitems-search-field">
+
+                        <label for="search">
+                            <i class="bi bi-search"></i>
+                            جستجو
+                        </label>
+
+                        <input type="text"
+                               id="search"
+                               name="search"
+                               value="@Model.Search"
+                               class="form-control workitems-control"
+                               placeholder="عنوان یا توضیحات Work Item..." />
+
+                    </div>
 
 
-    <!-- =====================================================
-         LIST
-         ===================================================== -->
+                    <!-- Status -->
 
-    <div class="workitems-list-card">
+                    <div class="workitems-filter-field">
+
+                        <label for="status">
+                            <i class="bi bi-circle-half"></i>
+                            وضعیت
+                        </label>
+
+                        <select id="status"
+                                name="status"
+                                class="form-select workitems-control">
+
+                            <option value="all"
+                                    selected="@(Model.Status == "all")">
+                                همه وضعیت‌ها
+                            </option>
+
+                            <option value="open"
+                                    selected="@(Model.Status == "open")">
+                                باز
+                            </option>
+
+                            <option value="completed"
+                                    selected="@(Model.Status == "completed")">
+                                تکمیل‌شده
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Assignee -->
+
+                    <div class="workitems-filter-field">
+
+                        <label for="assignedToUserId">
+                            <i class="bi bi-person"></i>
+                            مسئول
+                        </label>
+
+                        <select id="assignedToUserId"
+                                name="assignedToUserId"
+                                class="form-select workitems-control">
+
+                            <option value="">
+                                همه مسئولان
+                            </option>
+
+                            @foreach (var user in Model.Assignees)
+                            {
+                                <option value="@user.Id"
+                                        selected="@(Model.AssignedToUserId == user.Id)">
+                                    @user.FullName
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Tags -->
+
+                    <div class="workitems-filter-field workitems-tag-filter">
+
+                        <label for="tagDropdownToggle">
+                            <i class="bi bi-tags"></i>
+                            برچسب‌ها
+                        </label>
+
+                        @if (Model.AvailableTags.Count == 0)
+                        {
+                            <div class="workitems-no-tags">
+                                <i class="bi bi-info-circle"></i>
+                                برچسب فعالی وجود ندارد.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="workitems-tag-filter-control">
+
+                                <div class="workitems-tag-dropdown">
+
+                                    <button type="button"
+                                            id="tagDropdownToggle"
+                                            class="workitems-tag-dropdown-toggle"
+                                            aria-expanded="false"
+                                            aria-controls="tagDropdownMenu">
+
+                                        <span>
+                                            <i class="bi bi-tag"></i>
+                                            انتخاب برچسب...
+                                        </span>
+
+                                        <i class="bi bi-chevron-down"></i>
+
+                                    </button>
+
+                                    <div id="tagDropdownMenu"
+                                         class="workitems-tag-dropdown-menu"
+                                         hidden>
+
+                                        <div class="workitems-tag-search">
+
+                                            <i class="bi bi-search"></i>
+
+                                            <input type="text"
+                                                   id="tagSearchInput"
+                                                   class="form-control"
+                                                   placeholder="جستجوی برچسب..."
+                                                   autocomplete="off" />
+
+                                        </div>
+
+                                        <div class="workitems-tag-options"
+                                             id="tagOptions">
+
+                                            @foreach (var tag in Model.AvailableTags)
+                                            {
+                                                <button type="button"
+                                                        class="workitems-tag-option"
+                                                        data-tag-id="@tag.Id"
+                                                        data-tag-name="@tag.Name"
+                                                        data-tag-color="@tag.Color"
+                                                        aria-pressed="@Model.TagIds.Contains(tag.Id).ToString().ToLowerInvariant()">
+
+                                                    <span class="badge"
+                                                          style="background-color:@tag.Color;color:white;">
+                                                        @tag.Name
+                                                    </span>
+
+                                                    <span class="workitems-tag-option-check">
+                                                        @(Model.TagIds.Contains(tag.Id) ? "✓" : "")
+                                                    </span>
+
+                                                </button>
+                                            }
+
+                                        </div>
+
+                                        <div class="workitems-tag-dropdown-footer">
+                                            برای انتخاب یا حذف برچسب کلیک کنید.
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div id="selectedTags"
+                                     class="workitems-selected-tags">
+
+                                    @foreach (var tag in Model.AvailableTags.Where(x => Model.TagIds.Contains(x.Id)))
+                                    {
+                                        <span class="workitems-selected-tag"
+                                              data-tag-id="@tag.Id"
+                                              style="background-color:@tag.Color;color:white;">
+
+                                            <span>@tag.Name</span>
+
+                                            <button type="button"
+                                                    class="workitems-remove-tag"
+                                                    data-remove-tag="@tag.Id"
+                                                    aria-label="حذف @tag.Name">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+
+                                        </span>
+
+                                        <input type="hidden"
+                                               name="tagIds"
+                                               value="@tag.Id"
+                                               data-tag-input="@tag.Id" />
+                                    }
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- Actions -->
+
+                    <div class="workitems-filter-actions">
+
+                        <button type="submit"
+                                class="workitems-search-button">
+
+                            <i class="bi bi-search"></i>
+                            جستجو
+
+                        </button>
+
+                        <a asp-area="Research"
+                           asp-controller="WorkItems"
+                           asp-action="Index"
+                           class="workitems-reset-button">
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            پاک کردن فیلترها
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- Work Items List -->
+
+    <section class="workitems-list-card">
 
         <div class="workitems-list-header">
 
-            <div>
-                فهرست کارها
+            <div class="workitems-list-heading">
+
+                <div class="workitems-section-icon">
+                    <i class="bi bi-card-list"></i>
+                </div>
+
+                <div>
+                    <h2>فهرست کارهای پژوهشی</h2>
+                    <p>نتایج مطابق فیلترهای انتخاب‌شده</p>
+                </div>
+
             </div>
 
             <div class="workitems-list-result">
-
-                @Model.Items.Count مورد
-
+                <strong>@Model.Items.Count</strong>
+                <span>مورد</span>
             </div>
 
         </div>
@@ -267,7 +340,7 @@
             <div class="workitems-empty">
 
                 <div class="workitems-empty-icon">
-                    📭
+                    <i class="bi bi-inbox"></i>
                 </div>
 
                 <div class="workitems-empty-title">
@@ -287,39 +360,15 @@
                 <table class="table workitems-table">
 
                     <thead>
-
                         <tr>
-
-                            <th>
-                                عنوان
-                            </th>
-
-                            <th>
-                                پروژه
-                            </th>
-
-                            <th>
-                                نوع
-                            </th>
-
-                            <th>
-                                اولویت
-                            </th>
-
-                            <th>
-                                مسئول
-                            </th>
-
-                            <th>
-                                موعد
-                            </th>
-
-                            <th>
-                                وضعیت
-                            </th>
-
+                            <th>عنوان</th>
+                            <th>پروژه</th>
+                            <th>نوع</th>
+                            <th>اولویت</th>
+                            <th>مسئول</th>
+                            <th>موعد</th>
+                            <th>وضعیت</th>
                         </tr>
-
                     </thead>
 
                     <tbody>
@@ -330,7 +379,7 @@
 
                                 <!-- Title -->
 
-                                <td>
+                                <td class="workitems-title-cell">
 
                                     <div class="workitem-table-title">
                                         @item.Title
@@ -342,40 +391,41 @@
                                             @item.Description
                                         </div>
                                     }
+
                                     @if (item.Tags.Count > 0)
                                     {
-                                        <div class="d-flex flex-wrap gap-1 mt-2">
+                                        <div class="workitem-row-tags">
+
                                             @foreach (var tag in item.Tags)
                                             {
-                                                <span class="badge"
-                                                      style="background-color: @tag.Color; color: white;">
+                                                <span class="workitem-row-tag"
+                                                      style="background-color:@tag.Color;color:white;">
                                                     @tag.Name
                                                 </span>
                                             }
+
                                         </div>
                                     }
+
                                 </td>
 
 
                                 <!-- Project -->
 
                                 <td>
-
                                     <span class="workitem-project-badge">
+                                        <i class="bi bi-folder2"></i>
                                         پروژه #@item.ProjectId
                                     </span>
-
                                 </td>
 
 
                                 <!-- Type -->
 
                                 <td>
-
                                     <span class="workitem-type-badge">
                                         @item.Type
                                     </span>
-
                                 </td>
 
 
@@ -385,28 +435,30 @@
 
                                     @{
                                         var priorityClass =
-                                        item.Priority >= 8
-                                        ? "priority-high"
-                                        : item.Priority >= 5
-                                        ? "priority-medium"
-                                        : "priority-low";
+                                            item.Priority >= 8
+                                                ? "priority-high"
+                                                : item.Priority >= 5
+                                                    ? "priority-medium"
+                                                    : "priority-low";
 
                                         var priorityText =
-                                        item.Priority >= 8
-                                        ? "بالا"
-                                        : item.Priority >= 5
-                                        ? "متوسط"
-                                        : "پایین";
+                                            item.Priority >= 8
+                                                ? "بالا"
+                                                : item.Priority >= 5
+                                                    ? "متوسط"
+                                                    : "پایین";
                                     }
 
-                                    <span class="workitem-priority @priorityClass">
+                                    <div class="workitem-priority-wrapper">
 
-                                        @priorityText
+                                        <span class="workitem-priority @priorityClass">
+                                            @priorityText
+                                        </span>
 
-                                    </span>
+                                        <span class="workitem-priority-number">
+                                            @item.Priority
+                                        </span>
 
-                                    <div class="workitem-priority-number">
-                                        @item.Priority
                                     </div>
 
                                 </td>
@@ -419,13 +471,15 @@
                                     @if (string.IsNullOrWhiteSpace(item.AssignedToUserName))
                                     {
                                         <span class="workitem-unassigned">
+                                            <i class="bi bi-person-dash"></i>
                                             بدون مسئول
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="workitem-assignee">
-                                            👤 @item.AssignedToUserName
+                                            <i class="bi bi-person-circle"></i>
+                                            @item.AssignedToUserName
                                         </span>
                                     }
 
@@ -439,14 +493,14 @@
                                     @if (item.DueDate.HasValue)
                                     {
                                         <span class="workitem-due-date">
-
+                                            <i class="bi bi-calendar3"></i>
                                             @item.DueDate.Value.ToString("yyyy-MM-dd")
-
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="workitem-unassigned">
+                                            <i class="bi bi-calendar-minus"></i>
                                             بدون موعد
                                         </span>
                                     }
@@ -461,13 +515,15 @@
                                     @if (item.IsCompleted)
                                     {
                                         <span class="workitem-status workitem-status-completed">
-                                            ✓ تکمیل‌شده
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            تکمیل‌شده
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="workitem-status workitem-status-open">
-                                            ● باز
+                                            <span class="workitem-status-dot"></span>
+                                            باز
                                         </span>
                                     }
 
@@ -483,9 +539,10 @@
             </div>
         }
 
-    </div>
+    </section>
 
 </div>
+
 
 <script>
     (() => {
@@ -502,12 +559,40 @@
             toggle.setAttribute("aria-expanded", "false");
         };
 
-        toggle.addEventListener("click", () => {
-            menu.hidden = !menu.hidden;
-            toggle.setAttribute("aria-expanded", String(!menu.hidden));
+        const openMenu = () => {
+            menu.hidden = false;
+            toggle.setAttribute("aria-expanded", "true");
+            search.focus();
+        };
 
-            if (!menu.hidden) {
-                search.focus();
+        const updateOption = (id, isSelected) => {
+            const option = Array.from(
+                options.querySelectorAll(".workitems-tag-option")
+            ).find(x => x.dataset.tagId === String(id));
+
+            if (!option) return;
+
+            option.setAttribute("aria-pressed", String(isSelected));
+
+            const check = option.querySelector(".workitems-tag-option-check");
+
+            if (check) {
+                check.textContent = isSelected ? "✓" : "";
+            }
+        };
+
+        const removeTag = id => {
+            selected.querySelector(`[data-tag-id="${id}"]`)?.remove();
+            selected.querySelector(`[data-tag-input="${id}"]`)?.remove();
+
+            updateOption(id, false);
+        };
+
+        toggle.addEventListener("click", () => {
+            if (menu.hidden) {
+                openMenu();
+            } else {
+                closeMenu();
             }
         });
 
@@ -523,31 +608,40 @@
 
         options.addEventListener("click", event => {
             const option = event.target.closest(".workitems-tag-option");
+
             if (!option) return;
 
             const id = option.dataset.tagId;
             const name = option.dataset.tagName;
             const color = option.dataset.tagColor;
 
-            if (selected.querySelector(`[data-tag-id="${id}"]`)) return;
+            const existing = selected.querySelector(
+                `[data-tag-id="${id}"]`
+            );
+
+            if (existing) {
+                removeTag(id);
+                return;
+            }
 
             const badge = document.createElement("span");
-            badge.className = "badge d-inline-flex align-items-center gap-2";
+            badge.className = "workitems-selected-tag";
             badge.dataset.tagId = id;
             badge.style.backgroundColor = color;
             badge.style.color = "white";
 
-            const text = document.createElement("span");
-            text.textContent = name;
+            const label = document.createElement("span");
+            label.textContent = name;
 
             const remove = document.createElement("button");
             remove.type = "button";
-            remove.className = "btn-close btn-close-white";
-            remove.style.fontSize = ".55rem";
+            remove.className = "workitems-remove-tag";
             remove.setAttribute("aria-label", "حذف " + name);
-            remove.addEventListener("click", () => window.removeWorkItemTag(id));
+            remove.innerHTML = '<i class="bi bi-x"></i>';
 
-            badge.append(text, remove);
+            remove.addEventListener("click", () => removeTag(id));
+
+            badge.append(label, remove);
             selected.appendChild(badge);
 
             const input = document.createElement("input");
@@ -555,27 +649,19 @@
             input.name = "tagIds";
             input.value = id;
             input.dataset.tagInput = id;
+
             selected.appendChild(input);
 
-            option.setAttribute("aria-pressed", "true");
-            option.querySelector(".workitems-tag-option-check").textContent = "✓";
-
-            search.value = "";
-            search.dispatchEvent(new Event("input"));
-            closeMenu();
+            updateOption(id, true);
         });
 
-        window.removeWorkItemTag = id => {
-            selected.querySelector(`[data-tag-id="${id}"]`)?.remove();
-            selected.querySelector(`[data-tag-input="${id}"]`)?.remove();
+        selected.addEventListener("click", event => {
+            const button = event.target.closest("[data-remove-tag]");
 
-            const option = options.querySelector(`[data-tag-id="${id}"]`);
-            option?.setAttribute("aria-pressed", "false");
+            if (!button) return;
 
-            if (option) {
-                option.querySelector(".workitems-tag-option-check").textContent = "";
-            }
-        };
+            removeTag(button.dataset.removeTag);
+        });
 
         document.addEventListener("click", event => {
             if (!event.target.closest(".workitems-tag-dropdown")) {
@@ -584,7 +670,28 @@
         });
 
         document.addEventListener("keydown", event => {
-            if (event.key === "Escape") closeMenu();
+            if (event.key === "Escape") {
+                closeMenu();
+            }
         });
+
+        // Initial selected tags state
+        options.querySelectorAll(".workitems-tag-option").forEach(option => {
+            const id = option.dataset.tagId;
+
+            const isSelected = !!selected.querySelector(
+                `[data-tag-id="${id}"]`
+            );
+
+            updateOption(id, isSelected);
+        });
+
     })();
 </script>
+
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/work-items-index.css"
+          asp-append-version="true" />
+}

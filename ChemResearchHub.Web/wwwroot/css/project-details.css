@@ -1,0 +1,267 @@
+﻿/* =========================================================
+   ChemResearchHub — Project Details
+   Scoped to .project-details-page
+   ========================================================= */
+
+.project-details-page {
+    --project-primary: #6558d3;
+    --project-primary-dark: #5144bd;
+    --project-text: #25263a;
+    --project-muted: #77798c;
+    --project-border: #e9eaf1;
+    padding: 1.25rem;
+    border-radius: 18px;
+    background: #f7f8fc;
+    color: var(--project-text);
+}
+
+    /* Header */
+
+    .project-details-page .project-details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+        padding: 1.4rem 1.5rem;
+        border: 1px solid var(--project-border);
+        border-radius: 17px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(31, 35, 60, .035);
+    }
+
+    .project-details-page .project-form-kicker {
+        margin-bottom: .45rem;
+        color: var(--project-primary);
+        font-size: .76rem;
+        font-weight: 700;
+    }
+
+    .project-details-page .project-details-header h1 {
+        margin: 0 0 .5rem;
+        color: var(--project-text);
+        font-size: 1.55rem;
+        font-weight: 750;
+        letter-spacing: -.4px;
+        overflow-wrap: anywhere;
+    }
+
+    .project-details-page .project-details-header p {
+        margin: 0;
+        color: var(--project-muted);
+        font-size: .88rem;
+        line-height: 1.8;
+    }
+
+    .project-details-page .project-form-header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+    }
+
+    /* Buttons */
+
+    .project-details-page .crh-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: .55rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: .82rem;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all .18s ease;
+    }
+
+        .project-details-page .crh-btn:hover {
+            transform: translateY(-1px);
+        }
+
+    .project-details-page .crh-btn-primary {
+        background: var(--project-primary);
+        border-color: var(--project-primary);
+        color: #fff;
+    }
+
+        .project-details-page .crh-btn-primary:hover {
+            background: var(--project-primary-dark);
+            border-color: var(--project-primary-dark);
+            color: #fff;
+            box-shadow: 0 5px 12px rgba(101, 88, 211, .16);
+        }
+
+    .project-details-page .crh-btn-soft {
+        background: #fff;
+        border-color: #e2e2ec;
+        color: #626477;
+    }
+
+        .project-details-page .crh-btn-soft:hover {
+            background: #f5f4ff;
+            border-color: #d6d1f5;
+            color: var(--project-primary-dark);
+        }
+
+    /* Details layout */
+
+    .project-details-page .project-details-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 310px;
+        gap: 1.25rem;
+        align-items: start;
+    }
+
+    .project-details-page .project-details-main,
+    .project-details-page .project-details-side {
+        min-width: 0;
+    }
+
+    /* Cards */
+
+    .project-details-page .project-details-card {
+        padding: 1.4rem;
+        border: 1px solid var(--project-border);
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(31, 35, 60, .035);
+    }
+
+    .project-details-page .project-details-card-title {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: 1.2rem;
+        color: var(--project-text);
+        font-size: .95rem;
+        font-weight: 750;
+    }
+
+        .project-details-page .project-details-card-title::before {
+            content: "";
+            width: 4px;
+            height: 19px;
+            border-radius: 5px;
+            background: var(--project-primary);
+        }
+
+    /* Description */
+
+    .project-details-page .project-details-description {
+        min-height: 120px;
+        color: #55576b;
+        font-size: .9rem;
+        line-height: 2;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .project-details-page .project-description-empty {
+        color: #a1a2b0;
+        font-style: italic;
+    }
+
+    /* Status */
+
+    .project-details-page .project-details-status-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.2rem;
+    }
+
+    .project-details-page .project-status {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .4rem .8rem;
+        border-radius: 999px;
+        font-size: .77rem;
+        font-weight: 700;
+    }
+
+        .project-details-page .project-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .project-details-page .project-status-active {
+        background: #eaf7ef;
+        color: #21824d;
+    }
+
+    .project-details-page .project-status-inactive {
+        background: #f0f0f4;
+        color: #77798c;
+    }
+
+    /* Metadata */
+
+    .project-details-page .project-details-meta {
+        padding-top: .85rem;
+        border-top: 1px solid #f0f0f5;
+    }
+
+        .project-details-page .project-details-meta > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: .8rem;
+            padding: .6rem 0;
+            font-size: .79rem;
+        }
+
+            .project-details-page .project-details-meta > div + div {
+                border-top: 1px solid #f5f5f8;
+            }
+
+        .project-details-page .project-details-meta span {
+            color: #9293a3;
+        }
+
+        .project-details-page .project-details-meta strong {
+            color: #505166;
+            font-weight: 700;
+            text-align: left;
+        }
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .project-details-page .project-details-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .project-details-page {
+        padding: .85rem;
+        border-radius: 13px;
+    }
+
+        .project-details-page .project-details-header {
+            padding: 1.1rem;
+        }
+
+            .project-details-page .project-details-header h1 {
+                font-size: 1.3rem;
+            }
+
+        .project-details-page .project-details-card {
+            padding: 1.1rem;
+        }
+}
+
+@media (max-width: 576px) {
+    .project-details-page .project-form-header-actions {
+        width: 100%;
+    }
+
+        .project-details-page .project-form-header-actions .crh-btn {
+            flex: 1;
+        }
+}

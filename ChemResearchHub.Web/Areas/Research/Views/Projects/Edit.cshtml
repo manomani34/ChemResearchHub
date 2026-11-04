@@ -4,6 +4,12 @@
     ViewData["Title"] = "ویرایش پروژه";
 }
 
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/project-forms.css"
+          asp-append-version="true" />
+}
+
 <div class="project-form-page">
 
     <div class="project-form-header">
@@ -41,13 +47,11 @@
 
     <div class="project-form-card">
 
-        <form asp-action="Edit"
-              method="post">
+        <form asp-action="Edit" method="post">
 
             @Html.AntiForgeryToken()
 
-            <input asp-for="Id"
-                   type="hidden" />
+            <input asp-for="Id" type="hidden" />
 
             <div asp-validation-summary="ModelOnly"
                  class="project-validation-summary">
@@ -83,8 +87,7 @@
 
                     <textarea asp-for="Description"
                               class="project-form-input project-form-textarea"
-                              rows="6">
-                    </textarea>
+                              rows="6"></textarea>
 
                     <span asp-validation-for="Description"
                           class="project-form-error">
@@ -149,8 +152,7 @@
                     <input asp-for="IsActive"
                            class="project-active-checkbox" />
 
-                    <span class="project-active-switch">
-                    </span>
+                    <span class="project-active-switch"></span>
 
                 </label>
 

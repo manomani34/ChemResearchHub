@@ -1,0 +1,317 @@
+﻿.board-create-page {
+    --board-create-primary: #6558d3;
+    --board-create-primary-dark: #5144bd;
+    --board-create-primary-soft: #f0efff;
+    --board-create-border: #e9eaf1;
+    --board-create-muted: #73798c;
+    --board-create-text: #24263b;
+    direction: rtl;
+    color: var(--board-create-text);
+    padding: 28px 0 40px;
+}
+
+    .board-create-page .board-create-header {
+        margin-bottom: 27px;
+    }
+
+    .board-create-page .board-create-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 18px;
+        color: var(--board-create-muted);
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .board-create-page .board-create-breadcrumb-separator {
+        color: #c1c3d0;
+    }
+
+    .board-create-page .board-create-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .board-create-page .board-create-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        flex-shrink: 0;
+        border-radius: 16px;
+        background: var(--board-create-primary-soft);
+        font-size: 25px;
+    }
+
+    .board-create-page .board-create-title {
+        font-size: 25px;
+        font-weight: 800;
+        margin: 0 0 7px;
+    }
+
+    .board-create-page .board-create-subtitle {
+        color: var(--board-create-muted);
+        font-size: 13px;
+        margin: 0;
+        line-height: 1.8;
+    }
+
+    .board-create-page .board-create-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 290px;
+        align-items: start;
+        gap: 20px;
+    }
+
+    .board-create-page .board-create-card {
+        padding: 25px;
+        background: #fff;
+        border: 1px solid var(--board-create-border);
+        border-radius: 17px;
+        box-shadow: 0 3px 12px rgba(30, 35, 70, .035);
+    }
+
+    .board-create-page .board-create-card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding-bottom: 21px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #f0f0f5;
+    }
+
+    .board-create-page .board-create-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 29px;
+        height: 29px;
+        margin-bottom: 11px;
+        border-radius: 9px;
+        background: var(--board-create-primary-soft);
+        color: var(--board-create-primary);
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .board-create-page .board-create-card-heading h2 {
+        font-size: 17px;
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+
+    .board-create-page .board-create-card-heading p {
+        color: var(--board-create-muted);
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .board-create-page .board-create-field {
+        margin-bottom: 28px;
+    }
+
+    .board-create-page .form-label {
+        display: block;
+        margin-bottom: 9px;
+        color: #44495e;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .board-create-page .form-control {
+        min-height: 45px;
+        padding: 10px 13px;
+        border: 1px solid #dedfeb;
+        border-radius: 10px;
+        background: #fff;
+        color: var(--board-create-text);
+        font-size: 13px;
+        box-shadow: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .board-create-page .form-control:focus {
+            border-color: var(--board-create-primary);
+            box-shadow: 0 0 0 3px rgba(101, 88, 211, .11);
+        }
+
+        .board-create-page .form-control::placeholder {
+            color: #a4a8b7;
+        }
+
+    .board-create-page .board-create-field-hint {
+        margin-top: 8px;
+        color: #969bad;
+        font-size: 11px;
+        line-height: 1.8;
+    }
+
+    .board-create-page .text-danger {
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+    }
+
+    .board-create-page .board-create-validation-summary {
+        margin-bottom: 20px;
+        color: #b42318;
+        font-size: 12px;
+    }
+
+        .board-create-page .board-create-validation-summary:empty {
+            display: none;
+        }
+
+    .board-create-page .board-create-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f5;
+    }
+
+    .board-create-page .board-create-submit,
+    .board-create-page .board-create-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 19px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+    .board-create-page .board-create-submit {
+        border: 1px solid var(--board-create-primary);
+        background: var(--board-create-primary);
+        color: #fff;
+    }
+
+        .board-create-page .board-create-submit:hover {
+            background: var(--board-create-primary-dark);
+            border-color: var(--board-create-primary-dark);
+            box-shadow: 0 5px 14px rgba(101, 88, 211, .2);
+        }
+
+    .board-create-page .board-create-cancel {
+        border: 1px solid var(--board-create-border);
+        background: #fff;
+        color: #606579;
+    }
+
+        .board-create-page .board-create-cancel:hover {
+            background: #f7f7fb;
+            color: var(--board-create-text);
+        }
+
+    .board-create-page .board-create-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .board-create-page .board-create-project-card,
+    .board-create-page .board-create-info-card {
+        padding: 20px;
+        background: #fff;
+        border: 1px solid var(--board-create-border);
+        border-radius: 16px;
+        box-shadow: 0 3px 12px rgba(30, 35, 70, .03);
+    }
+
+    .board-create-page .board-create-sidebar-label {
+        color: var(--board-create-primary);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        margin-bottom: 18px;
+    }
+
+    .board-create-page .board-create-project-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 43px;
+        height: 43px;
+        margin-bottom: 13px;
+        border-radius: 13px;
+        background: var(--board-create-primary-soft);
+        font-size: 21px;
+    }
+
+    .board-create-page .board-create-project-card h3 {
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+        margin: 0 0 9px;
+    }
+
+    .board-create-page .board-create-project-card p,
+    .board-create-page .board-create-info-card p {
+        color: var(--board-create-muted);
+        font-size: 12px;
+        line-height: 1.9;
+        margin: 0;
+    }
+
+    .board-create-page .board-create-info-icon {
+        font-size: 22px;
+        margin-bottom: 11px;
+    }
+
+    .board-create-page .board-create-info-card h3 {
+        font-size: 14px;
+        font-weight: 800;
+        margin: 0 0 8px;
+    }
+
+@media (max-width: 900px) {
+    .board-create-page .board-create-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .board-create-page .board-create-sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .board-create-page {
+        padding-top: 18px;
+    }
+
+        .board-create-page .board-create-title {
+            font-size: 21px;
+        }
+
+        .board-create-page .board-create-heading {
+            align-items: flex-start;
+        }
+
+        .board-create-page .board-create-card {
+            padding: 18px;
+        }
+
+        .board-create-page .board-create-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .board-create-page .board-create-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .board-create-page .board-create-submit,
+        .board-create-page .board-create-cancel {
+            width: 100%;
+        }
+}

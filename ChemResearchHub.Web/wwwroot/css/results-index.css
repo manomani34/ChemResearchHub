@@ -1,0 +1,335 @@
+﻿.results-index-page {
+    direction: rtl;
+    color: #20243a;
+    padding: 1.5rem 0 2rem;
+}
+
+    .results-index-page .results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .results-index-page .results-heading {
+        min-width: 0;
+    }
+
+    .results-index-page .results-eyebrow {
+        color: #8178c9;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+        letter-spacing: 0.02em;
+    }
+
+    .results-index-page .results-heading h1 {
+        color: #252943;
+        font-size: 1.5rem;
+        font-weight: 750;
+        margin: 0 0 0.4rem;
+    }
+
+    .results-index-page .results-heading p {
+        color: #8990a5;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .results-index-page .results-count {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex-shrink: 0;
+        padding: 0.65rem 1rem;
+        background: #f0efff;
+        border: 1px solid #e7e4ff;
+        border-radius: 12px;
+        color: #6558d3;
+        font-size: 0.85rem;
+    }
+
+        .results-index-page .results-count strong {
+            font-size: 1.1rem;
+            font-weight: 750;
+        }
+
+    .results-index-page .results-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 3.5rem 1.5rem;
+        background: #fff;
+        border: 1px solid #e9eaf1;
+        border-radius: 18px;
+        box-shadow: 0 5px 20px rgba(30, 35, 70, 0.035);
+    }
+
+    .results-index-page .results-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        margin-bottom: 1rem;
+        background: #f0efff;
+        border-radius: 16px;
+        font-size: 1.5rem;
+    }
+
+    .results-index-page .results-empty h3 {
+        color: #292d46;
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+    }
+
+    .results-index-page .results-empty p {
+        color: #8990a5;
+        font-size: 0.875rem;
+        margin: 0 0 1.25rem;
+        max-width: 520px;
+    }
+
+    .results-index-page .results-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0.6rem 1.1rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .results-index-page .results-btn-primary {
+        background: #6558d3;
+        color: #fff;
+    }
+
+        .results-index-page .results-btn-primary:hover {
+            background: #5144bd;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .results-index-page .results-table-card {
+        background: #fff;
+        border: 1px solid #e9eaf1;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(30, 35, 70, 0.035);
+        overflow: hidden;
+    }
+
+    .results-index-page .results-table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.15rem 1.35rem;
+        border-bottom: 1px solid #eef0f5;
+    }
+
+        .results-index-page .results-table-header h2 {
+            color: #292d46;
+            font-size: 0.98rem;
+            font-weight: 700;
+            margin: 0 0 0.3rem;
+        }
+
+        .results-index-page .results-table-header p {
+            color: #9298aa;
+            font-size: 0.78rem;
+            margin: 0;
+        }
+
+    .results-index-page .results-table-total {
+        color: #777e94;
+        background: #f6f7fb;
+        border: 1px solid #eceef4;
+        border-radius: 8px;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .results-index-page .results-table {
+        width: 100%;
+        min-width: 1050px;
+        margin: 0;
+        color: #41465d;
+        font-size: 0.82rem;
+    }
+
+        .results-index-page .results-table thead th {
+            padding: 0.9rem 1rem;
+            background: #fafaff;
+            color: #858ba0;
+            border-bottom: 1px solid #eceef4;
+            font-size: 0.75rem;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .results-index-page .results-table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f1f5;
+            vertical-align: middle;
+        }
+
+        .results-index-page .results-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .results-index-page .results-table tbody tr {
+            transition: background 0.18s ease;
+        }
+
+            .results-index-page .results-table tbody tr:hover {
+                background: #fbfbff;
+            }
+
+    .results-index-page .result-reference-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        direction: ltr;
+    }
+
+    .results-index-page .result-reference-code {
+        color: #6558d3;
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .results-index-page .result-copy-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 25px;
+        height: 25px;
+        padding: 0;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: #9298aa;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: all 0.18s ease;
+    }
+
+        .results-index-page .result-copy-button:hover {
+            background: #f0efff;
+            color: #6558d3;
+        }
+
+        .results-index-page .result-copy-button.copied {
+            color: #16834b;
+            background: #e5f7ed;
+        }
+
+    .results-index-page .result-sample-code {
+        color: #343950;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .results-index-page .result-primary-text {
+        color: #343950;
+        font-weight: 600;
+    }
+
+    .results-index-page .result-secondary-text {
+        color: #9298aa;
+        font-size: 0.73rem;
+        margin-top: 0.25rem;
+    }
+
+    .results-index-page .result-value {
+        display: inline-block;
+        color: #343950;
+        background: #f5f4ff;
+        border: 1px solid #eceaff;
+        border-radius: 7px;
+        padding: 0.3rem 0.55rem;
+        font-weight: 650;
+        direction: ltr;
+        white-space: nowrap;
+    }
+
+    .results-index-page .result-unit {
+        color: #777e94;
+        font-size: 0.78rem;
+        direction: ltr;
+        white-space: nowrap;
+    }
+
+    .results-index-page .result-muted {
+        color: #a5aabb;
+    }
+
+    .results-index-page .result-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.35rem 0.65rem;
+        border-radius: 7px;
+        font-size: 0.73rem;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .results-index-page .result-status-pass {
+        color: #16834b;
+        background: #e8f7ee;
+    }
+
+    .results-index-page .result-status-fail {
+        color: #c13d4b;
+        background: #fff0f1;
+    }
+
+    .results-index-page .result-status-inconclusive {
+        color: #a36b13;
+        background: #fff6e5;
+    }
+
+    .results-index-page .result-status-pending {
+        color: #777e94;
+        background: #f0f1f5;
+    }
+
+@media (max-width: 768px) {
+    .results-index-page {
+        padding-top: 1rem;
+    }
+
+        .results-index-page .results-header {
+            align-items: flex-start;
+        }
+
+        .results-index-page .results-heading h1 {
+            font-size: 1.3rem;
+        }
+
+        .results-index-page .results-table-header {
+            padding: 1rem;
+        }
+}
+
+@media (max-width: 480px) {
+    .results-index-page .results-header {
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+
+    .results-index-page .results-count {
+        align-self: flex-start;
+    }
+}

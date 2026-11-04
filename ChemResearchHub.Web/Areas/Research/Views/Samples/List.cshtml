@@ -4,89 +4,64 @@
     ViewData["Title"] = "نمونه‌ها";
 }
 
-<style>
- .sample-reference-copy {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/samples-list.css"
+          asp-append-version="true" />
 }
-
-.sample-copy-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border: 0;
-    border-radius: 5px;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 11px;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.sample-copy-button:hover {
-    background: #e2e8f0;
-    color: #4f46e5;
-}
-
-.sample-copy-button.copied {
-    color: #16a34a;
-    background: #dcfce7;
-}
-</style>
 
 <div class="samples-page">
 
     <div class="samples-header">
-
         <div>
+            <div class="samples-eyebrow">Research Data</div>
             <h1>نمونه‌ها</h1>
-
-            <p>
-                فهرست نمونه‌های ثبت‌شده در آزمایش‌های پژوهشی
-            </p>
+            <p>فهرست نمونه‌های ثبت‌شده در آزمایش‌های پژوهشی</p>
         </div>
 
         <div class="samples-count">
-            @Model.Items.Count نمونه
+            <span class="samples-count-number">@Model.Items.Count</span>
+            <span>نمونه ثبت‌شده</span>
         </div>
-
     </div>
 
     @if (Model.Items.Count == 0)
     {
         <div class="samples-empty">
+            <div class="samples-empty-icon">🧫</div>
 
-            <div class="samples-empty-icon">
-                🧫
-            </div>
-
-            <h3>
-                هنوز نمونه‌ای ثبت نشده است
-            </h3>
+            <h3>هنوز نمونه‌ای ثبت نشده است</h3>
 
             <p>
                 نمونه‌ها از داخل بخش آزمایش‌های مربوط به کارهای پژوهشی ایجاد می‌شوند.
             </p>
 
-            <a asp-area="Research" asp-controller="Experiments"
+            <a asp-area="Research"
+               asp-controller="Experiments"
                asp-action="List"
-               class="crh-btn crh-btn-primary">
+               class="samples-primary-button">
                 مشاهده آزمایش‌ها
             </a>
-
         </div>
     }
     else
     {
         <div class="samples-table-card">
 
+            <div class="samples-table-heading">
+                <div>
+                    <h2>فهرست نمونه‌ها</h2>
+                    <p>اطلاعات نمونه‌ها و ارتباط آن‌ها با آزمایش‌ها و کارهای پژوهشی</p>
+                </div>
+
+                <span class="samples-table-total">
+                    @Model.Items.Count مورد
+                </span>
+            </div>
+
             <div class="table-responsive">
 
-                <table class="table crh-table align-middle">
+                <table class="table samples-table align-middle">
 
                     <thead>
                         <tr>
@@ -103,29 +78,23 @@
                     </thead>
 
                     <tbody>
-
                         @foreach (var item in Model.Items)
                         {
                             <tr>
-
                                 <td>
-                               <div class="sample-reference-copy">
+                                    <div class="sample-reference-copy">
+                                        <span class="sample-reference">
+                                            SMP-@item.Id.ToString("D6")
+                                        </span>
 
-    <span class="crh-id">
-        SMP-@item.Id.ToString("D6")
-    </span>
-
-    <button type="button"
-            class="sample-copy-button"
-            data-reference="SMP-@item.Id.ToString("D6")"
-            title="کپی شناسه"
-            aria-label="کپی شناسه SMP-@item.Id.ToString("D6")">
-
-        📋
-
-    </button>
-
-</div>
+                                        <button type="button"
+                                                class="sample-copy-button"
+                                                data-reference="SMP-@item.Id.ToString("D6")"
+                                                title="کپی شناسه"
+                                                aria-label="کپی شناسه SMP-@item.Id.ToString("D6")">
+                                            📋
+                                        </button>
+                                    </div>
                                 </td>
 
                                 <td>
@@ -137,15 +106,13 @@
                                 <td>
                                     @if (!string.IsNullOrWhiteSpace(item.Name))
                                     {
-                                        <div class="crh-primary-text">
+                                        <div class="sample-primary-text">
                                             @item.Name
                                         </div>
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="samples-muted">—</span>
                                     }
                                 </td>
 
@@ -158,41 +125,39 @@
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="samples-muted">—</span>
                                     }
                                 </td>
 
                                 <td>
                                     @if (!string.IsNullOrWhiteSpace(item.Matrix))
                                     {
-                                        @item.Matrix
+                                        <span class="sample-matrix">
+                                            @item.Matrix
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="samples-muted">—</span>
                                     }
                                 </td>
 
                                 <td>
-                                    <div class="crh-primary-text">
+                                    <div class="sample-primary-text">
                                         @item.ExperimentTitle
                                     </div>
 
-                                    <div class="crh-secondary-text">
+                                    <div class="sample-secondary-text">
                                         آزمایش #@item.ExperimentId
                                     </div>
                                 </td>
 
                                 <td>
-                                    <div class="crh-primary-text">
+                                    <div class="sample-primary-text">
                                         @item.WorkItemTitle
                                     </div>
 
-                                    <div class="crh-secondary-text">
+                                    <div class="sample-secondary-text">
                                         کار #@item.WorkItemId
                                     </div>
                                 </td>
@@ -200,95 +165,90 @@
                                 <td>
                                     @if (item.CollectedAt.HasValue)
                                     {
-                                        @item.CollectedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                        <span class="sample-date">
+                                            @item.CollectedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="samples-muted">—</span>
                                     }
                                 </td>
-                                <td>
-                                    <a asp-controller="Samples" asp-action="Details"
-   asp-route-id="@item.Id"
-   class="crh-id">
-   مشاهده
-</a>
-                                </td>
 
+                                <td>
+                                    <a asp-controller="Samples"
+                                       asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="sample-details-button">
+                                        مشاهده
+                                        <span>←</span>
+                                    </a>
+                                </td>
                             </tr>
                         }
-
                     </tbody>
 
                 </table>
 
             </div>
-
         </div>
     }
 
 </div>
 
-                                        <script>
-                                            document.addEventListener("DOMContentLoaded", function () {
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-    const copyButtons =
-        document.querySelectorAll(".sample-copy-button");
+            const copyButtons =
+                document.querySelectorAll(".samples-page .sample-copy-button");
 
-    copyButtons.forEach(function (button) {
+            copyButtons.forEach(function (button) {
 
-        button.addEventListener("click", async function (event) {
+                button.addEventListener("click", async function (event) {
 
-            event.preventDefault();
-            event.stopPropagation();
+                    event.preventDefault();
+                    event.stopPropagation();
 
-            const referenceCode =
-                button.dataset.reference;
+                    const referenceCode =
+                        button.dataset.reference;
 
-            if (!referenceCode) {
-                return;
-            }
+                    if (!referenceCode) {
+                        return;
+                    }
 
-            try {
+                    try {
 
-                await navigator.clipboard.writeText(
-                    referenceCode);
+                        await navigator.clipboard.writeText(referenceCode);
 
-                const originalText =
-                    button.textContent;
+                        const originalText = button.textContent;
 
-                button.textContent = "✓";
+                        button.textContent = "✓";
+                        button.classList.add("copied");
+                        button.title = "کپی شد";
 
-                button.classList.add("copied");
+                        setTimeout(function () {
 
-                button.title = "کپی شد";
+                            button.textContent = originalText;
+                            button.classList.remove("copied");
+                            button.title = "کپی شناسه";
 
-                setTimeout(function () {
+                        }, 1200);
 
-                    button.textContent =
-                        originalText;
+                    }
+                    catch (error) {
 
-                    button.classList.remove("copied");
+                        console.error(
+                            "Could not copy sample reference:",
+                            error
+                        );
 
-                    button.title =
-                        "کپی شناسه";
+                    }
 
-                }, 1200);
+                });
 
-            }
-            catch (error) {
-
-                console.error(
-                    "Could not copy sample reference:",
-                    error);
-
-            }
+            });
 
         });
-
-    });
-
-});
-                                        </script>
+    </script>
+}

@@ -34,7 +34,13 @@
     ViewData["Title"] = "Work Item Details";
 }
 
-<div class="container py-4">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/work-item-details.css"
+          asp-append-version="true" />
+}
+
+<div class="work-item-details-page container-fluid py-4">
     @if (TempData["SuccessMessage"] is string successMessage)
     {
         <div class="alert alert-success shadow-sm">
@@ -126,6 +132,12 @@
                 </div>
 
             </div>
+
+            @if (Model.MeetingActionItem is not null)
+            {
+                <partial name="_MeetingActionItem"
+                         model="Model.MeetingActionItem" />
+            }
 
             <!-- ========================================= -->
             <!-- Experiments -->

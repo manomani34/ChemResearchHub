@@ -4,89 +4,63 @@
     ViewData["Title"] = "پیوست‌ها";
 }
 
-<style>
-.attachment-reference-copy {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/attachments-index.css"
+          asp-append-version="true" />
 }
-
-.attachment-copy-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border: 0;
-    border-radius: 5px;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 11px;
-}
-
-.attachment-copy-button:hover {
-    background: #e2e8f0;
-    color: #4f46e5;
-}
-
-.attachment-copy-button.copied {
-    color: #16a34a;
-    background: #dcfce7;
-}
-</style>
 
 <div class="attachments-page">
 
     <div class="attachments-header">
-
-        <div>
+        <div class="attachments-heading">
+            <div class="attachments-eyebrow">Research Files</div>
             <h1>پیوست‌ها</h1>
-
-            <p>
-                فایل‌های مرتبط با کارهای پژوهشی
-            </p>
+            <p>فایل‌های مرتبط با کارهای پژوهشی</p>
         </div>
 
         <div class="attachments-count">
-            @Model.Items.Count فایل
+            <strong>@Model.Items.Count</strong>
+            <span>فایل</span>
         </div>
-
     </div>
 
     @if (Model.Items.Count == 0)
     {
         <div class="attachments-empty">
+            <div class="attachments-empty-icon">📎</div>
 
-            <div class="attachments-empty-icon">
-                📎
-            </div>
-
-            <h3>
-                هنوز فایلی ثبت نشده است
-            </h3>
+            <h3>هنوز فایلی ثبت نشده است</h3>
 
             <p>
                 فایل‌ها از داخل بخش کارهای پژوهشی به سامانه اضافه می‌شوند.
             </p>
 
-            <a asp-area="Research" asp-controller="WorkItems"
+            <a asp-area="Research"
+               asp-controller="WorkItems"
                asp-action="Index"
-               class="crh-btn crh-btn-primary">
+               class="attachments-btn attachments-btn-primary">
                 مشاهده کارهای پژوهشی
             </a>
-
         </div>
     }
     else
     {
         <div class="attachments-table-card">
 
+            <div class="attachments-table-header">
+                <div>
+                    <h2>فهرست فایل‌ها</h2>
+                    <p>اطلاعات و جزئیات فایل‌های بارگذاری‌شده</p>
+                </div>
+
+                <span class="attachments-table-count">
+                    @Model.Items.Count مورد
+                </span>
+            </div>
+
             <div class="table-responsive">
-
-                <table class="table crh-table align-middle">
-
+                <table class="table attachments-table align-middle">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -101,41 +75,37 @@
                     </thead>
 
                     <tbody>
-
                         @foreach (var item in Model.Items)
                         {
                             <tr>
-
                                 <td>
-    <div class="attachment-reference-copy">
-        <span class="crh-id">
-            @item.ReferenceCode
-        </span>
+                                    <div class="attachment-reference-copy">
+                                        <span class="attachment-reference">
+                                            @item.ReferenceCode
+                                        </span>
 
-        <button type="button"
-                class="attachment-copy-button"
-                data-reference="@item.ReferenceCode"
-                title="کپی شناسه"
-                aria-label="کپی شناسه @item.ReferenceCode">
-            📋
-        </button>
-    </div>
-</td>
+                                        <button type="button"
+                                                class="attachment-copy-button"
+                                                data-reference="@item.ReferenceCode"
+                                                title="کپی شناسه"
+                                                aria-label="کپی شناسه @item.ReferenceCode">
+                                            📋
+                                        </button>
+                                    </div>
+                                </td>
 
                                 <td>
                                     <div class="attachment-file">
-                                        <span class="attachment-file-icon">
-                                            📄
-                                        </span>
+                                        <span class="attachment-file-icon">📄</span>
 
-                                        <div>
-                                            <div class="crh-primary-text">
+                                        <div class="attachment-file-info">
+                                            <div class="attachment-primary-text">
                                                 @item.OriginalFileName
                                             </div>
 
                                             @if (!string.IsNullOrWhiteSpace(item.ContentType))
                                             {
-                                                <div class="crh-secondary-text">
+                                                <div class="attachment-secondary-text">
                                                     @item.ContentType
                                                 </div>
                                             }
@@ -144,11 +114,11 @@
                                 </td>
 
                                 <td>
-                                    <div class="crh-primary-text">
+                                    <div class="attachment-primary-text">
                                         @item.WorkItemTitle
                                     </div>
 
-                                    <div class="crh-secondary-text">
+                                    <div class="attachment-secondary-text">
                                         کار #@item.WorkItemId
                                     </div>
                                 </td>
@@ -156,8 +126,7 @@
                                 <td>
                                     @{
                                         var extension =
-                                        System.IO.Path.GetExtension(
-                                        item.OriginalFileName);
+                                            System.IO.Path.GetExtension(item.OriginalFileName);
 
                                         if (string.IsNullOrWhiteSpace(extension))
                                         {
@@ -176,22 +145,21 @@
 
                                         if (item.FileSize < 1024)
                                         {
-                                            fileSizeText =
-                                            $"{item.FileSize:N0} B";
+                                            fileSizeText = $"{item.FileSize:N0} B";
                                         }
                                         else if (item.FileSize < 1024 * 1024)
                                         {
-                                            fileSizeText =
-                                            $"{item.FileSize / 1024d:0.##} KB";
+                                            fileSizeText = $"{item.FileSize / 1024d:0.##} KB";
                                         }
                                         else
                                         {
-                                            fileSizeText =
-                                            $"{item.FileSize / (1024d * 1024d):0.##} MB";
+                                            fileSizeText = $"{item.FileSize / (1024d * 1024d):0.##} MB";
                                         }
                                     }
 
-                                    @fileSizeText
+                                    <span class="attachment-file-size">
+                                        @fileSizeText
+                                    </span>
                                 </td>
 
                                 <td>
@@ -204,44 +172,44 @@
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="attachment-muted">—</span>
                                     }
                                 </td>
 
                                 <td>
-                                    @item.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                                    <span class="attachment-date">
+                                        @item.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                                    </span>
                                 </td>
 
                                 <td>
                                     <a asp-controller="Attachments"
                                        asp-action="Download"
                                        asp-route-id="@item.Id"
-                                       class="crh-btn crh-btn-soft attachment-download-btn">
+                                       class="attachments-btn attachments-btn-soft attachment-download-btn">
+                                        <span>↓</span>
                                         دانلود
                                     </a>
                                 </td>
-
                             </tr>
                         }
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
     }
 
 </div>
 
-                                       @section Scripts {
+@section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-            document.querySelectorAll(".attachment-copy-button")
+            const page = document.querySelector(".attachments-page");
+
+            if (!page) return;
+
+            page.querySelectorAll(".attachment-copy-button")
                 .forEach(function (button) {
 
                     button.addEventListener("click", async function (event) {

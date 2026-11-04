@@ -1,0 +1,765 @@
+﻿.experiment-details-page {
+    direction: rtl;
+    padding: 26px;
+    color: #30364d;
+}
+
+    /* Header */
+
+    .experiment-details-page .experiment-header {
+        margin-bottom: 26px;
+        padding: 25px;
+        border: 1px solid #e9eaf1;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #fff 0%, #faf9ff 100%);
+        box-shadow: 0 5px 20px rgba(36, 42, 70, 0.035);
+    }
+
+    .experiment-details-page .experiment-header-content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .experiment-details-page .experiment-eyebrow {
+        margin-bottom: 7px;
+        color: #6558d3;
+        font-size: 0.75rem;
+        font-weight: 750;
+        letter-spacing: 0.04em;
+    }
+
+    .experiment-details-page .experiment-reference {
+        display: inline-flex;
+        width: fit-content;
+        margin-bottom: 9px;
+        padding: 5px 10px;
+        border: 1px solid #e5e2fa;
+        border-radius: 7px;
+        background: #f0efff;
+        color: #6558d3;
+        direction: ltr;
+        font-family: monospace;
+        font-size: 0.73rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .experiment-title {
+        margin: 0 0 8px;
+        color: #252b42;
+        font-size: 1.55rem;
+        font-weight: 800;
+        line-height: 1.6;
+    }
+
+    .experiment-details-page .experiment-subtitle {
+        color: #858b9c;
+        font-size: 0.86rem;
+    }
+
+    .experiment-details-page .experiment-back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 15px;
+        border: 1px solid #e2e3eb;
+        border-radius: 9px;
+        background: #fff;
+        color: #626a7e;
+        font-size: 0.8rem;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.18s ease;
+    }
+
+        .experiment-details-page .experiment-back-button:hover {
+            border-color: #6558d3;
+            background: #f8f7ff;
+            color: #6558d3;
+        }
+
+        .experiment-details-page .experiment-back-button span {
+            font-size: 1rem;
+        }
+
+    /* General sections */
+
+    .experiment-details-page .notebook-section {
+        height: 100%;
+        padding: 21px;
+        border: 1px solid #e9eaf1;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(36, 42, 70, 0.03);
+    }
+
+    .experiment-details-page .notebook-section-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 19px;
+        color: #30364d;
+        font-size: 0.98rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .notebook-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .experiment-details-page .section-description {
+        color: #9297a7;
+        font-size: 0.76rem;
+        line-height: 1.8;
+    }
+
+    .experiment-details-page .section-counter {
+        min-width: 65px;
+        padding: 9px 13px;
+        border: 1px solid #e7e5f5;
+        border-radius: 11px;
+        background: #f8f7ff;
+        text-align: center;
+    }
+
+    .experiment-details-page .section-counter-number {
+        color: #6558d3;
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .experiment-details-page .section-counter-label {
+        margin-top: 2px;
+        color: #9290ae;
+        font-size: 0.68rem;
+    }
+
+    .experiment-details-page .section-count-badge {
+        display: inline-flex;
+        min-width: 29px;
+        height: 29px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 8px;
+        border-radius: 8px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.75rem;
+        font-weight: 750;
+    }
+
+    /* Fields */
+
+    .experiment-details-page .experiment-field {
+        min-width: 0;
+    }
+
+    .experiment-details-page .field-label {
+        margin-bottom: 5px;
+        color: #9297a7;
+        font-size: 0.73rem;
+        font-weight: 600;
+    }
+
+    .experiment-details-page .field-value {
+        color: #41475b;
+        font-size: 0.87rem;
+        line-height: 1.9;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .experiment-long-text {
+        white-space: pre-line;
+    }
+
+    .experiment-details-page .experiment-mono {
+        direction: ltr;
+        font-family: monospace;
+        text-align: right;
+    }
+
+    /* Status */
+
+    .experiment-details-page .status-card {
+        padding: 15px;
+        border: 1px solid #e9eaf1;
+        border-radius: 11px;
+        background: #fafaff;
+    }
+
+    .experiment-details-page .status-label {
+        display: flex;
+        align-items: center;
+        color: #41475b;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .experiment-details-page .status-dot {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        margin-left: 9px;
+        border-radius: 50%;
+    }
+
+    .experiment-details-page .status-active {
+        background: #6558d3;
+        box-shadow: 0 0 0 4px #eeecff;
+    }
+
+    .experiment-details-page .status-completed {
+        background: #25a35a;
+        box-shadow: 0 0 0 4px #e7f7ed;
+    }
+
+    .experiment-details-page .status-pending {
+        background: #a0a5b3;
+        box-shadow: 0 0 0 4px #eff0f3;
+    }
+
+    /* Research link */
+
+    .experiment-details-page .research-link {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        width: fit-content;
+        max-width: 100%;
+        padding: 9px 12px;
+        border: 1px solid #e7e5f5;
+        border-radius: 9px;
+        background: #f8f7ff;
+        color: #555b72;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+        .experiment-details-page .research-link:hover {
+            border-color: #c8c1f3;
+            background: #f0efff;
+            color: #5144bd;
+        }
+
+    .experiment-details-page .research-link-reference {
+        direction: ltr;
+        color: #6558d3;
+        font-family: monospace;
+        font-size: 0.72rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .experiment-details-page .research-link-arrow {
+        color: #9297a7;
+    }
+
+    /* Empty states */
+
+    .experiment-details-page .experiment-empty-inline {
+        padding: 12px 14px;
+        border: 1px dashed #e1e2eb;
+        border-radius: 9px;
+        background: #fafaff;
+        color: #9297a7;
+        font-size: 0.78rem;
+        line-height: 1.8;
+    }
+
+    .experiment-details-page .empty-state {
+        padding: 28px 18px;
+        border: 1px dashed #dedfeb;
+        border-radius: 12px;
+        background: #fafaff;
+        color: #858b9c;
+        text-align: center;
+        font-size: 0.8rem;
+        line-height: 1.8;
+    }
+
+    .experiment-details-page .empty-state-icon {
+        margin-bottom: 10px;
+        font-size: 2rem;
+    }
+
+    .experiment-details-page .empty-state-title {
+        margin-bottom: 6px;
+        color: #52596d;
+        font-size: 0.86rem;
+        font-weight: 700;
+    }
+
+    .experiment-details-page .empty-state-description {
+        color: #9297a7;
+        font-size: 0.76rem;
+    }
+
+    /* Samples */
+
+    .experiment-details-page .sample-card {
+        height: 100%;
+        padding: 17px;
+        border: 1px solid #e9eaf1;
+        border-radius: 13px;
+        background: #fff;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+        .experiment-details-page .sample-card:hover {
+            border-color: #d9d5f5;
+            box-shadow: 0 4px 15px rgba(64, 54, 140, 0.045);
+        }
+
+    .experiment-details-page .sample-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .experiment-details-page .sample-identity {
+        min-width: 0;
+    }
+
+    .experiment-details-page .sample-reference {
+        margin-bottom: 5px;
+        direction: ltr;
+        color: #9297a7;
+        font-family: monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .experiment-details-page .sample-code {
+        color: #30364d;
+        font-size: 0.93rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .sample-name {
+        margin-top: 5px;
+        color: #777e91;
+        font-size: 0.77rem;
+    }
+
+    .experiment-details-page .sample-details-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 11px;
+        border: 1px solid #e3e1f5;
+        border-radius: 8px;
+        background: #f8f7ff;
+        color: #6558d3;
+        font-size: 0.73rem;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+
+        .experiment-details-page .sample-details-button:hover {
+            border-color: #6558d3;
+            background: #f0efff;
+            color: #5144bd;
+        }
+
+    .experiment-details-page .sample-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px 20px;
+        margin-top: 15px;
+        color: #777e91;
+        font-size: 0.75rem;
+        line-height: 1.8;
+    }
+
+    .experiment-details-page .sample-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .experiment-details-page .sample-meta-label {
+        color: #9a9eac;
+    }
+
+    /* Results */
+
+    .experiment-details-page .sample-results {
+        margin-top: 17px;
+        padding-top: 15px;
+        border-top: 1px solid #eeeef4;
+    }
+
+    .experiment-details-page .sample-results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+    }
+
+    .experiment-details-page .sample-results-title {
+        color: #41475b;
+        font-size: 0.84rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .sample-results-count {
+        display: inline-flex;
+        min-width: 25px;
+        height: 25px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 7px;
+        border-radius: 7px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.7rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .result-card {
+        height: 100%;
+        padding: 14px;
+        border: 1px solid #ececf3;
+        border-radius: 11px;
+        background: #fafaff;
+    }
+
+    .experiment-details-page .result-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 9px;
+    }
+
+    .experiment-details-page .result-identity {
+        min-width: 0;
+    }
+
+    .experiment-details-page .result-reference {
+        direction: ltr;
+        color: #969bad;
+        font-family: monospace;
+        font-size: 0.68rem;
+        font-weight: 700;
+    }
+
+    .experiment-details-page .result-metric {
+        margin-top: 5px;
+        color: #41475b;
+        font-size: 0.83rem;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .result-status {
+        flex-shrink: 0;
+        padding: 4px 8px;
+        border: 1px solid #e7e5f5;
+        border-radius: 7px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.66rem;
+        font-weight: 700;
+    }
+
+    .experiment-details-page .result-value {
+        margin-top: 13px;
+        color: #30364d;
+        font-size: 1.2rem;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .result-unit {
+        margin-right: 4px;
+        color: #9297a7;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .experiment-details-page .result-text-value {
+        margin-top: 13px;
+        color: #41475b;
+        font-size: 0.84rem;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .result-empty {
+        margin-top: 13px;
+        color: #a0a4b1;
+        font-size: 0.75rem;
+    }
+
+    .experiment-details-page .result-method {
+        margin-top: 10px;
+        color: #9297a7;
+        font-size: 0.7rem;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .result-notes {
+        margin-top: 9px;
+        padding-top: 9px;
+        border-top: 1px solid #ececf3;
+        color: #777e91;
+        font-size: 0.73rem;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    /* Reviews and decisions */
+
+    .experiment-details-page .review-card,
+    .experiment-details-page .decision-card {
+        padding: 16px;
+        border: 1px solid #e9eaf1;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .experiment-details-page .entity-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .experiment-details-page .entity-reference {
+        direction: ltr;
+        color: #9297a7;
+        font-family: monospace;
+        font-size: 0.7rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .entity-title {
+        margin-top: 5px;
+        color: #41475b;
+        font-size: 0.87rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .entity-status {
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.69rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .experiment-details-page .entity-field-label {
+        margin-bottom: 4px;
+        color: #9297a7;
+        font-size: 0.72rem;
+    }
+
+    .experiment-details-page .entity-field-value {
+        color: #41475b;
+        font-size: 0.8rem;
+        font-weight: 650;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .entity-note {
+        margin-top: 13px;
+        padding-top: 11px;
+        border-top: 1px solid #eeeef4;
+        color: #777e91;
+        font-size: 0.77rem;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .entity-date {
+        color: #9297a7;
+        font-size: 0.69rem;
+        white-space: nowrap;
+    }
+
+    .experiment-details-page .decision-main {
+        margin-top: 15px;
+        color: #41475b;
+        font-size: 0.85rem;
+        line-height: 1.9;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .decision-detail {
+        margin-top: 10px;
+        color: #858b9c;
+        font-size: 0.76rem;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+        .experiment-details-page .decision-detail strong {
+            color: #656b7e;
+        }
+
+    /* Timeline */
+
+    .experiment-details-page .timeline {
+        position: relative;
+        padding-right: 42px;
+    }
+
+        .experiment-details-page .timeline::before {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            bottom: 10px;
+            width: 2px;
+            background: linear-gradient(to bottom, #d8d3fa, #e8e7f0, #f1f1f5);
+            content: "";
+        }
+
+    .experiment-details-page .timeline-item {
+        position: relative;
+        margin-bottom: 18px;
+    }
+
+        .experiment-details-page .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .experiment-details-page .timeline-icon {
+        position: absolute;
+        top: 15px;
+        right: -42px;
+        z-index: 2;
+        display: flex;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #e3e0fb;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(36, 42, 70, 0.07);
+        font-size: 14px;
+    }
+
+    .experiment-details-page .timeline-content {
+        padding: 16px 17px;
+        border: 1px solid #e9eaf1;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fff, #fafaff);
+    }
+
+    .experiment-details-page .timeline-content-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .experiment-details-page .timeline-type {
+        display: inline-flex;
+        margin-bottom: 7px;
+        padding: 4px 9px;
+        border-radius: 7px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 0.67rem;
+        font-weight: 750;
+    }
+
+    .experiment-details-page .timeline-title {
+        color: #30364d;
+        font-size: 0.88rem;
+        font-weight: 750;
+        line-height: 1.7;
+    }
+
+    .experiment-details-page .timeline-description {
+        margin-top: 9px;
+        color: #777e91;
+        font-size: 0.78rem;
+        line-height: 1.9;
+        overflow-wrap: anywhere;
+    }
+
+    .experiment-details-page .timeline-date {
+        margin-top: 11px;
+        color: #999eae;
+        font-size: 0.69rem;
+    }
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .experiment-details-page {
+        padding: 18px 12px;
+    }
+
+        .experiment-details-page .experiment-header {
+            padding: 19px;
+        }
+
+        .experiment-details-page .experiment-title {
+            font-size: 1.3rem;
+        }
+
+        .experiment-details-page .notebook-section {
+            padding: 17px;
+        }
+
+        .experiment-details-page .sample-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .experiment-details-page .timeline {
+            padding-right: 34px;
+        }
+
+            .experiment-details-page .timeline::before {
+                right: 11px;
+            }
+
+        .experiment-details-page .timeline-icon {
+            right: -34px;
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+}
+
+@media (max-width: 480px) {
+    .experiment-details-page .experiment-header-content {
+        flex-direction: column;
+    }
+
+    .experiment-details-page .experiment-back-button {
+        align-self: flex-start;
+    }
+
+    .experiment-details-page .notebook-section-header {
+        align-items: flex-start;
+    }
+
+    .experiment-details-page .timeline-content-header {
+        flex-direction: column;
+    }
+
+    .experiment-details-page .entity-date {
+        white-space: normal;
+    }
+
+    .experiment-details-page .research-link {
+        flex-wrap: wrap;
+    }
+}

@@ -4,56 +4,240 @@
     ViewData["Title"] = "Create Tag";
 }
 
-<div class="container py-4">
-    <div class="mb-4">
-        <div class="text-muted mb-1">Work Item Management</div>
-        <h1 class="h3">Create Tag</h1>
-    </div>
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/tag-form.css"
+          asp-append-version="true" />
+}
 
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="tag-form-page" dir="ltr">
 
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" placeholder="e.g. High Priority" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+    <div class="tag-form-header">
+        <div>
+            <div class="tag-form-eyebrow">
+                <span class="tag-form-eyebrow-icon">
+                    <i class="bi bi-tags"></i>
+                </span>
+                Work Item Management
+            </div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label"></label>
-                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+            <h1>Create Tag</h1>
 
-                <div class="mb-4">
-                    <label asp-for="Color" class="form-label"></label>
-                    <div class="d-flex gap-2 align-items-center">
-                        <input type="color" id="colorPicker" value="@Model.Color"
-                               class="form-control form-control-color" />
-                        <input asp-for="Color" id="colorHex" class="form-control" />
-                    </div>
-                    <span asp-validation-for="Color" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Create</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-            </form>
+            <p>
+                Define a new classification tag for research work items.
+            </p>
         </div>
+
+        <a asp-action="Index" class="tag-form-back-link">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Tags</span>
+        </a>
     </div>
+
+    <div class="tag-form-layout">
+
+        <div class="tag-form-main-card">
+
+            <div class="tag-form-card-header">
+                <div class="tag-form-section-icon">
+                    <i class="bi bi-tag"></i>
+                </div>
+
+                <div>
+                    <h2>Tag Information</h2>
+                    <p>Configure the name, description and appearance.</p>
+                </div>
+            </div>
+
+            <div class="tag-form-card-body">
+
+                <form asp-action="Create" method="post">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="tag-form-validation-summary">
+                    </div>
+
+                    <div class="tag-form-section">
+                        <div class="tag-form-section-heading">
+                            <span class="tag-form-section-number">01</span>
+                            <div>
+                                <h3>Basic Information</h3>
+                                <p>Identify and describe your tag.</p>
+                            </div>
+                        </div>
+
+                        <div class="tag-form-field">
+                            <label asp-for="Name" class="form-label">
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control"
+                                   placeholder="e.g. High Priority" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="tag-form-field">
+                            <label asp-for="Description" class="form-label">
+                            </label>
+
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Describe the purpose of this tag...">
+                            </textarea>
+
+                            <span asp-validation-for="Description"
+                                  class="text-danger">
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="tag-form-section">
+                        <div class="tag-form-section-heading">
+                            <span class="tag-form-section-number">02</span>
+                            <div>
+                                <h3>Visual Appearance</h3>
+                                <p>Choose a color to distinguish this tag.</p>
+                            </div>
+                        </div>
+
+                        <div class="tag-form-field">
+                            <label asp-for="Color" class="form-label">
+                            </label>
+
+                            <div class="tag-form-color-control">
+                                <div class="tag-form-color-picker-wrapper">
+                                    <input type="color"
+                                           id="colorPicker"
+                                           value="@Model.Color"
+                                           class="form-control form-control-color" />
+                                </div>
+
+                                <div class="tag-form-color-input-wrapper">
+                                    <input asp-for="Color"
+                                           id="colorHex"
+                                           class="form-control"
+                                           placeholder="#6558D3" />
+
+                                    <span class="tag-form-color-hint">
+                                        HEX color code
+                                    </span>
+                                </div>
+                            </div>
+
+                            <span asp-validation-for="Color"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="tag-form-preview">
+                            <span class="tag-form-preview-label">
+                                Tag Preview
+                            </span>
+
+                            <span id="tagPreview"
+                                  class="tag-form-preview-badge">
+                                New Tag
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="tag-form-footer">
+                        <button type="submit"
+                                class="btn tag-form-submit-button">
+                            <i class="bi bi-plus-lg"></i>
+                            Create Tag
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn tag-form-cancel-button">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <aside class="tag-form-info-card">
+            <div class="tag-form-info-icon">
+                <i class="bi bi-lightbulb"></i>
+            </div>
+
+            <h3>About Tags</h3>
+
+            <p>
+                Tags help organize and categorize work items across research projects.
+            </p>
+
+            <div class="tag-form-info-divider"></div>
+
+            <div class="tag-form-info-item">
+                <i class="bi bi-tag"></i>
+                <div>
+                    <strong>Clear Naming</strong>
+                    <span>Use short and meaningful names.</span>
+                </div>
+            </div>
+
+            <div class="tag-form-info-item">
+                <i class="bi bi-palette"></i>
+                <div>
+                    <strong>Distinct Colors</strong>
+                    <span>Choose colors that are easy to recognize.</span>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script>
-        const picker = document.getElementById('colorPicker');
-        const hex = document.getElementById('colorHex');
-        picker.addEventListener('input', () => hex.value = picker.value.toUpperCase());
-        hex.addEventListener('input', () => {
-            if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value;
-        });
+        (() => {
+            const picker = document.getElementById('colorPicker');
+            const hex = document.getElementById('colorHex');
+            const preview = document.getElementById('tagPreview');
+            const nameInput = document.getElementById('Name');
+
+            if (!picker || !hex) return;
+
+            const isValidHex = value =>
+                /^#[0-9A-Fa-f]{6}$/.test(value);
+
+            const updatePreview = () => {
+                if (isValidHex(hex.value)) {
+                    preview.style.backgroundColor = hex.value;
+                    preview.style.borderColor = hex.value;
+                }
+
+                preview.textContent =
+                    nameInput?.value.trim() || 'New Tag';
+            };
+
+            picker.addEventListener('input', () => {
+                hex.value = picker.value.toUpperCase();
+                updatePreview();
+            });
+
+            hex.addEventListener('input', () => {
+                if (isValidHex(hex.value)) {
+                    picker.value = hex.value;
+                }
+
+                updatePreview();
+            });
+
+            nameInput?.addEventListener('input', updatePreview);
+
+            updatePreview();
+        })();
     </script>
 }

@@ -1,0 +1,396 @@
+﻿.attachments-page {
+    direction: rtl;
+    width: 100%;
+    padding: 28px;
+    color: #20233a;
+    font-family: inherit;
+}
+
+    .attachments-page,
+    .attachments-page * {
+        box-sizing: border-box;
+    }
+
+        /* Header */
+
+        .attachments-page .attachments-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .attachments-page .attachments-heading h1 {
+            margin: 0 0 7px;
+            color: #24243b;
+            font-size: 1.55rem;
+            font-weight: 750;
+        }
+
+        .attachments-page .attachments-heading p {
+            margin: 0;
+            color: #858ba0;
+            font-size: 0.9rem;
+        }
+
+        .attachments-page .attachments-eyebrow {
+            margin-bottom: 7px;
+            color: #6558d3;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .attachments-page .attachments-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 16px;
+            border: 1px solid #e8e7f5;
+            border-radius: 12px;
+            background: #f0efff;
+            color: #6558d3;
+            font-size: 0.85rem;
+        }
+
+            .attachments-page .attachments-count strong {
+                font-size: 1.1rem;
+                font-weight: 750;
+            }
+
+        /* Table card */
+
+        .attachments-page .attachments-table-card {
+            overflow: hidden;
+            border: 1px solid #e9eaf1;
+            border-radius: 17px;
+            background: #fff;
+            box-shadow: 0 5px 20px rgba(35, 38, 70, 0.035);
+        }
+
+        .attachments-page .attachments-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 21px 24px;
+            border-bottom: 1px solid #eff0f5;
+        }
+
+            .attachments-page .attachments-table-header h2 {
+                margin: 0 0 5px;
+                color: #292b43;
+                font-size: 1rem;
+                font-weight: 700;
+            }
+
+            .attachments-page .attachments-table-header p {
+                margin: 0;
+                color: #9297a8;
+                font-size: 0.8rem;
+            }
+
+        .attachments-page .attachments-table-count {
+            flex-shrink: 0;
+            padding: 6px 11px;
+            border-radius: 8px;
+            background: #f3f2ff;
+            color: #6558d3;
+            font-size: 0.76rem;
+            font-weight: 650;
+        }
+
+        /* Table */
+
+        .attachments-page .attachments-table {
+            width: 100%;
+            min-width: 1050px;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+            .attachments-page .attachments-table thead th {
+                padding: 14px 16px;
+                border-bottom: 1px solid #ececf3;
+                background: #fafaff;
+                color: #777d93;
+                font-size: 0.76rem;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+            .attachments-page .attachments-table tbody td {
+                padding: 16px;
+                border-bottom: 1px solid #f0f1f5;
+                color: #42465d;
+                font-size: 0.82rem;
+                vertical-align: middle;
+            }
+
+            .attachments-page .attachments-table tbody tr:last-child td {
+                border-bottom: 0;
+            }
+
+            .attachments-page .attachments-table tbody tr {
+                transition: background-color 0.18s ease;
+            }
+
+                .attachments-page .attachments-table tbody tr:hover {
+                    background: #fafaff;
+                }
+
+        /* Reference */
+
+        .attachments-page .attachment-reference-copy {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            direction: ltr;
+            white-space: nowrap;
+        }
+
+        .attachments-page .attachment-reference {
+            color: #6558d3;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .attachments-page .attachment-copy-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 25px;
+            height: 25px;
+            padding: 0;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: #8b90a3;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.18s ease;
+        }
+
+            .attachments-page .attachment-copy-button:hover {
+                background: #f0efff;
+                color: #6558d3;
+            }
+
+            .attachments-page .attachment-copy-button.copied {
+                background: #e7f8ee;
+                color: #159653;
+            }
+
+        /* File information */
+
+        .attachments-page .attachment-file {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 180px;
+        }
+
+        .attachments-page .attachment-file-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #f0efff;
+            font-size: 17px;
+        }
+
+        .attachments-page .attachment-file-info {
+            min-width: 0;
+        }
+
+        .attachments-page .attachment-primary-text {
+            color: #30334b;
+            font-size: 0.83rem;
+            font-weight: 650;
+            overflow-wrap: anywhere;
+        }
+
+        .attachments-page .attachment-secondary-text {
+            margin-top: 5px;
+            color: #969bad;
+            font-size: 0.73rem;
+            overflow-wrap: anywhere;
+        }
+
+        .attachments-page .attachment-extension {
+            display: inline-block;
+            padding: 5px 9px;
+            border: 1px solid #e9e8f8;
+            border-radius: 7px;
+            background: #f7f6ff;
+            color: #6558d3;
+            font-size: 0.72rem;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .attachments-page .attachment-file-size {
+            color: #555a70;
+            font-size: 0.78rem;
+            font-variant-numeric: tabular-nums;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .attachments-page .attachment-description {
+            display: inline-block;
+            max-width: 190px;
+            overflow: hidden;
+            color: #73798d;
+            font-size: 0.78rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .attachments-page .attachment-muted {
+            color: #b0b4c2;
+        }
+
+        .attachments-page .attachment-date {
+            color: #777d91;
+            font-size: 0.76rem;
+            white-space: nowrap;
+            direction: ltr;
+            display: inline-block;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Buttons */
+
+        .attachments-page .attachments-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 36px;
+            padding: 8px 13px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 650;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.18s ease;
+        }
+
+        .attachments-page .attachments-btn-primary {
+            border-color: #6558d3;
+            background: #6558d3;
+            color: #fff;
+        }
+
+            .attachments-page .attachments-btn-primary:hover {
+                border-color: #5144bd;
+                background: #5144bd;
+                color: #fff;
+                transform: translateY(-1px);
+            }
+
+        .attachments-page .attachments-btn-soft {
+            border-color: #e7e5fa;
+            background: #f3f2ff;
+            color: #6558d3;
+        }
+
+            .attachments-page .attachments-btn-soft:hover {
+                border-color: #d6d2f6;
+                background: #eae8ff;
+                color: #5144bd;
+            }
+
+        .attachments-page .attachment-download-btn span {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        /* Empty state */
+
+        .attachments-page .attachments-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 310px;
+            padding: 42px 24px;
+            border: 1px dashed #dcdbea;
+            border-radius: 17px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .attachments-page .attachments-empty-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 62px;
+            height: 62px;
+            margin-bottom: 18px;
+            border-radius: 18px;
+            background: #f0efff;
+            font-size: 27px;
+        }
+
+        .attachments-page .attachments-empty h3 {
+            margin: 0 0 9px;
+            color: #30334b;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .attachments-page .attachments-empty p {
+            max-width: 440px;
+            margin: 0 0 22px;
+            color: #9297a8;
+            font-size: 0.85rem;
+            line-height: 1.9;
+        }
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .attachments-page {
+        padding: 18px 12px;
+    }
+
+        .attachments-page .attachments-header {
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .attachments-page .attachments-heading h1 {
+            font-size: 1.3rem;
+        }
+
+        .attachments-page .attachments-count {
+            padding: 8px 11px;
+        }
+
+        .attachments-page .attachments-table-header {
+            padding: 17px;
+        }
+
+        .attachments-page .attachments-empty {
+            min-height: 270px;
+            padding: 30px 18px;
+        }
+}
+
+@media (max-width: 420px) {
+    .attachments-page .attachments-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+}

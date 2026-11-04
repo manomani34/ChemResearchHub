@@ -1,0 +1,462 @@
+﻿
+.team-members-page {
+    --tm-primary: #6558d3;
+    --tm-primary-dark: #5144bd;
+    --tm-primary-soft: #f0efff;
+    --tm-border: #e9eaf1;
+    --tm-muted: #85899a;
+    --tm-text: #292b3a;
+    --tm-background: #f7f8fc;
+    min-height: 100%;
+    padding: 30px 0 48px;
+    color: var(--tm-text);
+}
+
+    /* Header */
+
+    .team-members-page .team-members-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 26px;
+    }
+
+    .team-members-page .team-members-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 12px;
+        color: var(--tm-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.035em;
+    }
+
+    .team-members-page .team-members-eyebrow-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 29px;
+        height: 29px;
+        border-radius: 9px;
+        background: var(--tm-primary-soft);
+        font-size: 0.95rem;
+    }
+
+    .team-members-page .team-members-heading h1 {
+        margin: 0 0 7px;
+        color: var(--tm-text);
+        font-size: 1.8rem;
+        font-weight: 750;
+        letter-spacing: -0.035em;
+    }
+
+    .team-members-page .team-members-heading p {
+        margin: 0;
+        color: var(--tm-muted);
+        font-size: 0.94rem;
+    }
+
+    /* Buttons */
+
+    .team-members-page .team-members-add-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 43px;
+        padding: 10px 18px;
+        border: 1px solid var(--tm-primary);
+        border-radius: 11px;
+        background: var(--tm-primary);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 650;
+        white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .team-members-page .team-members-add-button:hover {
+            border-color: var(--tm-primary-dark);
+            background: var(--tm-primary-dark);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(101, 88, 211, 0.2);
+        }
+
+    /* Summary */
+
+    .team-members-page .team-members-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 185px;
+        margin-bottom: 22px;
+        padding: 13px 17px;
+        border: 1px solid var(--tm-border);
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .team-members-page .team-members-summary-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 43px;
+        height: 43px;
+        border-radius: 12px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 1.15rem;
+    }
+
+    .team-members-page .team-members-summary-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .team-members-page .team-members-summary-label {
+        color: var(--tm-muted);
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    .team-members-page .team-members-summary-content strong {
+        color: var(--tm-text);
+        font-size: 1.25rem;
+        font-weight: 750;
+        line-height: 1.2;
+    }
+
+    /* Directory card */
+
+    .team-members-page .team-members-list-card {
+        overflow: hidden;
+        border: 1px solid var(--tm-border);
+        border-radius: 17px;
+        background: #fff;
+        box-shadow: 0 4px 18px rgba(35, 38, 65, 0.035);
+    }
+
+    .team-members-page .team-members-list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 21px 23px;
+        border-bottom: 1px solid var(--tm-border);
+    }
+
+        .team-members-page .team-members-list-header h2 {
+            margin: 0 0 5px;
+            color: var(--tm-text);
+            font-size: 1.02rem;
+            font-weight: 750;
+        }
+
+        .team-members-page .team-members-list-header p {
+            margin: 0;
+            color: var(--tm-muted);
+            font-size: 0.82rem;
+        }
+
+    .team-members-page .team-members-count {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 11px;
+        border: 1px solid #e5e2ff;
+        border-radius: 20px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Table */
+
+    .team-members-page .team-members-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .team-members-page .team-members-table thead th {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--tm-border);
+            background: #fafaff;
+            color: #777b8e;
+            font-size: 0.76rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .team-members-page .team-members-table tbody td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0f1f5;
+            color: #505365;
+            font-size: 0.86rem;
+            vertical-align: middle;
+        }
+
+        .team-members-page .team-members-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .team-members-page .team-members-table tbody tr {
+            transition: background 0.18s ease;
+        }
+
+            .team-members-page .team-members-table tbody tr:hover {
+                background: #fafaff;
+            }
+
+    /* User identity */
+
+    .team-members-page .team-members-identity {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 155px;
+    }
+
+    .team-members-page .team-members-avatar {
+        display: flex;
+        flex: 0 0 36px;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid #e7e4ff;
+        border-radius: 11px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 1rem;
+    }
+
+    .team-members-page .team-members-identity strong {
+        color: var(--tm-text);
+        font-size: 0.86rem;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .team-members-page .team-members-email {
+        color: #666a7d;
+        overflow-wrap: anywhere;
+    }
+
+    /* Roles */
+
+    .team-members-page .team-members-roles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-width: 100px;
+    }
+
+    .team-members-page .team-role-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    .team-members-page .team-role-admin {
+        border-color: #f8d7da;
+        background: #fff0f1;
+        color: #c43d4b;
+    }
+
+    .team-members-page .team-role-reviewer {
+        border-color: #f7e4bd;
+        background: #fff8e9;
+        color: #9b6810;
+    }
+
+    .team-members-page .team-role-researcher {
+        border-color: #e0e2e8;
+        background: #f1f2f5;
+        color: #555b6d;
+    }
+
+    .team-members-page .team-role-default {
+        border-color: #d6eaf2;
+        background: #edf8fc;
+        color: #287b98;
+    }
+
+    .team-members-page .team-members-no-role {
+        color: #a0a3b0;
+        font-size: 0.78rem;
+    }
+
+    /* Status */
+
+    .team-members-page .team-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .team-members-page .team-status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+    }
+
+    .team-members-page .team-status-active {
+        border-color: #ccebd9;
+        background: #effaf3;
+        color: #21834c;
+    }
+
+        .team-members-page .team-status-active .team-status-dot {
+            background: #28a45f;
+        }
+
+    .team-members-page .team-status-inactive {
+        border-color: #e5e6eb;
+        background: #f3f4f6;
+        color: #777b89;
+    }
+
+        .team-members-page .team-status-inactive .team-status-dot {
+            background: #969aa7;
+        }
+
+    /* Edit action */
+
+    .team-members-page .team-members-edit-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-width: 76px;
+        padding: 7px 11px;
+        border: 1px solid #dedaff;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--tm-primary);
+        font-size: 0.78rem;
+        font-weight: 700;
+        transition: all 0.18s ease;
+    }
+
+        .team-members-page .team-members-edit-button:hover {
+            border-color: var(--tm-primary);
+            background: var(--tm-primary-soft);
+            color: var(--tm-primary-dark);
+        }
+
+    /* Empty state */
+
+    .team-members-page .team-members-empty-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+        padding: 42px 20px;
+        border: 1px solid var(--tm-border);
+        border-radius: 17px;
+        background: #fff;
+        text-align: center;
+        box-shadow: 0 4px 18px rgba(35, 38, 65, 0.035);
+    }
+
+    .team-members-page .team-members-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 65px;
+        margin-bottom: 17px;
+        border-radius: 19px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 1.7rem;
+    }
+
+    .team-members-page .team-members-empty-card h5 {
+        margin: 0 0 8px;
+        color: var(--tm-text);
+        font-size: 1.05rem;
+        font-weight: 750;
+    }
+
+    .team-members-page .team-members-empty-card p {
+        margin: 0 0 19px;
+        color: var(--tm-muted);
+        font-size: 0.88rem;
+    }
+
+    .team-members-page .team-members-empty-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 15px;
+        border: 1px solid #dedaff;
+        border-radius: 10px;
+        background: var(--tm-primary-soft);
+        color: var(--tm-primary);
+        font-size: 0.83rem;
+        font-weight: 700;
+    }
+
+        .team-members-page .team-members-empty-button:hover {
+            border-color: var(--tm-primary);
+            background: var(--tm-primary);
+            color: #fff;
+        }
+
+/* Responsive */
+
+@media (max-width: 767.98px) {
+    .team-members-page {
+        padding-top: 20px;
+    }
+
+        .team-members-page .team-members-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .team-members-page .team-members-heading h1 {
+            font-size: 1.5rem;
+        }
+
+        .team-members-page .team-members-add-button {
+            width: 100%;
+        }
+
+        .team-members-page .team-members-summary {
+            width: 100%;
+        }
+
+        .team-members-page .team-members-list-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 18px;
+        }
+
+        .team-members-page .team-members-table thead th,
+        .team-members-page .team-members-table tbody td {
+            padding: 13px 14px;
+        }
+}

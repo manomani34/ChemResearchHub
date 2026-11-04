@@ -1,51 +1,88 @@
-﻿
-@model IReadOnlyList<ChemResearchHub.Application.Users.Dtos.UserDto>
+﻿@model IReadOnlyList<ChemResearchHub.Application.Users.Dtos.UserDto>
 
 @{
     ViewData["Title"] = "Team Members";
 }
 
-<div class="container py-4">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/team-members-index.css"
+          asp-append-version="true" />
+}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <div class="text-muted mb-1">
+<div class="team-members-page" dir="ltr">
+
+    <div class="team-members-header">
+        <div class="team-members-heading">
+            <div class="team-members-eyebrow">
+                <span class="team-members-eyebrow-icon">
+                    <i class="bi bi-people"></i>
+                </span>
                 Team Management
             </div>
 
-            <h1 class="h3 mb-1">
-                Team Members
-            </h1>
+            <h1>Team Members</h1>
 
-            <p class="text-muted mb-0">
+            <p>
                 Researchers and team members of ChemResearchHub.
             </p>
         </div>
 
-        <a asp-action="Create" class="btn btn-primary">
-            Add User
+        <a asp-action="Create" class="btn team-members-add-button">
+            <i class="bi bi-person-plus"></i>
+            <span>Add User</span>
         </a>
+    </div>
+
+    <div class="team-members-summary">
+        <div class="team-members-summary-icon">
+            <i class="bi bi-people-fill"></i>
+        </div>
+
+        <div class="team-members-summary-content">
+            <span class="team-members-summary-label">Total Members</span>
+            <strong>@Model.Count</strong>
+        </div>
     </div>
 
     @if (Model.Count == 0)
     {
-        <div class="card shadow-sm">
-            <div class="card-body text-center py-5">
-                <h5 class="mb-2">No users</h5>
-
-                <p class="text-muted mb-0">
-                    There are currently no team members.
-                </p>
+        <div class="team-members-empty-card">
+            <div class="team-members-empty-icon">
+                <i class="bi bi-person-exclamation"></i>
             </div>
+
+            <h5>No users</h5>
+
+            <p>
+                There are currently no team members.
+            </p>
+
+            <a asp-action="Create" class="btn team-members-empty-button">
+                <i class="bi bi-person-plus"></i>
+                Add First User
+            </a>
         </div>
     }
     else
     {
-        <div class="card shadow-sm">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+        <div class="team-members-list-card">
 
-                    <thead class="table-light">
+            <div class="team-members-list-header">
+                <div>
+                    <h2>Team Directory</h2>
+                    <p>Manage researchers and their access roles.</p>
+                </div>
+
+                <span class="team-members-count">
+                    @Model.Count members
+                </span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table team-members-table align-middle mb-0">
+
+                    <thead>
                         <tr>
                             <th>Full Name</th>
                             <th>Email</th>
@@ -60,57 +97,71 @@
                         {
                             <tr>
                                 <td>
-                                    <strong>
-                                        @(string.IsNullOrWhiteSpace(user.FullName)
-                                            ? "-"
-                                            : user.FullName)
-                                    </strong>
+                                    <div class="team-members-identity">
+                                        <div class="team-members-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+
+                                        <strong>
+                                            @(string.IsNullOrWhiteSpace(user.FullName)
+                                                ? "-"
+                                                : user.FullName)
+                                        </strong>
+                                    </div>
                                 </td>
 
                                 <td>
-                                    @user.Email
+                                    <span class="team-members-email">
+                                        @user.Email
+                                    </span>
                                 </td>
 
                                 <td>
-                                    @if (user.RoleNames != null && user.RoleNames.Count > 0)
-                                    {
-                                        foreach (var role in user.RoleNames)
+                                    <div class="team-members-roles">
+                                        @if (user.RoleNames != null && user.RoleNames.Count > 0)
                                         {
-                                            var badgeClass = role.Equals(
-                                                "Admin",
-                                                StringComparison.OrdinalIgnoreCase)
-                                                ? "bg-danger"
-                                                : role.Equals(
-                                                    "Reviewer",
+                                            foreach (var role in user.RoleNames)
+                                            {
+                                                var badgeClass = role.Equals(
+                                                    "Admin",
                                                     StringComparison.OrdinalIgnoreCase)
-                                                    ? "bg-warning text-dark"
+                                                    ? "team-role-admin"
                                                     : role.Equals(
-                                                        "Researcher",
+                                                        "Reviewer",
                                                         StringComparison.OrdinalIgnoreCase)
-                                                        ? "bg-secondary"
-                                                        : "bg-info text-dark";
+                                                        ? "team-role-reviewer"
+                                                        : role.Equals(
+                                                            "Researcher",
+                                                            StringComparison.OrdinalIgnoreCase)
+                                                            ? "team-role-researcher"
+                                                            : "team-role-default";
 
-                                            <span class="badge @badgeClass me-1 mb-1">
-                                                @role
+                                                <span class="team-role-badge @badgeClass">
+                                                    @role
+                                                </span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="team-members-no-role">
+                                                No role assigned
                                             </span>
                                         }
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">No role assigned</span>
-                                    }
+                                    </div>
                                 </td>
 
                                 <td>
                                     @if (user.IsActive)
                                     {
-                                        <span class="badge bg-success">
+                                        <span class="team-status-badge team-status-active">
+                                            <span class="team-status-dot"></span>
                                             Active
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">
+                                        <span class="team-status-badge team-status-inactive">
+                                            <span class="team-status-dot"></span>
                                             Inactive
                                         </span>
                                     }
@@ -119,8 +170,9 @@
                                 <td class="text-end">
                                     <a asp-action="Edit"
                                        asp-route-id="@user.Id"
-                                       class="btn btn-sm btn-outline-primary">
-                                        Edit
+                                       class="btn team-members-edit-button">
+                                        <i class="bi bi-pencil-square"></i>
+                                        <span>Edit</span>
                                     </a>
                                 </td>
                             </tr>

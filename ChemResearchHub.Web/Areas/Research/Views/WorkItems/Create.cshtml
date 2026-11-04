@@ -16,29 +16,46 @@
     ViewData["Title"] = "Create Work Item";
 }
 
-<div class="container py-4">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/work-item-create.css"
+          asp-append-version="true" />
+}
 
-    <div class="mb-4">
-        <div class="text-muted mb-1">
-            Project
+<div class="work-item-create-page">
+
+    <div class="work-item-create-header">
+        <div class="work-item-create-eyebrow">Project Workspace</div>
+
+        <h1>@project.Name</h1>
+
+        <div class="work-item-context">
+            <span>
+                Board:
+                <strong>@board.Name</strong>
+            </span>
+
+            <span class="work-item-context-separator">·</span>
+
+            <span>
+                Column:
+                <strong>@column.Name</strong>
+            </span>
         </div>
-
-        <h1 class="h3 mb-1">
-            @project.Name
-        </h1>
-
-        <p class="text-muted mb-1">
-            Board: @board.Name
-        </p>
-
-        <p class="mb-0">
-            Column:
-            <strong>@column.Name</strong>
-        </p>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <div class="work-item-create-card">
+
+        <div class="work-item-card-header">
+            <div class="work-item-card-icon">＋</div>
+
+            <div>
+                <h2>Create Work Item</h2>
+                <p>Define a research task, experiment, or analysis</p>
+            </div>
+        </div>
+
+        <div class="work-item-card-body">
 
             <form asp-action="Create" method="post">
 
@@ -47,270 +64,252 @@
                 <input asp-for="BoardColumnId" type="hidden" />
 
                 <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+                     class="work-item-validation-summary text-danger mb-3">
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Title"
-                           class="form-label">
-                    </label>
+                <section class="work-item-form-section">
 
-                    <input asp-for="Title"
-                           class="form-control"
-                           placeholder="For example: Analyze NMR spectrum" />
+                    <div class="work-item-section-heading">
+                        <span class="work-item-section-number">01</span>
+                        <div>
+                            <h3>Basic Information</h3>
+                            <p>Title and description of the work</p>
+                        </div>
+                    </div>
 
-                    <span asp-validation-for="Title"
-                          class="text-danger">
-                    </span>
-                </div>
+                    <div class="work-item-form-field">
+                        <label asp-for="Title" class="form-label"></label>
 
-                <div class="mb-3">
-                    <label asp-for="Description"
-                           class="form-label">
-                    </label>
+                        <input asp-for="Title"
+                               class="form-control"
+                               placeholder="For example: Analyze NMR spectrum" />
 
-                    <textarea asp-for="Description"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Describe the research task, experiment, or analysis...">
-                    </textarea>
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
 
-                    <span asp-validation-for="Description"
-                          class="text-danger">
-                    </span>
-                </div>
+                    <div class="work-item-form-field">
+                        <label asp-for="Description" class="form-label"></label>
 
-                <div class="row">
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="5"
+                                  placeholder="Describe the research task, experiment, or analysis..."></textarea>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Type"
-                               class="form-label">
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                </section>
+
+                <section class="work-item-form-section">
+
+                    <div class="work-item-section-heading">
+                        <span class="work-item-section-number">02</span>
+                        <div>
+                            <h3>Work Configuration</h3>
+                            <p>Choose the work type and its priority</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="work-item-form-field">
+                                <label asp-for="Type" class="form-label"></label>
+
+                                <select asp-for="Type"
+                                        asp-items="Html.GetEnumSelectList<ChemResearchHub.Domain.Enums.WorkItemType>()"
+                                        class="form-select">
+                                </select>
+
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="work-item-form-field">
+                                <label asp-for="Priority" class="form-label"></label>
+
+                                <input asp-for="Priority"
+                                       type="number"
+                                       class="form-control"
+                                       min="0"
+                                       max="10" />
+
+                                <span asp-validation-for="Priority" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="work-item-form-field">
+                        <label asp-for="DueDate" class="form-label"></label>
+
+                        <input asp-for="DueDate"
+                               class="form-control"
+                               type="date" />
+
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+
+                </section>
+
+                <section class="work-item-form-section">
+
+                    <div class="work-item-section-heading">
+                        <span class="work-item-section-number">03</span>
+                        <div>
+                            <h3>People & Collaboration</h3>
+                            <p>Assign responsibility and add collaborators</p>
+                        </div>
+                    </div>
+
+                    <div class="work-item-form-field">
+                        <label asp-for="AssignedToUserId" class="form-label">
+                            Assigned To
                         </label>
 
-                        <select asp-for="Type"
-                                asp-items="Html.GetEnumSelectList<ChemResearchHub.Domain.Enums.WorkItemType>()"
+                        <select asp-for="AssignedToUserId"
                                 class="form-select">
+
+                            <option value="">
+                                -- Unassigned --
+                            </option>
+
+                            @foreach (var user in users)
+                            {
+                                var displayName =
+                                    string.IsNullOrWhiteSpace(user.FullName)
+                                        ? user.Email
+                                        : user.FullName;
+
+                                <option value="@user.Id">
+                                    @displayName
+                                </option>
+                            }
+
                         </select>
 
-                        <span asp-validation-for="Type"
-                              class="text-danger">
-                        </span>
+                        <div class="work-item-form-help">
+                            Select the researcher responsible for this work item.
+                        </div>
+
+                        <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Priority"
-                               class="form-label">
+                    <div class="work-item-form-field">
+
+                        <label class="form-label">
+                            Additional Collaborators
                         </label>
 
-                        <input asp-for="Priority"
-                               type="number"
-                               class="form-control"
-                               min="0"
-                               max="10" />
+                        <div id="availableCollaborators"
+                             class="work-item-collaborator-list">
 
-                        <span asp-validation-for="Priority"
-                              class="text-danger">
-                        </span>
+                            @foreach (var user in users)
+                            {
+                                var displayName =
+                                    string.IsNullOrWhiteSpace(user.FullName)
+                                        ? (user.Email ?? user.Id)
+                                        : user.FullName;
+
+                                <button type="button"
+                                        class="work-item-collaborator-option collaborator-option"
+                                        data-user-id="@user.Id"
+                                        data-user-name="@displayName">
+
+                                    <span class="work-item-collaborator-plus">+</span>
+                                    <span>@displayName</span>
+
+                                </button>
+                            }
+
+                        </div>
+
+                        <div class="work-item-selected-heading">
+                            Selected Collaborators
+                        </div>
+
+                        <div id="selectedCollaborators"
+                             class="work-item-selected-collaborators">
+
+                            <div id="noCollaboratorsMessage"
+                                 class="work-item-no-collaborators">
+                                No additional collaborators selected.
+                            </div>
+
+                        </div>
+
+                        <div id="collaboratorHiddenInputs"></div>
+
+                        <span asp-validation-for="AssignedUserIds" class="text-danger"></span>
+
                     </div>
 
-                </div>
+                </section>
 
-                <div class="mb-3">
+                <section class="work-item-form-section">
 
-                    <label asp-for="AssignedToUserId"
-                           class="form-label">
-                        Assigned To
-                    </label>
+                    <div class="work-item-section-heading">
+                        <span class="work-item-section-number">04</span>
+                        <div>
+                            <h3>Tags</h3>
+                            <p>Classify this work item</p>
+                        </div>
+                    </div>
 
-                    <select asp-for="AssignedToUserId"
-                            class="form-select">
+                    <div class="work-item-form-field">
 
-                        <option value="">
-                            -- Unassigned --
-                        </option>
+                        <label class="form-label">Tags</label>
 
-                        @foreach (var user in users)
+                        @if (Model.AvailableTags.Count == 0)
                         {
-                            var displayName =
-                            string.IsNullOrWhiteSpace(user.FullName)
-                            ? user.Email
-                            : user.FullName;
+                            <div class="work-item-no-tags">
+                                No active tags available.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="work-item-tags">
 
-                            <option value="@user.Id">
-                                @displayName
-                            </option>
+                                @foreach (var tag in Model.AvailableTags)
+                                {
+                                    <label class="work-item-tag-option">
+
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="TagIds"
+                                               value="@tag.Id"
+                                               checked="@Model.TagIds.Contains(tag.Id)" />
+
+                                        <span class="work-item-tag-color"
+                                              style="background-color: @tag.Color;">
+                                        </span>
+
+                                        <span class="work-item-tag-name">
+                                            @tag.Name
+                                        </span>
+
+                                    </label>
+                                }
+
+                            </div>
                         }
 
-                    </select>
-
-                    <div class="form-text">
-                        Select the researcher responsible for this work item.
                     </div>
 
-                    <span asp-validation-for="AssignedToUserId"
-                          class="text-danger">
-                    </span>
+                </section>
 
-                </div>
-
-                <div class="mb-3">
-    <label class="form-label">Additional Collaborators</label>
-
-    <div id="availableCollaborators"
-         class="list-group border rounded mb-3"
-         style="max-height: 180px; overflow-y: auto;">
-        @foreach (var user in users)
-        {
-            var displayName = string.IsNullOrWhiteSpace(user.FullName)
-                ? (user.Email ?? user.Id)
-                : user.FullName;
-
-            <button type="button"
-                    class="list-group-item list-group-item-action collaborator-option"
-                    data-user-id="@user.Id"
-                    data-user-name="@displayName">
-                <i class="bi bi-plus-circle me-2"></i>@displayName
-            </button>
-        }
-    </div>
-
-    <div class="form-label">Selected Collaborators</div>
-
-    <div id="selectedCollaborators" class="d-flex flex-wrap align-items-center gap-2 mb-2">
-        <div id="noCollaboratorsMessage" class="text-muted small">
-            No additional collaborators selected.
-        </div>
-    </div>
-
-    <div id="collaboratorHiddenInputs"></div>
-
-    <span asp-validation-for="AssignedUserIds"
-          class="text-danger"></span>
-</div>
-
-<script>
-(() => {
-    const primarySelect = document.getElementById('AssignedToUserId');
-    const available = document.getElementById('availableCollaborators');
-    const selected = document.getElementById('selectedCollaborators');
-    const hiddenInputs = document.getElementById('collaboratorHiddenInputs');
-    const emptyMessage = document.getElementById('noCollaboratorsMessage');
-
-    if (!primarySelect || !available || !selected || !hiddenInputs) return;
-
-    const chosen = new Map();
-
-    function render() {
-        selected.querySelectorAll('.selected-collaborator').forEach(x => x.remove());
-        hiddenInputs.replaceChildren();
-
-        if (emptyMessage) emptyMessage.hidden = chosen.size > 0;
-
-        available.querySelectorAll('.collaborator-option').forEach(button => {
-            const id = button.dataset.userId;
-            const isPrimary = id === primarySelect.value;
-            button.hidden = isPrimary || chosen.has(id);
-        });
-
-        for (const [id, name] of chosen) {
-            const row = document.createElement('div');
-            row.className = 'selected-collaborator badge rounded-pill bg-light text-dark border d-inline-flex align-items-center gap-2 px-2 py-2';
-
-            const label = document.createElement('span');
-            label.textContent = name;
-
-            const remove = document.createElement('button');
-            remove.type = 'button';
-            remove.className = 'btn btn-sm p-0 border-0 text-danger lh-1';
-            remove.textContent = '×';
-            remove.style.fontSize = '14px';
-            remove.style.minWidth = '14px';
-            remove.setAttribute('aria-label', 'Remove ' + name);
-            remove.addEventListener('click', () => {
-                chosen.delete(id);
-                render();
-            });
-
-            row.append(label, remove);
-            selected.appendChild(row);
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'AssignedUserIds';
-            input.value = id;
-            hiddenInputs.appendChild(input);
-        }
-    }
-
-    available.querySelectorAll('.collaborator-option').forEach(button => {
-        button.addEventListener('click', () => {
-            const id = button.dataset.userId;
-            const name = button.dataset.userName;
-
-            if (id && id !== primarySelect.value && !chosen.has(id)) {
-                chosen.set(id, name);
-                render();
-            }
-        });
-    });
-
-    primarySelect.addEventListener('change', render);
-    render();
-})();
-</script>
-<div class="mb-4">
-    <label class="form-label">Tags</label>
-    @if (Model.AvailableTags.Count == 0)
-    {
-        <div class="text-muted small">No active tags available.</div>
-    }
-    else
-    {
-        <div class="d-flex flex-wrap gap-2">
-            @foreach (var tag in Model.AvailableTags)
-            {
-                <label class="form-check border rounded px-3 py-2 d-flex align-items-center gap-2">
-                    <input class="form-check-input mt-0"
-                           type="checkbox"
-                           name="TagIds"
-                           value="@tag.Id"
-                           checked="@Model.TagIds.Contains(tag.Id)" />
-                    <span class="badge"
-                          style="background-color: @tag.Color; color: white;">
-                        @tag.Name
-                    </span>
-                </label>
-            }
-        </div>
-    }
-</div>
-
-<div class="mb-4">
-                    <label asp-for="DueDate"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="DueDate"
-                           class="form-control"
-                           type="date" />
-
-                    <span asp-validation-for="DueDate"
-                          class="text-danger">
-                    </span>
-                </div>
-
-                <div class="d-flex gap-2">
+                <div class="work-item-form-actions">
 
                     <button type="submit"
-                            class="btn btn-primary">
+                            class="work-item-form-button work-item-form-button-primary">
                         Create Work Item
                     </button>
 
-                    <a asp-area="Research" asp-controller="Boards"
+                    <a asp-area="Research"
+                       asp-controller="Boards"
                        asp-action="Index"
                        asp-route-projectId="@Model.ProjectId"
                        asp-route-boardId="@Model.BoardId"
-                       class="btn btn-outline-secondary">
+                       class="work-item-form-button work-item-form-button-secondary">
                         Cancel
                     </a>
 
@@ -320,12 +319,93 @@
 
         </div>
     </div>
-
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (() => {
+            const page = document.querySelector(".work-item-create-page");
+
+            if (!page)
+                return;
+
+            const primarySelect = page.querySelector("#AssignedToUserId");
+            const available = page.querySelector("#availableCollaborators");
+            const selected = page.querySelector("#selectedCollaborators");
+            const hiddenInputs = page.querySelector("#collaboratorHiddenInputs");
+            const emptyMessage = page.querySelector("#noCollaboratorsMessage");
+
+            if (!primarySelect || !available || !selected || !hiddenInputs)
+                return;
+
+            const chosen = new Map();
+
+            function render() {
+                selected.querySelectorAll(".selected-collaborator")
+                    .forEach(element => element.remove());
+
+                hiddenInputs.replaceChildren();
+
+                if (emptyMessage)
+                    emptyMessage.hidden = chosen.size > 0;
+
+                available.querySelectorAll(".collaborator-option")
+                    .forEach(button => {
+                        const id = button.dataset.userId;
+                        const isPrimary = id === primarySelect.value;
+
+                        button.hidden = isPrimary || chosen.has(id);
+                    });
+
+                for (const [id, name] of chosen) {
+                    const row = document.createElement("div");
+                    row.className = "selected-collaborator";
+
+                    const label = document.createElement("span");
+                    label.className = "selected-collaborator-name";
+                    label.textContent = name;
+
+                    const remove = document.createElement("button");
+                    remove.type = "button";
+                    remove.className = "selected-collaborator-remove";
+                    remove.textContent = "×";
+                    remove.setAttribute("aria-label", "Remove " + name);
+
+                    remove.addEventListener("click", () => {
+                        chosen.delete(id);
+                        render();
+                    });
+
+                    row.append(label, remove);
+                    selected.appendChild(row);
+
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "AssignedUserIds";
+                    input.value = id;
+
+                    hiddenInputs.appendChild(input);
+                }
+            }
+
+            available.querySelectorAll(".collaborator-option")
+                .forEach(button => {
+                    button.addEventListener("click", () => {
+                        const id = button.dataset.userId;
+                        const name = button.dataset.userName;
+
+                        if (id && id !== primarySelect.value && !chosen.has(id)) {
+                            chosen.set(id, name);
+                            render();
+                        }
+                    });
+                });
+
+            primarySelect.addEventListener("change", render);
+
+            render();
+        })();
+    </script>
 }
-
-
-

@@ -1,0 +1,452 @@
+﻿
+.team-user-form-page {
+    --tuf-primary: #6558d3;
+    --tuf-primary-dark: #5144bd;
+    --tuf-soft: #f0efff;
+    --tuf-border: #e9eaf1;
+    --tuf-muted: #74798b;
+    padding: 28px;
+    color: #292d3a;
+}
+
+.team-user-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.team-user-form-eyebrow {
+    color: var(--tuf-primary);
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+
+.team-user-form-title {
+    font-size: 1.65rem;
+    font-weight: 750;
+    letter-spacing: -.025em;
+    margin: 0 0 7px;
+}
+
+.team-user-form-subtitle {
+    color: var(--tuf-muted);
+    font-size: .92rem;
+    margin: 0;
+}
+
+.team-user-form-header-icon {
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: var(--tuf-soft);
+    color: var(--tuf-primary);
+    border-radius: 15px;
+    font-size: 1.5rem;
+}
+
+.team-user-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 22px;
+    align-items: start;
+}
+
+.team-user-form-main {
+    min-width: 0;
+}
+
+.team-user-form-card {
+    background: #fff;
+    border: 1px solid var(--tuf-border);
+    border-radius: 17px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(35, 38, 60, .025);
+}
+
+.team-user-form-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 21px 24px;
+    background: #fcfcff;
+    border-bottom: 1px solid var(--tuf-border);
+}
+
+.team-user-form-card-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: var(--tuf-soft);
+    color: var(--tuf-primary);
+    border-radius: 12px;
+    font-size: 1.2rem;
+}
+
+.team-user-form-card-header h2 {
+    font-size: 1rem;
+    font-weight: 750;
+    margin: 0 0 4px;
+}
+
+.team-user-form-card-header p {
+    color: var(--tuf-muted);
+    font-size: .82rem;
+    margin: 0;
+}
+
+.team-user-form-card-body {
+    padding: 26px 24px;
+}
+
+.team-user-validation-summary:empty {
+    display: none;
+}
+
+.team-user-validation-summary {
+    font-size: .87rem;
+    margin-bottom: 20px;
+}
+
+.team-user-form-section {
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--tuf-border);
+}
+
+.team-user-last-section {
+    padding-bottom: 0;
+    margin-bottom: 25px;
+    border-bottom: 0;
+}
+
+.team-user-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 21px;
+}
+
+.team-user-section-number {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: var(--tuf-soft);
+    color: var(--tuf-primary);
+    border-radius: 10px;
+    font-size: .78rem;
+    font-weight: 800;
+}
+
+.team-user-section-heading h3 {
+    font-size: .94rem;
+    font-weight: 750;
+    margin: 0 0 4px;
+}
+
+.team-user-section-heading p {
+    color: var(--tuf-muted);
+    font-size: .79rem;
+    margin: 0;
+}
+
+.team-user-form-card-body .form-label {
+    display: block;
+    color: #3d4050;
+    font-size: .87rem;
+    font-weight: 700;
+    margin-bottom: 9px;
+}
+
+.team-user-input-wrapper {
+    position: relative;
+}
+
+    .team-user-input-wrapper > i {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        transform: translateY(-50%);
+        color: #9295a5;
+        font-size: 1rem;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+.team-user-input {
+    min-height: 46px;
+    padding: 10px 13px 10px 41px;
+    border: 1px solid #dfe1eb;
+    border-radius: 10px;
+    font-size: .9rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+    .team-user-input:focus,
+    .team-user-role-select:focus {
+        border-color: var(--tuf-primary);
+        box-shadow: 0 0 0 3px rgba(101, 88, 211, .12);
+    }
+
+    .team-user-input::placeholder {
+        color: #a0a3b1;
+    }
+
+.team-user-field-error {
+    display: block;
+    font-size: .8rem;
+    margin-top: 6px;
+}
+
+.team-user-form-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    color: var(--tuf-muted);
+    font-size: .77rem;
+    line-height: 1.65;
+    margin-top: 9px;
+}
+
+    .team-user-form-hint i {
+        color: var(--tuf-primary);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+.team-user-role-select {
+    min-height: 135px;
+    padding: 9px;
+    border: 1px solid #dfe1eb;
+    border-radius: 10px;
+    font-size: .88rem;
+}
+
+    .team-user-role-select option {
+        padding: 8px 10px;
+        border-radius: 5px;
+    }
+
+.team-user-status-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 17px;
+    border: 1px solid var(--tuf-border);
+    background: #fcfcff;
+    border-radius: 12px;
+}
+
+.team-user-status-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.team-user-status-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: var(--tuf-soft);
+    color: var(--tuf-primary);
+    border-radius: 11px;
+    font-size: 1.15rem;
+}
+
+.team-user-status-info strong {
+    display: block;
+    font-size: .87rem;
+    margin-bottom: 4px;
+}
+
+.team-user-status-info p {
+    color: var(--tuf-muted);
+    font-size: .77rem;
+    margin: 0;
+}
+
+.team-user-status-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+    .team-user-status-switch .form-check-input {
+        width: 2.4em;
+        height: 1.25em;
+        margin: 0;
+        cursor: pointer;
+    }
+
+        .team-user-status-switch .form-check-input:checked {
+            background-color: var(--tuf-primary);
+            border-color: var(--tuf-primary);
+        }
+
+    .team-user-status-switch .form-check-label {
+        font-size: .82rem;
+        font-weight: 650;
+        cursor: pointer;
+        margin: 0;
+    }
+
+.team-user-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid var(--tuf-border);
+}
+
+    .team-user-form-actions .btn {
+        min-height: 43px;
+        padding: 9px 17px;
+        border-radius: 10px;
+        font-size: .87rem;
+        font-weight: 650;
+    }
+
+.team-user-submit {
+    background: var(--tuf-primary);
+    border-color: var(--tuf-primary);
+}
+
+    .team-user-submit:hover {
+        background: var(--tuf-primary-dark);
+        border-color: var(--tuf-primary-dark);
+    }
+
+.team-user-form-sidebar {
+    min-width: 0;
+}
+
+.team-user-info-card {
+    padding: 23px;
+    background: #fff;
+    border: 1px solid var(--tuf-border);
+    border-radius: 16px;
+}
+
+.team-user-info-icon {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    background: var(--tuf-soft);
+    color: var(--tuf-primary);
+    border-radius: 12px;
+    font-size: 1.25rem;
+    margin-bottom: 17px;
+}
+
+.team-user-info-card h3 {
+    font-size: .98rem;
+    font-weight: 750;
+    margin-bottom: 9px;
+}
+
+.team-user-info-card > p {
+    color: var(--tuf-muted);
+    font-size: .83rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.team-user-info-divider {
+    height: 1px;
+    background: var(--tuf-border);
+    margin: 19px 0;
+}
+
+.team-user-info-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #555a6b;
+    font-size: .8rem;
+    line-height: 1.65;
+    margin-bottom: 13px;
+}
+
+    .team-user-info-point:last-child {
+        margin-bottom: 0;
+    }
+
+    .team-user-info-point i {
+        color: var(--tuf-primary);
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+@media (max-width: 992px) {
+    .team-user-form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .team-user-form-sidebar {
+        order: 2;
+    }
+}
+
+@media (max-width: 576px) {
+    .team-user-form-page {
+        padding: 18px 12px;
+    }
+
+    .team-user-form-header {
+        align-items: flex-start;
+    }
+
+    .team-user-form-title {
+        font-size: 1.4rem;
+    }
+
+    .team-user-form-header-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.25rem;
+    }
+
+    .team-user-form-card-header {
+        padding: 17px;
+    }
+
+    .team-user-form-card-body {
+        padding: 20px 17px;
+    }
+
+    .team-user-status-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .team-user-status-switch {
+        padding-left: 2px;
+    }
+
+    .team-user-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+        .team-user-form-actions .btn {
+            width: 100%;
+        }
+}

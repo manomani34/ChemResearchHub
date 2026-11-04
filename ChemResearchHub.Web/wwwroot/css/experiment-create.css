@@ -1,0 +1,349 @@
+﻿
+/* =========================================================
+   Experiment Create
+   ChemResearchHub Design System
+   ========================================================= */
+
+.experiment-create-page {
+    --ec-primary: #6558d3;
+    --ec-primary-dark: #5144bd;
+    --ec-primary-soft: #f0efff;
+    --ec-bg: #f7f8fc;
+    --ec-surface: #ffffff;
+    --ec-text: #20243a;
+    --ec-muted: #858ba0;
+    --ec-border: #e9eaf1;
+    background: var(--ec-bg);
+    color: var(--ec-text);
+    min-height: calc(100vh - 100px);
+    padding: 30px clamp(16px, 3vw, 40px);
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+    .experiment-create-page * {
+        box-sizing: border-box;
+    }
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.experiment-create-header {
+    margin-bottom: 26px;
+}
+
+.experiment-create-heading {
+    padding: 24px 28px;
+    background: var(--ec-surface);
+    border: 1px solid var(--ec-border);
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(35, 39, 70, 0.035);
+}
+
+.experiment-create-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--ec-primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.experiment-create-eyebrow-icon {
+    width: 29px;
+    height: 29px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: var(--ec-primary-soft);
+    font-size: 14px;
+}
+
+.experiment-create-heading h1 {
+    margin: 0 0 7px;
+    color: var(--ec-text);
+    font-size: clamp(23px, 2.2vw, 29px);
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.experiment-create-heading p {
+    margin: 0;
+    color: var(--ec-muted);
+    font-size: 13px;
+}
+
+/* =========================================================
+   Content
+   ========================================================= */
+
+.experiment-create-content {
+    width: 100%;
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   Card
+   ========================================================= */
+
+.experiment-create-card {
+    overflow: hidden;
+    background: var(--ec-surface);
+    border: 1px solid var(--ec-border);
+    border-radius: 17px;
+    box-shadow: 0 5px 20px rgba(35, 39, 70, 0.04);
+}
+
+.experiment-create-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 21px 25px;
+    border-bottom: 1px solid var(--ec-border);
+}
+
+.experiment-create-card-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: var(--ec-primary-soft);
+    color: var(--ec-primary);
+    font-size: 19px;
+}
+
+.experiment-create-card-header h2 {
+    margin: 0 0 3px;
+    color: var(--ec-text);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.experiment-create-card-header p {
+    margin: 0;
+    color: var(--ec-muted);
+    font-size: 12px;
+}
+
+.experiment-create-card-body {
+    padding: 25px;
+}
+
+/* =========================================================
+   Form Sections
+   ========================================================= */
+
+.experiment-form-section {
+    padding-bottom: 22px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid #f0f1f6;
+}
+
+.experiment-notes-section {
+    margin-bottom: 0;
+}
+
+.experiment-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 17px;
+    color: var(--ec-text);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.experiment-section-number {
+    width: 29px;
+    height: 29px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: var(--ec-primary-soft);
+    color: var(--ec-primary);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* =========================================================
+   Labels
+   ========================================================= */
+
+.experiment-create-page .form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #60677d;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   Inputs
+   ========================================================= */
+
+.experiment-create-page .form-control {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    border: 1px solid var(--ec-border);
+    border-radius: 10px;
+    background-color: #fff;
+    color: var(--ec-text);
+    font-size: 13px;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.experiment-create-page textarea.form-control {
+    min-height: unset;
+    resize: vertical;
+    line-height: 1.8;
+}
+
+.experiment-create-page .form-control::placeholder {
+    color: #a4a9b9;
+    font-size: 12px;
+}
+
+.experiment-create-page .form-control:focus {
+    border-color: var(--ec-primary);
+    box-shadow: 0 0 0 3px rgba(101, 88, 211, 0.11);
+    background: #fff;
+}
+
+/* =========================================================
+   Timeline
+   ========================================================= */
+
+.experiment-create-page input[type="datetime-local"] {
+    color-scheme: light;
+}
+
+/* =========================================================
+   Validation
+   ========================================================= */
+
+.experiment-create-page .text-danger {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.experiment-create-page .validation-summary-errors {
+    padding: 13px 16px;
+    border: 1px solid #f5d5d9;
+    border-radius: 10px;
+    background: #fff2f3;
+    color: #c34553;
+    font-size: 12px;
+}
+
+/* =========================================================
+   Footer Actions
+   ========================================================= */
+
+.experiment-form-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 23px;
+    margin-top: 5px;
+    border-top: 1px solid var(--ec-border);
+}
+
+.experiment-create-page .btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+    .experiment-create-page .btn:hover {
+        transform: translateY(-2px);
+    }
+
+.experiment-create-submit {
+    color: #fff;
+    background: var(--ec-primary);
+    border-color: var(--ec-primary);
+    box-shadow: 0 4px 10px rgba(101, 88, 211, 0.17);
+}
+
+    .experiment-create-submit:hover {
+        color: #fff;
+        background: var(--ec-primary-dark);
+        border-color: var(--ec-primary-dark);
+    }
+
+.experiment-create-cancel {
+    color: #646b80;
+    background: #fff;
+    border-color: var(--ec-border);
+}
+
+    .experiment-create-cancel:hover {
+        color: var(--ec-text);
+        background: #f4f5f9;
+        border-color: #d9dbea;
+    }
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .experiment-create-page {
+        padding: 18px 12px;
+    }
+
+    .experiment-create-heading {
+        padding: 20px;
+    }
+
+    .experiment-create-card-header {
+        padding: 18px;
+    }
+
+    .experiment-create-card-body {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .experiment-create-page {
+        padding: 12px 8px;
+    }
+
+    .experiment-create-heading h1 {
+        font-size: 23px;
+    }
+
+    .experiment-form-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .experiment-form-footer .btn {
+            width: 100%;
+        }
+}

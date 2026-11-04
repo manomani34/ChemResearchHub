@@ -1,5 +1,15 @@
 ﻿@using ChemResearchHub.Application.Meetings.DTOs
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model MeetingActionItemDto
+
+@{
+    var workItems =
+        ViewData["WorkItems"] as List<SelectListItem>
+        ?? new List<SelectListItem>();
+
+    var meetingSessionId =
+        ViewData["MeetingSessionId"];
+}
 
 <article class="crm-action-card">
 
@@ -76,6 +86,13 @@
                 Work Item #@Model.WorkItemId
             </span>
         }
+        else
+        {
+            <span class="text-muted">
+                <i class="bi bi-link-45deg"></i>
+                بدون اتصال به Work Item
+            </span>
+        }
 
     </div>
 
@@ -85,6 +102,77 @@
             <i class="bi bi-check-circle"></i>
             Completed at:
             @Model.CompletedAt.Value.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+        </div>
+    }
+
+    @if (Model.Type != ChemResearchHub.Domain.Enums.Meetings.MeetingActionItemType.ConvertedWorkItem)
+    {
+        <div class="crm-action-link-editor mt-3">
+
+            <form asp-area="Research"
+                  asp-controller="MeetingActionItems"
+                  asp-action="Link"
+                  asp-route-meetingSessionId="@meetingSessionId"
+                  asp-route-actionItemId="@Model.Id"
+                  method="post"
+                  class="d-flex flex-wrap gap-2">
+
+                @Html.AntiForgeryToken()
+
+                <select name="workItemId"
+                        class="form-select"
+                        style="max-width: 350px">
+
+                    <option value="0">انتخاب Work Item</option>
+
+                    @foreach (var workItem in workItems)
+                    {
+                        if (workItem.Value == Model.WorkItemId?.ToString())
+                        {
+                            <option value="@workItem.Value" selected>
+                                @workItem.Text
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@workItem.Value">
+                                @workItem.Text
+                            </option>
+                        }
+                    }
+
+                </select>
+
+                <button type="submit"
+                        class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-link-45deg"></i>
+                    ذخیره ارتباط
+                </button>
+
+            </form>
+
+            @if (Model.WorkItemId.HasValue)
+            {
+                <form asp-area="Research"
+                      asp-controller="MeetingActionItems"
+                      asp-action="Unlink"
+                      asp-route-meetingSessionId="@meetingSessionId"
+                      asp-route-actionItemId="@Model.Id"
+                      method="post"
+                      class="mt-2"
+                      onsubmit="return confirm('آیا از قطع ارتباط این Action Item مطمئن هستید؟');">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-link-break"></i>
+                        قطع اتصال
+                    </button>
+
+                </form>
+            }
+
         </div>
     }
 

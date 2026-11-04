@@ -1,8 +1,8 @@
-﻿
-using ChemResearchHub.Application.Meetings.DTOs;
+﻿using ChemResearchHub.Application.Meetings.DTOs;
 using ChemResearchHub.Application.Meetings.Interfaces;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.Projects.Interfaces;
+using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Web.Areas.Research.Models.Meetings.ActionItems;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +18,18 @@ public class MeetingActionItemsController : Controller
     private readonly IMeetingService _meetingService;
     private readonly IUserService _userService;
     private readonly IProjectService _projectService;
+    private readonly IWorkItemService _workItemService;
 
     public MeetingActionItemsController(
         IMeetingService meetingService,
         IUserService userService,
-        IProjectService projectService)
+        IProjectService projectService,
+        IWorkItemService workItemService)
     {
         _meetingService = meetingService;
         _userService = userService;
         _projectService = projectService;
+        _workItemService = workItemService;
     }
 
     [HttpGet("")]
@@ -63,17 +66,128 @@ public class MeetingActionItemsController : Controller
         if (model is null)
             return NotFound();
 
-        // اعتبارسنجی کاربر مسئول
+        ValidateRelatedEntities(request, model);
+
+        if (!ModelState.IsValid)
+        {
+            return View(
+                "~/Areas/Research/Views/MeetingActionItems/Index.cshtml",
+                model);
+        }
+
+        try
+        {
+            var result = await _meetingService.AddActionItemAsync(
+                meetingSessionId,
+                request,
+                cancellationToken);
+
+            if (!result.HasValue)
+                return NotFound();
+
+            TempData["SuccessMessage"] =
+                "Action Item با موفقیت ثبت شد.";
+
+            return RedirectToAction(
+                nameof(Index),
+                new { meetingSessionId });
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(
+                "CreateRequest.WorkItemId",
+                ex.Message);
+
+            return View(
+                "~/Areas/Research/Views/MeetingActionItems/Index.cshtml",
+                model);
+        }
+    }
+
+    [HttpPost("{actionItemId:int}/Link")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Link(
+        int meetingSessionId,
+        int actionItemId,
+        int workItemId,
+        CancellationToken cancellationToken)
+    {
+        if (workItemId <= 0)
+        {
+            TempData["ErrorMessage"] =
+                "ابتدا یک Work Item معتبر انتخاب کنید.";
+
+            return RedirectToAction(
+                nameof(Index),
+                new { meetingSessionId });
+        }
+
+        try
+        {
+            var result =
+                await _meetingService.LinkActionItemToWorkItemAsync(
+                    actionItemId,
+                    workItemId,
+                    cancellationToken);
+
+            if (!result)
+                return NotFound();
+
+            TempData["SuccessMessage"] =
+                "ارتباط Action Item با Work Item با موفقیت ثبت شد.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(
+            nameof(Index),
+            new { meetingSessionId });
+    }
+
+    [HttpPost("{actionItemId:int}/Unlink")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Unlink(
+        int meetingSessionId,
+        int actionItemId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result =
+                await _meetingService.UnlinkActionItemFromWorkItemAsync(
+                    actionItemId,
+                    cancellationToken);
+
+            if (!result)
+                return NotFound();
+
+            TempData["SuccessMessage"] =
+                "ارتباط Action Item با Work Item قطع شد.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(
+            nameof(Index),
+            new { meetingSessionId });
+    }
+
+    private void ValidateRelatedEntities(
+        CreateMeetingActionItemRequest request,
+        ActionItemsViewModel model)
+    {
         if (!string.IsNullOrWhiteSpace(request.AssignedToUserId) &&
-            !model.Users.Any(x =>
-                x.Value == request.AssignedToUserId))
+            !model.Users.Any(x => x.Value == request.AssignedToUserId))
         {
             ModelState.AddModelError(
                 "CreateRequest.AssignedToUserId",
                 "کاربر انتخاب‌شده معتبر یا فعال نیست.");
         }
 
-        // اعتبارسنجی پروژه
         if (request.ProjectId.HasValue &&
             !model.Projects.Any(x =>
                 x.Value == request.ProjectId.Value.ToString()))
@@ -83,7 +197,6 @@ public class MeetingActionItemsController : Controller
                 "پروژه انتخاب‌شده معتبر یا فعال نیست.");
         }
 
-        // اعتبارسنجی تعلق تصمیم به جلسه جاری
         if (request.DecisionId.HasValue &&
             !model.Decisions.Any(x =>
                 x.Value == request.DecisionId.Value.ToString()))
@@ -93,24 +206,14 @@ public class MeetingActionItemsController : Controller
                 "تصمیم انتخاب‌شده متعلق به این جلسه نیست.");
         }
 
-        if (!ModelState.IsValid)
+        if (request.WorkItemId.HasValue &&
+            !model.WorkItems.Any(x =>
+                x.Value == request.WorkItemId.Value.ToString()))
         {
-            return View(
-                "~/Areas/Research/Views/MeetingActionItems/Index.cshtml",
-                model);
+            ModelState.AddModelError(
+                "CreateRequest.WorkItemId",
+                "Work Item انتخاب‌شده معتبر نیست.");
         }
-
-        await _meetingService.AddActionItemAsync(
-            meetingSessionId,
-            request,
-            cancellationToken);
-
-        TempData["SuccessMessage"] =
-            "Action Item با موفقیت ثبت شد.";
-
-        return RedirectToAction(
-            nameof(Index),
-            new { meetingSessionId });
     }
 
     private async Task<ActionItemsViewModel?> BuildViewModelAsync(
@@ -139,11 +242,13 @@ public class MeetingActionItemsController : Controller
             meetingSessionId,
             cancellationToken);
 
+        var workItems = await _workItemService.GetAllAsync(
+            cancellationToken: cancellationToken);
+
         return new ActionItemsViewModel
         {
             MeetingSessionId = meetingSessionId,
             Items = items,
-
             CreateRequest = request ?? new CreateMeetingActionItemRequest(),
 
             Users = users
@@ -171,6 +276,15 @@ public class MeetingActionItemsController : Controller
                 {
                     Value = x.Id.ToString(),
                     Text = x.Title
+                })
+                .ToList(),
+
+            WorkItems = workItems
+                .OrderBy(x => x.Title)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = $"#{x.Id} - {x.Title}"
                 })
                 .ToList()
         };

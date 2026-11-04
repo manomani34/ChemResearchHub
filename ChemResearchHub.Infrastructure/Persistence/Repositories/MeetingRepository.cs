@@ -211,6 +211,16 @@ public class MeetingRepository : IMeetingRepository
                 cancellationToken);
     }
 
+    public async Task<MeetingActionItem?> GetActionItemByWorkItemIdAsync(
+    int workItemId,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.MeetingActionItems
+            .FirstOrDefaultAsync(
+                x => x.WorkItemId == workItemId,
+                cancellationToken);
+    }
+
     public Task<int> SaveChangesAsync(
         CancellationToken cancellationToken = default)
     {

@@ -1,0 +1,343 @@
+﻿
+/* =========================================================
+   Decision Log - Create
+   ChemResearchHub Design System
+   ========================================================= */
+
+.decision-log-page {
+    --dl-primary: #6558d3;
+    --dl-primary-dark: #5144bd;
+    --dl-primary-soft: #f0efff;
+    --dl-bg: #f7f8fc;
+    --dl-surface: #ffffff;
+    --dl-text: #20243a;
+    --dl-muted: #858ba0;
+    --dl-border: #e9eaf1;
+    background: var(--dl-bg);
+    color: var(--dl-text);
+    min-height: calc(100vh - 100px);
+    padding: 30px clamp(16px, 3vw, 40px);
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+    .decision-log-page * {
+        box-sizing: border-box;
+    }
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.decision-log-header {
+    margin-bottom: 26px;
+}
+
+.decision-log-heading {
+    padding: 24px 28px;
+    background: var(--dl-surface);
+    border: 1px solid var(--dl-border);
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(35, 39, 70, 0.035);
+}
+
+.decision-log-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--dl-primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.decision-log-eyebrow-icon {
+    width: 29px;
+    height: 29px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: var(--dl-primary-soft);
+    font-size: 14px;
+}
+
+.decision-log-heading h1 {
+    margin: 0 0 7px;
+    color: var(--dl-text);
+    font-size: clamp(23px, 2.2vw, 29px);
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.decision-log-heading p {
+    margin: 0;
+    color: var(--dl-muted);
+    font-size: 13px;
+}
+
+/* =========================================================
+   Content
+   ========================================================= */
+
+.decision-log-content {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   Main Card
+   ========================================================= */
+
+.decision-log-card {
+    overflow: hidden;
+    background: var(--dl-surface);
+    border: 1px solid var(--dl-border);
+    border-radius: 17px;
+    box-shadow: 0 5px 20px rgba(35, 39, 70, 0.04);
+}
+
+.decision-log-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 21px 25px;
+    border-bottom: 1px solid var(--dl-border);
+}
+
+.decision-log-card-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: var(--dl-primary-soft);
+    color: var(--dl-primary);
+    font-size: 19px;
+}
+
+.decision-log-card-header h2 {
+    margin: 0 0 3px;
+    color: var(--dl-text);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.decision-log-card-header p {
+    margin: 0;
+    color: var(--dl-muted);
+    font-size: 12px;
+}
+
+.decision-log-card-body {
+    padding: 25px;
+}
+
+/* =========================================================
+   Form Sections
+   ========================================================= */
+
+.decision-log-form-section {
+    padding-bottom: 22px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid #f0f1f6;
+}
+
+    .decision-log-form-section:last-of-type {
+        margin-bottom: 0;
+    }
+
+.decision-log-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 17px;
+    color: var(--dl-text);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.decision-log-section-number {
+    width: 29px;
+    height: 29px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: var(--dl-primary-soft);
+    color: var(--dl-primary);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* =========================================================
+   Labels
+   ========================================================= */
+
+.decision-log-page .form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #60677d;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   Inputs
+   ========================================================= */
+
+.decision-log-page .form-control,
+.decision-log-page .form-select {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    border: 1px solid var(--dl-border);
+    border-radius: 10px;
+    background-color: #fff;
+    color: var(--dl-text);
+    font-size: 13px;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.decision-log-page textarea.form-control {
+    min-height: unset;
+    resize: vertical;
+    line-height: 1.8;
+}
+
+.decision-log-page .form-control::placeholder {
+    color: #a4a9b9;
+    font-size: 12px;
+}
+
+.decision-log-page .form-control:focus,
+.decision-log-page .form-select:focus {
+    border-color: var(--dl-primary);
+    box-shadow: 0 0 0 3px rgba(101, 88, 211, 0.11);
+    background: #fff;
+}
+
+/* =========================================================
+   Validation
+   ========================================================= */
+
+.decision-log-page .text-danger {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.decision-log-page .validation-summary-errors {
+    padding: 13px 16px;
+    border: 1px solid #f5d5d9;
+    border-radius: 10px;
+    background: #fff2f3;
+    color: #c34553;
+    font-size: 12px;
+}
+
+/* =========================================================
+   Footer Actions
+   ========================================================= */
+
+.decision-log-form-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 23px;
+    margin-top: 5px;
+    border-top: 1px solid var(--dl-border);
+}
+
+.decision-log-page .btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+    .decision-log-page .btn:hover {
+        transform: translateY(-2px);
+    }
+
+.decision-log-save {
+    color: #fff;
+    background: var(--dl-primary);
+    border-color: var(--dl-primary);
+    box-shadow: 0 4px 10px rgba(101, 88, 211, 0.17);
+}
+
+    .decision-log-save:hover {
+        color: #fff;
+        background: var(--dl-primary-dark);
+        border-color: var(--dl-primary-dark);
+    }
+
+.decision-log-cancel {
+    color: #646b80;
+    background: #fff;
+    border-color: var(--dl-border);
+}
+
+    .decision-log-cancel:hover {
+        color: var(--dl-text);
+        background: #f4f5f9;
+        border-color: #d9dbea;
+    }
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .decision-log-page {
+        padding: 18px 12px;
+    }
+
+    .decision-log-heading {
+        padding: 20px;
+    }
+
+    .decision-log-card-header {
+        padding: 18px;
+    }
+
+    .decision-log-card-body {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .decision-log-page {
+        padding: 12px 8px;
+    }
+
+    .decision-log-heading h1 {
+        font-size: 23px;
+    }
+
+    .decision-log-form-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .decision-log-form-footer .btn {
+            width: 100%;
+        }
+}

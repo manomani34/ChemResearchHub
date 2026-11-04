@@ -1,0 +1,602 @@
+﻿
+/* =========================================================
+   Work Item Details
+   ChemResearchHub Design System
+   ========================================================= */
+
+.work-item-details-page {
+    --wid-primary: #6558d3;
+    --wid-primary-dark: #5144bd;
+    --wid-primary-soft: #f0efff;
+    --wid-bg: #f7f8fc;
+    --wid-surface: #ffffff;
+    --wid-text: #20243a;
+    --wid-muted: #858ba0;
+    --wid-border: #e9eaf1;
+    --wid-success: #16a477;
+    --wid-danger: #e45b67;
+    --wid-warning: #e99b42;
+    --wid-radius: 16px;
+    --wid-radius-sm: 11px;
+    color: var(--wid-text);
+    background: var(--wid-bg);
+    min-height: 100vh;
+    padding: 28px clamp(16px, 3vw, 40px) !important;
+    border-radius: 18px;
+}
+
+    /* =========================================================
+   Global
+   ========================================================= */
+
+    .work-item-details-page,
+    .work-item-details-page * {
+        box-sizing: border-box;
+    }
+
+.work-item-details-page {
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+    .work-item-details-page h1,
+    .work-item-details-page h2,
+    .work-item-details-page h3,
+    .work-item-details-page h4,
+    .work-item-details-page h5,
+    .work-item-details-page strong {
+        color: var(--wid-text);
+    }
+
+    .work-item-details-page .text-muted {
+        color: var(--wid-muted) !important;
+    }
+
+    .work-item-details-page .small {
+        font-size: 12px;
+    }
+
+    /* =========================================================
+   Page Header
+   ========================================================= */
+
+    .work-item-details-page > .d-flex.justify-content-between:first-of-type {
+        padding: 24px 26px;
+        background: var(--wid-surface);
+        border: 1px solid var(--wid-border);
+        border-radius: 18px;
+        box-shadow: 0 5px 20px rgba(35, 39, 70, 0.035);
+        margin-bottom: 26px !important;
+        gap: 20px;
+    }
+
+        .work-item-details-page > .d-flex.justify-content-between:first-of-type > div:first-child {
+            min-width: 0;
+        }
+
+        .work-item-details-page > .d-flex.justify-content-between:first-of-type
+        .text-muted:first-child {
+            color: var(--wid-primary) !important;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+    .work-item-details-page h1 {
+        font-size: clamp(22px, 2.2vw, 29px);
+        font-weight: 800;
+        letter-spacing: -0.7px;
+        line-height: 1.35;
+    }
+
+        .work-item-details-page h1 + p {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+    .work-item-details-page > .d-flex.justify-content-between:first-of-type > .d-flex {
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* =========================================================
+   Buttons
+   ========================================================= */
+
+    .work-item-details-page .btn {
+        border-radius: 10px;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+    }
+
+        .work-item-details-page .btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .work-item-details-page .btn-primary {
+        background: var(--wid-primary);
+        border-color: var(--wid-primary);
+        box-shadow: 0 4px 10px rgba(101, 88, 211, 0.16);
+    }
+
+        .work-item-details-page .btn-primary:hover {
+            background: var(--wid-primary-dark);
+            border-color: var(--wid-primary-dark);
+        }
+
+    .work-item-details-page .btn-success {
+        background: var(--wid-success);
+        border-color: var(--wid-success);
+    }
+
+    .work-item-details-page .btn-outline-primary {
+        color: var(--wid-primary);
+        border-color: #d8d3fa;
+    }
+
+        .work-item-details-page .btn-outline-primary:hover {
+            color: white;
+            background: var(--wid-primary);
+            border-color: var(--wid-primary);
+        }
+
+    .work-item-details-page .btn-outline-secondary {
+        color: #646b80;
+        border-color: var(--wid-border);
+        background: #fff;
+    }
+
+        .work-item-details-page .btn-outline-secondary:hover {
+            color: var(--wid-text);
+            background: #f2f3f8;
+            border-color: #d9dbea;
+        }
+
+    .work-item-details-page .btn-danger {
+        background: var(--wid-danger);
+        border-color: var(--wid-danger);
+    }
+
+    /* =========================================================
+   Main Layout
+   ========================================================= */
+
+    .work-item-details-page > .row {
+        --bs-gutter-x: 22px;
+        --bs-gutter-y: 22px;
+    }
+
+    .work-item-details-page .col-lg-8,
+    .work-item-details-page .col-lg-4 {
+        min-width: 0;
+    }
+
+    /* =========================================================
+   Cards
+   ========================================================= */
+
+    .work-item-details-page .card {
+        background: var(--wid-surface);
+        border: 1px solid var(--wid-border);
+        border-radius: var(--wid-radius);
+        box-shadow: 0 4px 16px rgba(35, 39, 70, 0.035);
+        overflow: hidden;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+        .work-item-details-page .card:hover {
+            border-color: #dedcf2;
+            box-shadow: 0 7px 22px rgba(35, 39, 70, 0.055);
+        }
+
+    .work-item-details-page .card-header {
+        min-height: 54px;
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        background: #fff !important;
+        border-bottom: 1px solid var(--wid-border);
+    }
+
+        .work-item-details-page .card-header strong {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: -0.15px;
+        }
+
+    .work-item-details-page .card-body {
+        padding: 20px;
+    }
+
+    .work-item-details-page .card-header .badge {
+        margin-left: 8px;
+    }
+
+    /* =========================================================
+   Badges
+   ========================================================= */
+
+    .work-item-details-page .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 23px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.1px;
+    }
+
+    .work-item-details-page .bg-primary {
+        background: var(--wid-primary-soft) !important;
+        color: var(--wid-primary) !important;
+    }
+
+    .work-item-details-page .bg-secondary {
+        background: #f0f1f6 !important;
+        color: #697087 !important;
+    }
+
+    .work-item-details-page .bg-success {
+        background: #e5f7f0 !important;
+        color: #13865f !important;
+    }
+
+    .work-item-details-page .bg-danger {
+        background: #fff0f1 !important;
+        color: #d94c5b !important;
+    }
+
+    .work-item-details-page .bg-warning {
+        background: #fff5e8 !important;
+        color: #a96a19 !important;
+    }
+
+    /* =========================================================
+   Description
+   ========================================================= */
+
+    .work-item-details-page .card-body > p {
+        line-height: 1.9;
+    }
+
+    /* =========================================================
+   Accordion
+   ========================================================= */
+
+    .work-item-details-page .accordion {
+        --bs-accordion-border-color: var(--wid-border);
+        --bs-accordion-border-radius: 12px;
+        --bs-accordion-inner-border-radius: 12px;
+    }
+
+    .work-item-details-page .accordion-item {
+        margin-bottom: 10px;
+        border: 1px solid var(--wid-border);
+        border-radius: 12px !important;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .work-item-details-page .accordion-button {
+        padding: 15px 17px;
+        background: #fff;
+        color: var(--wid-text);
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow: none !important;
+    }
+
+        .work-item-details-page .accordion-button:not(.collapsed) {
+            background: var(--wid-primary-soft);
+            color: var(--wid-primary-dark);
+        }
+
+        .work-item-details-page .accordion-button::after {
+            width: 14px;
+            height: 14px;
+            background-size: 14px;
+        }
+
+    .work-item-details-page .accordion-body {
+        padding: 20px;
+        background: #fff;
+    }
+
+        .work-item-details-page .accordion-body dl {
+            row-gap: 12px;
+        }
+
+        .work-item-details-page .accordion-body dt {
+            font-size: 12px;
+            font-weight: 800;
+            color: #686e84;
+        }
+
+        .work-item-details-page .accordion-body dd {
+            font-size: 13px;
+            color: var(--wid-text);
+        }
+
+    /* =========================================================
+   Tables
+   ========================================================= */
+
+    .work-item-details-page .table-responsive {
+        border-radius: 10px;
+    }
+
+    .work-item-details-page .table {
+        font-size: 12px;
+        vertical-align: middle;
+        border-color: var(--wid-border);
+    }
+
+        .work-item-details-page .table thead th {
+            padding: 12px;
+            background: #f7f8fc;
+            color: #70768c;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid var(--wid-border);
+            white-space: nowrap;
+        }
+
+        .work-item-details-page .table tbody td,
+        .work-item-details-page .table tbody th {
+            padding: 11px 12px;
+        }
+
+        .work-item-details-page .table tbody tr {
+            border-color: #f0f1f6;
+        }
+
+    .work-item-details-page .table-hover tbody tr:hover {
+        background: #fafaff;
+    }
+
+    /* =========================================================
+   Samples
+   ========================================================= */
+
+    .work-item-details-page .border.rounded.p-3 {
+        border-color: var(--wid-border) !important;
+        border-radius: 12px !important;
+        background: #fcfcfe;
+    }
+
+    .work-item-details-page .border.rounded.p-4 {
+        border-color: var(--wid-border) !important;
+        border-radius: 13px !important;
+    }
+
+    /* =========================================================
+   Workflow History
+   ========================================================= */
+
+    .work-item-details-page .list-group-item {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        border-color: var(--wid-border);
+        background: transparent;
+    }
+
+        .work-item-details-page .list-group-item:last-child {
+            border-bottom: 0;
+        }
+
+        .work-item-details-page .list-group-item .fw-semibold {
+            font-size: 13px;
+        }
+
+    /* =========================================================
+   Flow Metrics
+   ========================================================= */
+
+    .work-item-details-page .bg-light {
+        background: #f7f8fc !important;
+    }
+
+    .work-item-details-page .border.rounded.p-3.h-100 {
+        border-color: var(--wid-border) !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease;
+    }
+
+        .work-item-details-page .border.rounded.p-3.h-100:hover {
+            background: var(--wid-primary-soft) !important;
+            border-color: #d8d3fa !important;
+            transform: translateY(-2px);
+        }
+
+        .work-item-details-page .border.rounded.p-3.h-100 .fw-semibold {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--wid-primary-dark);
+        }
+
+    /* =========================================================
+   Blocked Status
+   ========================================================= */
+
+    .work-item-details-page .alert {
+        border: 1px solid transparent;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 13px;
+    }
+
+    .work-item-details-page .alert-danger {
+        color: #a83f4a;
+        background: #fff2f3;
+        border-color: #f8d9dc;
+    }
+
+    .work-item-details-page textarea {
+        min-height: 85px;
+        resize: vertical;
+    }
+
+    /* =========================================================
+   Forms
+   ========================================================= */
+
+    .work-item-details-page .form-control,
+    .work-item-details-page .form-select {
+        min-height: 42px;
+        border: 1px solid var(--wid-border);
+        border-radius: 10px;
+        background-color: #fff;
+        color: var(--wid-text);
+        font-size: 13px;
+        padding: 9px 12px;
+        box-shadow: none;
+    }
+
+        .work-item-details-page .form-control:focus,
+        .work-item-details-page .form-select:focus {
+            border-color: var(--wid-primary);
+            box-shadow: 0 0 0 3px rgba(101, 88, 211, 0.11);
+        }
+
+    .work-item-details-page .form-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #60677d;
+        margin-bottom: 7px;
+    }
+
+    /* =========================================================
+   Sidebar
+   ========================================================= */
+
+    .work-item-details-page .col-lg-4 > .card {
+        position: relative;
+    }
+
+    .work-item-details-page .col-lg-4 .card-header {
+        min-height: 52px;
+    }
+
+    .work-item-details-page .col-lg-4 dl {
+        row-gap: 15px;
+    }
+
+    .work-item-details-page .col-lg-4 dt {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--wid-muted);
+    }
+
+    .work-item-details-page .col-lg-4 dd {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--wid-text);
+    }
+
+    /* =========================================================
+   Research Extensions
+   ========================================================= */
+
+    .work-item-details-page .col-lg-4 .card-body > .mb-3 {
+        padding: 11px 12px;
+        margin-bottom: 9px !important;
+        border: 1px solid var(--wid-border);
+        border-radius: 10px;
+        background: #fcfcfe;
+    }
+
+        .work-item-details-page .col-lg-4 .card-body > .mb-3:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        .work-item-details-page .col-lg-4 .card-body > .mb-3 .fw-semibold {
+            font-size: 12px;
+        }
+
+    /* =========================================================
+   Alerts / Feedback
+   ========================================================= */
+
+    .work-item-details-page > .alert {
+        border-radius: 12px;
+        padding: 13px 17px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .work-item-details-page .alert-success {
+        background: #eaf8f2;
+        color: #137c58;
+        border-color: #d0efe1;
+    }
+
+    /* =========================================================
+   Meeting Action Item Partial
+   ========================================================= */
+
+    .work-item-details-page .crm-meeting-action-item,
+    .work-item-details-page .meeting-action-item {
+        border-radius: var(--wid-radius);
+    }
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+    .work-item-details-page {
+        padding: 18px 12px !important;
+    }
+
+        .work-item-details-page > .d-flex.justify-content-between:first-of-type {
+            flex-direction: column;
+            align-items: stretch !important;
+            padding: 20px;
+        }
+
+            .work-item-details-page > .d-flex.justify-content-between:first-of-type > .d-flex {
+                width: 100%;
+            }
+
+                .work-item-details-page > .d-flex.justify-content-between:first-of-type > .d-flex .btn {
+                    flex: 1;
+                }
+}
+
+@media (max-width: 575.98px) {
+    .work-item-details-page {
+        padding: 12px 8px !important;
+    }
+
+        .work-item-details-page .card-header {
+            padding: 13px 14px;
+        }
+
+        .work-item-details-page .card-body {
+            padding: 15px;
+        }
+
+        .work-item-details-page .btn {
+            padding: 8px 10px;
+            font-size: 11px;
+        }
+
+        .work-item-details-page > .d-flex.justify-content-between:first-of-type > .d-flex {
+            flex-direction: column;
+        }
+
+            .work-item-details-page > .d-flex.justify-content-between:first-of-type > .d-flex .btn {
+                width: 100%;
+            }
+
+        .work-item-details-page .accordion-body {
+            padding: 14px;
+        }
+}

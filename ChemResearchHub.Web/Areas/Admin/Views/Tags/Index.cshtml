@@ -4,36 +4,104 @@
     ViewData["Title"] = "Tag Management";
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <div class="text-muted mb-1">Work Item Management</div>
-            <h1 class="h3 mb-1">Tags</h1>
-            <p class="text-muted mb-0">Manage tags used to categorize work items.</p>
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/tag-management-index.css"
+          asp-append-version="true" />
+}
+
+<div class="tag-management-page" dir="ltr">
+
+    <div class="tag-management-header">
+        <div class="tag-management-heading">
+            <div class="tag-management-eyebrow">
+                <span class="tag-management-eyebrow-icon">
+                    <i class="bi bi-tags"></i>
+                </span>
+                Work Item Management
+            </div>
+
+            <h1>Tags</h1>
+
+            <p>
+                Manage tags used to categorize work items.
+            </p>
         </div>
-        <a asp-action="Create" class="btn btn-primary">Create Tag</a>
+
+        <a asp-action="Create"
+           class="btn tag-management-create-button">
+            <i class="bi bi-plus-lg"></i>
+            <span>Create Tag</span>
+        </a>
+    </div>
+
+    <div class="tag-management-summary">
+        <div class="tag-management-summary-icon">
+            <i class="bi bi-tags-fill"></i>
+        </div>
+
+        <div class="tag-management-summary-content">
+            <span>Total Tags</span>
+            <strong>@Model.Count</strong>
+        </div>
+
+        <div class="tag-management-summary-divider"></div>
+
+        <div class="tag-management-summary-detail">
+            <span>Work Item Classification</span>
+            <small>Organize and categorize research activities</small>
+        </div>
     </div>
 
     @if (TempData["SuccessMessage"] is string successMessage)
     {
-        <div class="alert alert-success alert-dismissible fade show">
-            @successMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert tag-management-alert tag-management-alert-success alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-check-circle-fill"></i>
+            <span>@successMessage</span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
         </div>
     }
 
     @if (TempData["ErrorMessage"] is string errorMessage)
     {
-        <div class="alert alert-danger alert-dismissible fade show">
-            @errorMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert tag-management-alert tag-management-alert-error alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span>@errorMessage</span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
         </div>
     }
 
-    <div class="card shadow-sm">
+    <div class="tag-management-card">
+
+        <div class="tag-management-card-header">
+            <div>
+                <h2>Tag Directory</h2>
+                <p>Manage classification labels and their appearance.</p>
+            </div>
+
+            <span class="tag-management-count">
+                @Model.Count tags
+            </span>
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table class="table tag-management-table align-middle mb-0">
+
+                <thead>
                     <tr>
                         <th>Tag</th>
                         <th>Description</th>
@@ -42,11 +110,30 @@
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @if (Model.Count == 0)
                     {
                         <tr>
-                            <td colspan="5" class="text-center py-5 text-muted">No tags found.</td>
+                            <td colspan="5">
+                                <div class="tag-management-empty">
+                                    <div class="tag-management-empty-icon">
+                                        <i class="bi bi-tags"></i>
+                                    </div>
+
+                                    <h5>No tags found</h5>
+
+                                    <p>
+                                        There are currently no tags configured.
+                                    </p>
+
+                                    <a asp-action="Create"
+                                       class="btn tag-management-empty-button">
+                                        <i class="bi bi-plus-lg"></i>
+                                        Create First Tag
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                     }
                     else
@@ -55,45 +142,95 @@
                         {
                             <tr>
                                 <td>
-                                    <span class="badge rounded-pill"
-                                          style="background-color:@tag.Color;color:#fff;">
-                                        @tag.Name
+                                    <div class="tag-management-identity">
+                                        <span class="tag-management-color-indicator"
+                                              style="background-color:@tag.Color;">
+                                        </span>
+
+                                        <span class="tag-management-name">
+                                            @tag.Name
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="tag-management-description">
+                                        @(string.IsNullOrWhiteSpace(tag.Description)
+                                            ? "—"
+                                            : tag.Description)
                                     </span>
                                 </td>
-                                <td>@(string.IsNullOrWhiteSpace(tag.Description) ? "—" : tag.Description)</td>
+
                                 <td>
-                                    <span class="d-inline-block rounded border me-1"
-                                          style="width:18px;height:18px;background-color:@tag.Color;vertical-align:middle;"></span>
-                                    <code>@tag.Color</code>
+                                    <div class="tag-management-color-info">
+                                        <span class="tag-management-color-swatch"
+                                              style="background-color:@tag.Color;">
+                                        </span>
+
+                                        <code>@tag.Color</code>
+                                    </div>
                                 </td>
+
                                 <td>
                                     @if (tag.IsActive)
                                     {
-                                        <span class="badge bg-success">Active</span>
+                                        <span class="tag-management-status tag-management-status-active">
+                                            <span class="tag-management-status-dot"></span>
+                                            Active
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">Inactive</span>
+                                        <span class="tag-management-status tag-management-status-inactive">
+                                            <span class="tag-management-status-dot"></span>
+                                            Inactive
+                                        </span>
                                     }
                                 </td>
-                                <td class="text-end">
-                                    <a asp-action="Edit" asp-route-id="@tag.Id"
-                                       class="btn btn-sm btn-outline-primary">Edit</a>
 
-                                    <form asp-action="ToggleActive" asp-route-id="@tag.Id"
-                                          method="post" class="d-inline"
-                                          onsubmit="return confirm('Are you sure you want to change this tag status?');">
-                                        <button type="submit"
-                                                class="btn btn-sm @(tag.IsActive ? "btn-outline-warning" : "btn-outline-success")">
-                                            @(tag.IsActive ? "Deactivate" : "Activate")
-                                        </button>
-                                    </form>
+                                <td class="text-end">
+                                    <div class="tag-management-actions">
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@tag.Id"
+                                           class="btn tag-management-action tag-management-edit-action">
+                                            <i class="bi bi-pencil-square"></i>
+                                            <span>Edit</span>
+                                        </a>
+
+                                        <form asp-action="ToggleActive"
+                                              asp-route-id="@tag.Id"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to change this tag status?');">
+
+                                            <button type="submit"
+                                                    class="btn tag-management-action @(tag.IsActive ? "tag-management-deactivate-action" : "tag-management-activate-action")">
+
+                                                @if (tag.IsActive)
+                                                {
+                                                    <i class="bi bi-toggle-on"></i>
+                                                    <span>Deactivate</span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-toggle-off"></i>
+                                                    <span>Activate</span>
+                                                }
+
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </td>
                             </tr>
                         }
                     }
                 </tbody>
+
             </table>
         </div>
+
     </div>
+
 </div>

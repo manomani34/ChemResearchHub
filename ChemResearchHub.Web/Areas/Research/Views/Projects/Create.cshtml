@@ -4,6 +4,12 @@
     ViewData["Title"] = "ایجاد پروژه";
 }
 
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/project-forms.css"
+          asp-append-version="true" />
+}
+
 <div class="project-form-page">
 
     <div class="project-form-header">
@@ -33,8 +39,7 @@
 
     <div class="project-form-card">
 
-        <form asp-action="Create"
-              method="post">
+        <form asp-action="Create" method="post">
 
             @Html.AntiForgeryToken()
 
@@ -74,8 +79,7 @@
                     <textarea asp-for="Description"
                               class="project-form-input project-form-textarea"
                               rows="6"
-                              placeholder="توضیح مختصر درباره هدف و محدوده پروژه...">
-                    </textarea>
+                              placeholder="توضیح مختصر درباره هدف و محدوده پروژه..."></textarea>
 
                     <span asp-validation-for="Description"
                           class="project-form-error">

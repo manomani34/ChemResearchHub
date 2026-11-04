@@ -1,6 +1,4 @@
 ﻿using ChemResearchHub.Application.Meetings.DTOs;
-using ChemResearchHub.Application.Users.Dtos;
-using ChemResearchHub.Application.Projects.Dtos;
 using ChemResearchHub.Domain.Enums.Meetings;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -19,6 +17,8 @@ public class ActionItemsViewModel
     public List<SelectListItem> Projects { get; set; } = [];
 
     public List<SelectListItem> Decisions { get; set; } = [];
+
+    public List<SelectListItem> WorkItems { get; set; } = [];
 
     public int TotalCount => Items.Count;
 

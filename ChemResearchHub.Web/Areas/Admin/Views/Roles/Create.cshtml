@@ -4,46 +4,96 @@
     ViewData["Title"] = "Create Role";
 }
 
-<div class="container py-4">
-    <div class="mb-4">
-        <div class="text-muted mb-1">Access Management</div>
-        <h1 class="h3">Create Role</h1>
-    </div>
+<div class="role-form-page">
+    <div class="role-form-header">
+        <div>
+            <div class="role-form-eyebrow">Access Management</div>
+            <h1 class="role-form-title">Create Role</h1>
+            <p class="role-form-subtitle">
+                Define a new role for application access management.
+            </p>
+        </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3"></div>
-
-                <div class="mb-4">
-                    <label asp-for="RoleName"
-                           class="form-label"></label>
-
-                    <input asp-for="RoleName"
-                           class="form-control"
-                           placeholder="e.g. ProjectManager" />
-
-                    <span asp-validation-for="RoleName"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        Create
-                    </button>
-
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Cancel
-                    </a>
-                </div>
-            </form>
-
+        <div class="role-form-header-icon">
+            <i class="bi bi-shield-plus"></i>
         </div>
     </div>
+
+    <div class="role-form-layout">
+        <div class="role-form-main">
+            <div class="role-form-card">
+                <div class="role-form-card-header">
+                    <div class="role-form-card-icon">
+                        <i class="bi bi-person-lock"></i>
+                    </div>
+                    <div>
+                        <h2>Role Information</h2>
+                        <p>Enter the details of the new role.</p>
+                    </div>
+                </div>
+
+                <div class="role-form-card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger role-form-validation-summary">
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="RoleName" class="form-label">
+                                Role Name
+                            </label>
+
+                            <input asp-for="RoleName"
+                                   class="form-control role-form-input"
+                                   placeholder="e.g. ProjectManager" />
+
+                            <span asp-validation-for="RoleName"
+                                  class="text-danger role-form-field-error">
+                            </span>
+
+                            <div class="role-form-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Use a clear and descriptive role name.
+                            </div>
+                        </div>
+
+                        <div class="role-form-actions">
+                            <button type="submit" class="btn btn-primary role-form-submit">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Create
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <aside class="role-form-sidebar">
+            <div class="role-form-info-card">
+                <div class="role-form-info-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>Access Management</h3>
+                <p>
+                    A role defines a set of access rights for users.
+                    Once created, you can configure its permissions
+                    from the role management section.
+                </p>
+            </div>
+        </aside>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/role-form.css"
+          asp-append-version="true" />
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

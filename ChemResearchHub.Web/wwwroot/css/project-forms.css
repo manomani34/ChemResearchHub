@@ -1,0 +1,379 @@
+﻿/* =========================================================
+   ChemResearchHub — Project Create / Edit
+   Scoped to .project-form-page
+   ========================================================= */
+
+.project-form-page {
+    --project-primary: #6558d3;
+    --project-primary-dark: #5144bd;
+    --project-primary-soft: #f0efff;
+    --project-text: #25263a;
+    --project-muted: #77798c;
+    --project-border: #e9eaf1;
+    --project-surface: #ffffff;
+    padding: 1.25rem;
+    border-radius: 18px;
+    background: #f7f8fc;
+    color: var(--project-text);
+}
+
+    /* Header */
+
+    .project-form-page .project-form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+        padding: 1.4rem 1.5rem;
+        border: 1px solid var(--project-border);
+        border-radius: 17px;
+        background: var(--project-surface);
+        box-shadow: 0 4px 18px rgba(31, 35, 60, .035);
+    }
+
+    .project-form-page .project-form-kicker {
+        margin-bottom: .45rem;
+        color: var(--project-primary);
+        font-size: .76rem;
+        font-weight: 700;
+        letter-spacing: .25px;
+    }
+
+    .project-form-page .project-form-header h1 {
+        margin: 0 0 .5rem;
+        color: var(--project-text);
+        font-size: 1.55rem;
+        font-weight: 750;
+        letter-spacing: -.4px;
+    }
+
+    .project-form-page .project-form-header p {
+        margin: 0;
+        color: var(--project-muted);
+        font-size: .88rem;
+        line-height: 1.8;
+    }
+
+    .project-form-page .project-form-header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+    }
+
+    /* Buttons */
+
+    .project-form-page .crh-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .4rem;
+        min-height: 39px;
+        padding: .55rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: .82rem;
+        font-weight: 650;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+        .project-form-page .crh-btn:hover {
+            transform: translateY(-1px);
+        }
+
+    .project-form-page .crh-btn-primary {
+        background: var(--project-primary);
+        border-color: var(--project-primary);
+        color: #fff;
+    }
+
+        .project-form-page .crh-btn-primary:hover {
+            background: var(--project-primary-dark);
+            border-color: var(--project-primary-dark);
+            color: #fff;
+            box-shadow: 0 5px 12px rgba(101, 88, 211, .16);
+        }
+
+    .project-form-page .crh-btn-soft {
+        background: #fff;
+        border-color: #e2e2ec;
+        color: #626477;
+    }
+
+        .project-form-page .crh-btn-soft:hover {
+            background: #f5f4ff;
+            border-color: #d6d1f5;
+            color: var(--project-primary-dark);
+        }
+
+    /* Main form card */
+
+    .project-form-page .project-form-card {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.6rem;
+        border: 1px solid var(--project-border);
+        border-radius: 17px;
+        background: var(--project-surface);
+        box-shadow: 0 5px 20px rgba(31, 35, 60, .04);
+    }
+
+    /* Form sections */
+
+    .project-form-page .project-form-section {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #f0f0f5;
+    }
+
+        .project-form-page .project-form-section:last-of-type {
+            margin-bottom: 0;
+        }
+
+    .project-form-page .project-form-section-title {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: 1.35rem;
+        color: var(--project-text);
+        font-size: .95rem;
+        font-weight: 750;
+    }
+
+        .project-form-page .project-form-section-title::before {
+            content: "";
+            width: 4px;
+            height: 19px;
+            border-radius: 5px;
+            background: var(--project-primary);
+        }
+
+    /* Fields */
+
+    .project-form-page .project-form-field {
+        margin-bottom: 1.2rem;
+    }
+
+        .project-form-page .project-form-field:last-child {
+            margin-bottom: 0;
+        }
+
+    .project-form-page .project-form-label {
+        display: block;
+        margin-bottom: .5rem;
+        color: #505166;
+        font-size: .81rem;
+        font-weight: 650;
+    }
+
+    .project-form-page .project-form-input {
+        display: block;
+        width: 100%;
+        min-height: 43px;
+        padding: .65rem .85rem;
+        border: 1px solid #e0e2ec;
+        border-radius: 10px;
+        background: #fff;
+        color: var(--project-text);
+        font-family: inherit;
+        font-size: .86rem;
+        line-height: 1.7;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .project-form-page .project-form-input::placeholder {
+            color: #a3a4b2;
+        }
+
+        .project-form-page .project-form-input:focus {
+            border-color: #aaa1eb;
+            outline: none;
+            box-shadow: 0 0 0 .2rem rgba(101, 88, 211, .1);
+        }
+
+        .project-form-page .project-form-input:hover:not(:focus) {
+            border-color: #c9c7dc;
+        }
+
+    .project-form-page .project-form-textarea {
+        min-height: 145px;
+        resize: vertical;
+    }
+
+    /* Validation */
+
+    .project-form-page .project-form-error {
+        display: block;
+        margin-top: .4rem;
+        color: #c03945;
+        font-size: .75rem;
+    }
+
+    .project-form-page .project-form-input.input-validation-error {
+        border-color: #e4a4aa;
+        background: #fffafa;
+    }
+
+    .project-form-page .project-validation-summary {
+        margin-bottom: 1.25rem;
+        color: #b83240;
+        font-size: .82rem;
+    }
+
+        .project-form-page .project-validation-summary:empty {
+            display: none;
+        }
+
+        .project-form-page .project-validation-summary:not(:empty) {
+            padding: .85rem 1rem;
+            border: 1px solid #f1c9cd;
+            border-radius: 10px;
+            background: #fff4f5;
+        }
+
+    /* Active project toggle */
+
+    .project-form-page .project-active-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid #e8e7f2;
+        border-radius: 12px;
+        background: #fafaff;
+        cursor: pointer;
+        transition: border-color .18s ease, background-color .18s ease;
+    }
+
+        .project-form-page .project-active-toggle:hover {
+            border-color: #d4d0f1;
+            background: #f8f7ff;
+        }
+
+    .project-form-page .project-active-toggle-content {
+        display: flex;
+        flex-direction: column;
+        gap: .35rem;
+    }
+
+    .project-form-page .project-active-toggle-title {
+        color: #3d3e53;
+        font-size: .85rem;
+        font-weight: 700;
+    }
+
+    .project-form-page .project-active-toggle-description {
+        color: var(--project-muted);
+        font-size: .75rem;
+        line-height: 1.8;
+    }
+
+    .project-form-page .project-active-checkbox {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .project-form-page .project-active-switch {
+        position: relative;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 25px;
+        border-radius: 999px;
+        background: #d5d6df;
+        transition: background-color .2s ease;
+    }
+
+        .project-form-page .project-active-switch::after {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+            content: "";
+            transition: transform .2s ease;
+        }
+
+    .project-form-page .project-active-checkbox:checked + .project-active-switch {
+        background: var(--project-primary);
+    }
+
+        .project-form-page .project-active-checkbox:checked + .project-active-switch::after {
+            transform: translateX(19px);
+        }
+
+    .project-form-page .project-active-checkbox:focus-visible + .project-active-switch {
+        outline: 3px solid rgba(101, 88, 211, .2);
+        outline-offset: 3px;
+    }
+
+    /* Form actions */
+
+    .project-form-page .project-form-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: .7rem;
+        padding-top: 1.4rem;
+    }
+
+        .project-form-page .project-form-actions .crh-btn {
+            min-width: 125px;
+        }
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .project-form-page {
+        padding: .85rem;
+        border-radius: 13px;
+    }
+
+        .project-form-page .project-form-header {
+            padding: 1.1rem;
+        }
+
+            .project-form-page .project-form-header h1 {
+                font-size: 1.3rem;
+            }
+
+        .project-form-page .project-form-card {
+            padding: 1.15rem;
+        }
+}
+
+@media (max-width: 576px) {
+    .project-form-page .project-form-header {
+        align-items: stretch;
+    }
+
+    .project-form-page .project-form-header-actions {
+        width: 100%;
+    }
+
+        .project-form-page .project-form-header-actions .crh-btn {
+            flex: 1;
+        }
+
+    .project-form-page .project-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .project-form-page .project-form-actions .crh-btn {
+            width: 100%;
+        }
+
+    .project-form-page .project-active-toggle {
+        gap: .8rem;
+    }
+}

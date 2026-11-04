@@ -4,328 +4,461 @@
     ViewData["Title"] = "Edit Work Item";
 }
 
-<div class="container py-4">
+<div class="work-item-edit-page container-fluid py-4">
 
-    <div class="mb-4">
-        <div class="text-muted mb-1">
+    <div class="wie-header mb-4">
+        <div class="wie-eyebrow">
+            <i class="bi bi-kanban me-2"></i>
             Research Work Item
         </div>
 
-        <h1 class="h3 mb-1">
-            Edit Work Item
-        </h1>
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <h1 class="wie-title">Edit Work Item</h1>
+                <p class="wie-subtitle mb-0">
+                    Update the work item details, ownership and status.
+                </p>
+            </div>
 
-        <p class="text-muted mb-0">
-            Update the work item details and status.
-        </p>
-    </div>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <form asp-action="Edit" method="post">
-
-                <input asp-for="Id" type="hidden" />
-                <input asp-for="ProjectId" type="hidden" />
-                <input asp-for="BoardId" type="hidden" />
-                <input asp-for="BoardColumnId" type="hidden" />
-
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Title"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="Title"
-                           class="form-control" />
-
-                    <span asp-validation-for="Title"
-                          class="text-danger">
-                    </span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Description"
-                           class="form-label">
-                    </label>
-
-                    <textarea asp-for="Description"
-                              class="form-control"
-                              rows="5">
-                    </textarea>
-
-                    <span asp-validation-for="Description"
-                          class="text-danger">
-                    </span>
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-
-                        <label asp-for="Type"
-                               class="form-label">
-                        </label>
-
-                        <select asp-for="Type"
-                                asp-items="Html.GetEnumSelectList<ChemResearchHub.Domain.Enums.WorkItemType>()"
-                                class="form-select">
-                        </select>
-
-                        <span asp-validation-for="Type"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-
-                        <label asp-for="Priority"
-                               class="form-label">
-                        </label>
-
-                        <input asp-for="Priority"
-                               type="number"
-                               class="form-control"
-                               min="0"
-                               max="10" />
-
-                        <span asp-validation-for="Priority"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label">Tags</label>
-
-                    @if (Model.AvailableTags.Count == 0)
-                    {
-                        <div class="text-muted small">No active tags available.</div>
-                    }
-                    else
-                    {
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach (var tag in Model.AvailableTags)
-                            {
-                                <label class="form-check border rounded px-3 py-2 d-flex align-items-center gap-2">
-                                    <input class="form-check-input mt-0"
-                                           type="checkbox"
-                                           name="TagIds"
-                                           value="@tag.Id"
-                                           checked="@Model.TagIds.Contains(tag.Id)" />
-                                    <span class="badge"
-                                          style="background-color: @tag.Color; color: white;">
-                                        @tag.Name
-                                    </span>
-                                </label>
-                            }
-                        </div>
-                    }
-                </div>
-                <div class="mb-3">
-
-                    <label asp-for="DueDate"
-                           class="form-label">
-                    </label>
-
-                    <input asp-for="DueDate"
-                           type="date"
-                           class="form-control" />
-
-                    <span asp-validation-for="DueDate"
-                          class="text-danger">
-                    </span>
-
-                </div>
-
-                <div class="mb-3">
-
-    <label asp-for="AssignedToUserId"
-           class="form-label">
-        Assigned To
-    </label>
-
-    <select asp-for="AssignedToUserId"
-            class="form-select">
-
-        <option value="">
-            Unassigned
-        </option>
-
-        @foreach (var user in ViewBag.Users)
-        {
-            <option value="@user.Id">
-                @(string.IsNullOrWhiteSpace(user.FullName)
-                    ? user.Email ?? user.Id
-                    : user.FullName)
-            </option>
-        }
-
-    </select>
-
-    <span asp-validation-for="AssignedToUserId"
-          class="text-danger">
-    </span>
-
-</div>
-<div class="mb-3">
-    <label class="form-label">Additional Collaborators</label>
-
-    <div id="availableCollaborators"
-         class="list-group border rounded mb-3"
-         style="max-height: 180px; overflow-y: auto;">
-        @foreach (var user in ViewBag.Users)
-        {
-            var displayName = string.IsNullOrWhiteSpace(user.FullName)
-                ? (user.Email ?? user.Id)
-                : user.FullName;
-
-            <button type="button"
-                    class="list-group-item list-group-item-action collaborator-option"
-                    data-user-id="@user.Id"
-                    data-user-name="@displayName">
-                <i class="bi bi-plus-circle me-2"></i>@displayName
-            </button>
-        }
-    </div>
-
-    <div class="form-label">Selected Collaborators</div>
-
-    <div id="selectedCollaborators" class="d-flex flex-wrap align-items-center gap-2 mb-2">
-        <div id="noCollaboratorsMessage" class="text-muted small">
-            No additional collaborators selected.
+            <div class="wie-header-icon">
+                <i class="bi bi-pencil-square"></i>
+            </div>
         </div>
     </div>
 
-    <div id="collaboratorHiddenInputs"></div>
+    <form asp-action="Edit" method="post">
 
-    <span asp-validation-for="AssignedUserIds"
-          class="text-danger"></span>
-</div>
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="ProjectId" type="hidden" />
+        <input asp-for="BoardId" type="hidden" />
+        <input asp-for="BoardColumnId" type="hidden" />
 
-<script>
-(() => {
-    const primarySelect = document.getElementById('AssignedToUserId');
-    const available = document.getElementById('availableCollaborators');
-    const selected = document.getElementById('selectedCollaborators');
-    const hiddenInputs = document.getElementById('collaboratorHiddenInputs');
-    const emptyMessage = document.getElementById('noCollaboratorsMessage');
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger wie-validation-summary mb-4">
+        </div>
 
-    if (!primarySelect || !available || !selected || !hiddenInputs) return;
+        <div class="row g-4">
 
-    const chosen = new Map();
+            <div class="col-lg-8">
 
-    const initialIds = @Html.Raw(
-        System.Text.Json.JsonSerializer.Serialize(
-            Model.AssignedUserIds ?? new List<string>()));
+                <div class="wie-card mb-4">
+                    <div class="wie-card-header">
+                        <div class="wie-section-icon">
+                            <i class="bi bi-card-text"></i>
+                        </div>
+                        <div>
+                            <h5>Work Item Details</h5>
+                            <p>Define the title and description of this work item.</p>
+                        </div>
+                    </div>
 
-    available.querySelectorAll('.collaborator-option').forEach(button => {
-        const id = button.dataset.userId;
-        if (initialIds.includes(id) && id !== primarySelect.value) {
-            chosen.set(id, button.dataset.userName);
-        }
-    });
+                    <div class="wie-card-body">
 
-    function render() {
-        selected.querySelectorAll('.selected-collaborator').forEach(x => x.remove());
-        hiddenInputs.replaceChildren();
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label wie-label"></label>
 
-        if (emptyMessage) emptyMessage.hidden = chosen.size > 0;
+                            <input asp-for="Title"
+                                   class="form-control wie-control"
+                                   placeholder="Enter work item title..." />
 
-        available.querySelectorAll('.collaborator-option').forEach(button => {
-            const id = button.dataset.userId;
-            button.hidden = id === primarySelect.value || chosen.has(id);
-        });
+                            <span asp-validation-for="Title"
+                                  class="text-danger">
+                            </span>
+                        </div>
 
-        for (const [id, name] of chosen) {
-            const row = document.createElement('div');
-            row.className = 'selected-collaborator badge rounded-pill bg-light text-dark border d-inline-flex align-items-center gap-2 px-2 py-2';
+                        <div class="mb-0">
+                            <label asp-for="Description"
+                                   class="form-label wie-label">
+                            </label>
 
-            const label = document.createElement('span');
-            label.textContent = name;
+                            <textarea asp-for="Description"
+                                      class="form-control wie-control"
+                                      rows="6"
+                                      placeholder="Describe the research task, objectives and expected outcome...">
+                            </textarea>
 
-            const remove = document.createElement('button');
-            remove.type = 'button';
-            remove.className = 'btn btn-sm p-0 border-0 text-danger lh-1';
-            remove.textContent = '×';
-            remove.style.fontSize = '14px';
-            remove.style.minWidth = '14px';
-            remove.setAttribute('aria-label', 'Remove ' + name);
-            remove.addEventListener('click', () => {
-                chosen.delete(id);
-                render();
-            });
+                            <span asp-validation-for="Description"
+                                  class="text-danger">
+                            </span>
+                        </div>
 
-            row.append(label, remove);
-            selected.appendChild(row);
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'AssignedUserIds';
-            input.value = id;
-            hiddenInputs.appendChild(input);
-        }
-    }
-
-    available.querySelectorAll('.collaborator-option').forEach(button => {
-        button.addEventListener('click', () => {
-            const id = button.dataset.userId;
-            const name = button.dataset.userName;
-
-            if (id && id !== primarySelect.value && !chosen.has(id)) {
-                chosen.set(id, name);
-                render();
-            }
-        });
-    });
-
-    primarySelect.addEventListener('change', render);
-    render();
-})();
-</script><div class="form-check mb-4">
-
-                    <input asp-for="IsCompleted"
-                           class="form-check-input" />
-
-                    <label asp-for="IsCompleted"
-                           class="form-check-label">
-                        Completed
-                    </label>
-
+                    </div>
                 </div>
 
-                <div class="d-flex gap-2">
+                <div class="wie-card mb-4">
+                    <div class="wie-card-header">
+                        <div class="wie-section-icon">
+                            <i class="bi bi-sliders"></i>
+                        </div>
+                        <div>
+                            <h5>Classification & Priority</h5>
+                            <p>Configure the work item type and priority level.</p>
+                        </div>
+                    </div>
+
+                    <div class="wie-card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label asp-for="Type"
+                                       class="form-label wie-label">
+                                </label>
+
+                                <select asp-for="Type"
+                                        asp-items="Html.GetEnumSelectList<ChemResearchHub.Domain.Enums.WorkItemType>()"
+                                        class="form-select wie-control">
+                                </select>
+
+                                <span asp-validation-for="Type"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Priority"
+                                       class="form-label wie-label">
+                                </label>
+
+                                <input asp-for="Priority"
+                                       type="number"
+                                       class="form-control wie-control"
+                                       min="0"
+                                       max="10" />
+
+                                <span asp-validation-for="Priority"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wie-card mb-4">
+                    <div class="wie-card-header">
+                        <div class="wie-section-icon">
+                            <i class="bi bi-tags"></i>
+                        </div>
+                        <div>
+                            <h5>Tags</h5>
+                            <p>Associate relevant research tags with this work item.</p>
+                        </div>
+                    </div>
+
+                    <div class="wie-card-body">
+
+                        @if (Model.AvailableTags.Count == 0)
+                        {
+                            <div class="wie-empty-state">
+                                <i class="bi bi-info-circle"></i>
+                                <span>No active tags available.</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="wie-tags">
+                                @foreach (var tag in Model.AvailableTags)
+                                {
+                                    <label class="wie-tag-option">
+                                        <input class="form-check-input mt-0"
+                                               type="checkbox"
+                                               name="TagIds"
+                                               value="@tag.Id"
+                                               checked="@Model.TagIds.Contains(tag.Id)" />
+
+                                        <span class="badge"
+                                              style="background-color: @tag.Color; color: white;">
+                                            @tag.Name
+                                        </span>
+                                    </label>
+                                }
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="wie-card mb-4">
+                    <div class="wie-card-header">
+                        <div class="wie-section-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <h5>Assignment & Collaboration</h5>
+                            <p>Manage the primary assignee and additional collaborators.</p>
+                        </div>
+                    </div>
+
+                    <div class="wie-card-body">
+
+                        <div class="mb-4">
+                            <label asp-for="AssignedToUserId"
+                                   class="form-label wie-label">
+                                Assigned To
+                            </label>
+
+                            <select asp-for="AssignedToUserId"
+                                    class="form-select wie-control">
+
+                                <option value="">Unassigned</option>
+
+                                @foreach (var user in ViewBag.Users)
+                                {
+                                    <option value="@user.Id">
+                                        @(string.IsNullOrWhiteSpace(user.FullName)
+                                            ? user.Email ?? user.Id
+                                            : user.FullName)
+                                    </option>
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="AssignedToUserId"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="wie-collaborator-section">
+
+                            <label class="form-label wie-label">
+                                Additional Collaborators
+                            </label>
+
+                            <div class="wie-collaborator-hint">
+                                Select other team members who will collaborate on this work item.
+                            </div>
+
+                            <div id="availableCollaborators"
+                                 class="wie-collaborator-list">
+
+                                @foreach (var user in ViewBag.Users)
+                                {
+                                    var displayName = string.IsNullOrWhiteSpace(user.FullName)
+                                        ? (user.Email ?? user.Id)
+                                        : user.FullName;
+
+                                    <button type="button"
+                                            class="wie-collaborator-option collaborator-option"
+                                            data-user-id="@user.Id"
+                                            data-user-name="@displayName">
+
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span>@displayName</span>
+
+                                    </button>
+                                }
+
+                            </div>
+
+                            <div class="wie-selected-heading">
+                                <i class="bi bi-person-check me-2"></i>
+                                Selected Collaborators
+                            </div>
+
+                            <div id="selectedCollaborators"
+                                 class="wie-selected-collaborators">
+
+                                <div id="noCollaboratorsMessage"
+                                     class="wie-empty-collaborators">
+                                    No additional collaborators selected.
+                                </div>
+
+                            </div>
+
+                            <div id="collaboratorHiddenInputs"></div>
+
+                            <span asp-validation-for="AssignedUserIds"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="wie-card mb-4">
+                    <div class="wie-card-header">
+                        <div class="wie-section-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h5>Planning</h5>
+                            <p>Set the target completion date.</p>
+                        </div>
+                    </div>
+
+                    <div class="wie-card-body">
+
+                        <label asp-for="DueDate"
+                               class="form-label wie-label">
+                        </label>
+
+                        <input asp-for="DueDate"
+                               type="date"
+                               class="form-control wie-control" />
+
+                        <span asp-validation-for="DueDate"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+                </div>
+
+                <div class="wie-card mb-4">
+                    <div class="wie-card-header">
+                        <div class="wie-section-icon">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div>
+                            <h5>Completion Status</h5>
+                            <p>Update the current completion state.</p>
+                        </div>
+                    </div>
+
+                    <div class="wie-card-body">
+
+                        <label class="wie-completion-option">
+                            <input asp-for="IsCompleted"
+                                   class="form-check-input" />
+
+                            <span class="wie-completion-content">
+                                <strong>Completed</strong>
+                                <small>Mark this work item as completed.</small>
+                            </span>
+                        </label>
+
+                    </div>
+                </div>
+
+                <div class="wie-action-card">
+                    <div class="wie-action-title">
+                        <i class="bi bi-save me-2"></i>
+                        Save Changes
+                    </div>
+
+                    <p>
+                        Review your changes before updating this work item.
+                    </p>
 
                     <button type="submit"
-                            class="btn btn-primary">
+                            class="btn wie-save-button w-100">
+                        <i class="bi bi-check-lg me-2"></i>
                         Save Changes
                     </button>
 
-                    <a asp-area="Research" asp-controller="Boards"
+                    <a asp-area="Research"
+                       asp-controller="Boards"
                        asp-action="Index"
                        asp-route-projectId="@Model.ProjectId"
                        asp-route-boardId="@Model.BoardId"
-                       class="btn btn-outline-secondary">
+                       class="btn wie-cancel-button w-100 mt-2">
                         Cancel
                     </a>
-
                 </div>
 
-            </form>
+            </div>
 
         </div>
-    </div>
+
+    </form>
 
 </div>
+
+<script>
+    (() => {
+        const primarySelect = document.getElementById('AssignedToUserId');
+        const available = document.getElementById('availableCollaborators');
+        const selected = document.getElementById('selectedCollaborators');
+        const hiddenInputs = document.getElementById('collaboratorHiddenInputs');
+        const emptyMessage = document.getElementById('noCollaboratorsMessage');
+
+        if (!primarySelect || !available || !selected || !hiddenInputs) return;
+
+        const chosen = new Map();
+
+        const initialIds = @Html.Raw(
+                        System.Text.Json.JsonSerializer.Serialize(
+                                Model.AssignedUserIds ?? new List<string>()));
+
+        available.querySelectorAll('.collaborator-option').forEach(button => {
+            const id = button.dataset.userId;
+
+            if (initialIds.includes(id) && id !== primarySelect.value) {
+                chosen.set(id, button.dataset.userName);
+            }
+        });
+
+        function render() {
+            selected.querySelectorAll('.selected-collaborator').forEach(x => x.remove());
+            hiddenInputs.replaceChildren();
+
+            if (emptyMessage) {
+                emptyMessage.hidden = chosen.size > 0;
+            }
+
+            available.querySelectorAll('.collaborator-option').forEach(button => {
+                const id = button.dataset.userId;
+                button.hidden = id === primarySelect.value || chosen.has(id);
+            });
+
+            for (const [id, name] of chosen) {
+                const row = document.createElement('div');
+                row.className = 'selected-collaborator wie-selected-collaborator';
+
+                const label = document.createElement('span');
+                label.textContent = name;
+
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'wie-remove-collaborator';
+                remove.textContent = '×';
+                remove.setAttribute('aria-label', 'Remove ' + name);
+
+                remove.addEventListener('click', () => {
+                    chosen.delete(id);
+                    render();
+                });
+
+                row.append(label, remove);
+                selected.appendChild(row);
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'AssignedUserIds';
+                input.value = id;
+
+                hiddenInputs.appendChild(input);
+            }
+        }
+
+        available.querySelectorAll('.collaborator-option').forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.dataset.userId;
+                const name = button.dataset.userName;
+
+                if (id && id !== primarySelect.value && !chosen.has(id)) {
+                    chosen.set(id, name);
+                    render();
+                }
+            });
+        });
+
+        primarySelect.addEventListener('change', render);
+
+        render();
+    })();
+</script>
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/work-item-edit.css"
+          asp-append-version="true" />
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-

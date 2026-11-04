@@ -4,86 +4,34 @@
     ViewData["Title"] = "آزمایش‌ها";
 }
 
-<style>
-    .experiment-reference-copy {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .experiment-copy-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 22px;
-        height: 22px;
-        padding: 0;
-        border: 0;
-        border-radius: 5px;
-        background: transparent;
-        color: #64748b;
-        cursor: pointer;
-        font-size: 11px;
-    }
-
-    .experiment-copy-button:hover {
-        background: #e2e8f0;
-        color: #4f46e5;
-    }
-
-    .experiment-copy-button.copied {
-        color: #16a34a;
-        background: #dcfce7;
-    }
-
-    .experiment-details-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 6px 10px;
-        border: 1px solid #cbd5e1;
-        border-radius: 7px;
-        background: #ffffff;
-        color: #475569;
-        text-decoration: none;
-        font-size: 0.75rem;
-        transition: all 0.15s ease;
-        white-space: nowrap;
-    }
-
-    .experiment-details-button:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
-        color: #1e293b;
-    }
-</style>
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/experiments-list.css"
+          asp-append-version="true" />
+}
 
 <div class="experiments-page">
 
     <div class="experiments-header">
 
         <div>
+            <div class="experiments-eyebrow">Research Experiments</div>
             <h1>آزمایش‌ها</h1>
-
-            <p>
-                فهرست آزمایش‌های ثبت‌شده در پروژه‌های پژوهشی
-            </p>
+            <p>فهرست آزمایش‌های ثبت‌شده در پروژه‌های پژوهشی</p>
         </div>
 
         <div class="experiments-count">
-            @Model.Items.Count آزمایش
+            <span class="experiments-count-number">@Model.Items.Count</span>
+            <span>آزمایش ثبت‌شده</span>
         </div>
 
     </div>
-
 
     @if (Model.Items.Count == 0)
     {
         <div class="experiments-empty">
 
-            <div class="experiments-empty-icon">
-                🧪
-            </div>
+            <div class="experiments-empty-icon">🧪</div>
 
             <h3>هنوز آزمایشی ثبت نشده است</h3>
 
@@ -91,9 +39,10 @@
                 آزمایش‌ها از داخل بخش کارهای پژوهشی ایجاد می‌شوند.
             </p>
 
-            <a asp-area="Research" asp-controller="WorkItems"
+            <a asp-area="Research"
+               asp-controller="WorkItems"
                asp-action="Index"
-               class="crh-btn crh-btn-primary">
+               class="experiments-primary-button">
                 مشاهده کارهای پژوهشی
             </a>
 
@@ -103,9 +52,20 @@
     {
         <div class="experiments-table-card">
 
+            <div class="experiments-table-heading">
+                <div>
+                    <h2>فهرست آزمایش‌ها</h2>
+                    <p>اطلاعات و وضعیت آزمایش‌های ثبت‌شده</p>
+                </div>
+
+                <span class="experiments-table-total">
+                    @Model.Items.Count مورد
+                </span>
+            </div>
+
             <div class="table-responsive">
 
-                <table class="table crh-table align-middle">
+                <table class="table experiments-table align-middle">
 
                     <thead>
                         <tr>
@@ -125,13 +85,10 @@
                         {
                             <tr>
 
-                                <!-- Reference Code -->
-
                                 <td>
-
                                     <div class="experiment-reference-copy">
 
-                                        <span class="crh-id">
+                                        <span class="experiment-reference">
                                             @item.ReferenceCode
                                         </span>
 
@@ -144,106 +101,75 @@
                                         </button>
 
                                     </div>
-
                                 </td>
 
-
-                                <!-- Experiment Title -->
-
                                 <td>
-
-                                    <div class="crh-primary-text">
+                                    <div class="experiment-title">
                                         @item.Title
                                     </div>
-
                                 </td>
 
-
-                                <!-- Work Item -->
-
                                 <td>
-
-                                    <div class="crh-primary-text">
+                                    <div class="experiment-work-title">
                                         @item.WorkItemTitle
                                     </div>
 
-                                    <div class="crh-secondary-text">
+                                    <div class="experiment-work-id">
                                         CRH-@item.WorkItemId.ToString("D6")
                                     </div>
-
                                 </td>
 
-
-                                <!-- Started -->
-
                                 <td>
-
                                     @if (item.StartedAt.HasValue)
                                     {
-                                        @item.StartedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                        <span class="experiment-date">
+                                            @item.StartedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="experiment-muted">—</span>
                                     }
-
                                 </td>
 
-
-                                <!-- Completed -->
-
                                 <td>
-
                                     @if (item.CompletedAt.HasValue)
                                     {
-                                        @item.CompletedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                        <span class="experiment-date">
+                                            @item.CompletedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="experiment-muted">—</span>
                                     }
-
                                 </td>
 
-
-                                <!-- Status -->
-
                                 <td>
-
                                     @if (item.IsCompleted)
                                     {
-                                        <span class="crh-status crh-status-success">
+                                        <span class="experiment-status experiment-status-success">
+                                            <span class="experiment-status-dot"></span>
                                             تکمیل‌شده
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="crh-status crh-status-warning">
+                                        <span class="experiment-status experiment-status-warning">
+                                            <span class="experiment-status-dot"></span>
                                             در حال انجام
                                         </span>
                                     }
-
                                 </td>
 
-
-                                <!-- Actions -->
-
                                 <td>
-
                                     <a asp-controller="Experiments"
                                        asp-action="Details"
                                        asp-route-id="@item.Id"
                                        class="experiment-details-button">
-
                                         🔬
-                                        مشاهده Notebook
-
+                                        <span>مشاهده Notebook</span>
                                     </a>
-
                                 </td>
 
                             </tr>
@@ -260,14 +186,13 @@
 
 </div>
 
-
 @section Scripts {
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
             const copyButtons =
-                document.querySelectorAll(".experiment-copy-button");
+                document.querySelectorAll(".experiments-page .experiment-copy-button");
 
             copyButtons.forEach(function (button) {
 
@@ -284,28 +209,20 @@
 
                     try {
 
-                        await navigator.clipboard.writeText(
-                            referenceCode
-                        );
+                        await navigator.clipboard.writeText(referenceCode);
 
                         const originalText =
                             button.textContent;
 
                         button.textContent = "✓";
-
                         button.classList.add("copied");
-
                         button.title = "کپی شد";
 
                         setTimeout(function () {
 
-                            button.textContent =
-                                originalText;
-
+                            button.textContent = originalText;
                             button.classList.remove("copied");
-
-                            button.title =
-                                "کپی شناسه";
+                            button.title = "کپی شناسه";
 
                         }, 1200);
 
@@ -325,4 +242,5 @@
 
         });
     </script>
+
 }

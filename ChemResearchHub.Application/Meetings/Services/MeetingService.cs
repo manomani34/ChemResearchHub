@@ -20,16 +20,52 @@ public class MeetingService : IMeetingService
         _workItemRepository = workItemRepository;
     }
 
+    public async Task<MeetingActionItemDto?> GetActionItemByWorkItemIdAsync(
+    int workItemId,
+    CancellationToken cancellationToken = default)
+    {
+        if (workItemId <= 0)
+            return null;
+
+        var actionItem =
+            await _repository.GetActionItemByWorkItemIdAsync(
+                workItemId,
+                cancellationToken);
+
+        return actionItem is null
+            ? null
+            : MapActionItem(actionItem);
+    }
+
+    public async Task<bool> UnlinkActionItemFromWorkItemAsync(
+        int actionItemId,
+        CancellationToken cancellationToken = default)
+    {
+        if (actionItemId <= 0)
+            return false;
+
+        var actionItem =
+            await _repository.GetActionItemByIdAsync(
+                actionItemId,
+                cancellationToken);
+
+        if (actionItem is null)
+            return false;
+
+        actionItem.UnlinkWorkItem();
+
+        await _repository.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }    
+
     public async Task<bool> LinkActionItemToWorkItemAsync(
     int id,
     int workItemId,
     CancellationToken cancellationToken = default)
     {
-        if (id <= 0)
-            throw new ArgumentOutOfRangeException(nameof(id));
-
-        if (workItemId <= 0)
-            throw new ArgumentOutOfRangeException(nameof(workItemId));
+        if (id <= 0 || workItemId <= 0)
+            return false;
 
         var actionItem = await _repository.GetActionItemByIdAsync(
             id,
@@ -44,6 +80,17 @@ public class MeetingService : IMeetingService
 
         if (workItem is null)
             return false;
+
+        var existingLink =
+            await _repository.GetActionItemByWorkItemIdAsync(
+                workItemId,
+                cancellationToken);
+
+        if (existingLink is not null && existingLink.Id != id)
+        {
+            throw new InvalidOperationException(
+                "این Work Item قبلاً به یک Action Item دیگر متصل شده است.");
+        }
 
         actionItem.LinkWorkItem(workItemId);
 
@@ -652,9 +699,9 @@ public class MeetingService : IMeetingService
     }
 
     public async Task<int?> AddActionItemAsync(
-        int meetingSessionId,
-        CreateMeetingActionItemRequest request,
-        CancellationToken cancellationToken = default)
+    int meetingSessionId,
+    CreateMeetingActionItemRequest request,
+    CancellationToken cancellationToken = default)
     {
         var session = await _repository.GetSessionForUpdateAsync(
             meetingSessionId,
@@ -672,6 +719,28 @@ public class MeetingService : IMeetingService
             request.ProjectId,
             request.DecisionId,
             request.AcceptanceCriteria);
+
+        if (request.WorkItemId.HasValue)
+        {
+            var workItem = await _workItemRepository.GetByIdAsync(
+                request.WorkItemId.Value,
+                cancellationToken);
+
+            if (workItem is null)
+                throw new InvalidOperationException(
+                    "Work Item انتخاب‌شده وجود ندارد.");
+
+            var existingLink =
+                await _repository.GetActionItemByWorkItemIdAsync(
+                    request.WorkItemId.Value,
+                    cancellationToken);
+
+            if (existingLink is not null)
+                throw new InvalidOperationException(
+                    "این Work Item قبلاً به یک Action Item دیگر متصل شده است.");
+
+            actionItem.LinkWorkItem(request.WorkItemId.Value);
+        }
 
         session.ActionItems.Add(actionItem);
 
@@ -957,9 +1026,9 @@ public class MeetingService : IMeetingService
     }
 
     public async Task<bool> UpdateActionItemAsync(
-        int id,
-        UpdateMeetingActionItemRequest request,
-        CancellationToken cancellationToken = default)
+    int id,
+    UpdateMeetingActionItemRequest request,
+    CancellationToken cancellationToken = default)
     {
         var item = await _repository.GetActionItemByIdAsync(
             id,
@@ -976,6 +1045,40 @@ public class MeetingService : IMeetingService
             request.ProjectId,
             request.DecisionId,
             request.AcceptanceCriteria);
+
+        if (item.Type == MeetingActionItemType.ConvertedWorkItem)
+        {
+            if (request.WorkItemId != item.WorkItemId)
+            {
+                throw new InvalidOperationException(
+                    "اتصال Action Item تبدیل‌شده به Work Item قابل تغییر نیست.");
+            }
+        }
+        else if (request.WorkItemId.HasValue)
+        {
+            var workItem = await _workItemRepository.GetByIdAsync(
+                request.WorkItemId.Value,
+                cancellationToken);
+
+            if (workItem is null)
+                throw new InvalidOperationException(
+                    "Work Item انتخاب‌شده وجود ندارد.");
+
+            var existingLink =
+                await _repository.GetActionItemByWorkItemIdAsync(
+                    request.WorkItemId.Value,
+                    cancellationToken);
+
+            if (existingLink is not null && existingLink.Id != id)
+                throw new InvalidOperationException(
+                    "این Work Item قبلاً به یک Action Item دیگر متصل شده است.");
+
+            item.LinkWorkItem(request.WorkItemId.Value);
+        }
+        else
+        {
+            item.UnlinkWorkItem();
+        }
 
         await _repository.SaveChangesAsync(cancellationToken);
 

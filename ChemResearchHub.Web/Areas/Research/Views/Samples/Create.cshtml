@@ -4,51 +4,59 @@
     ViewData["Title"] = "Create Sample";
 }
 
-<div class="container py-4">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/sample-create.css"
+          asp-append-version="true" />
+}
 
-    <div class="mb-4">
+<div class="sample-create-page">
 
-        <div class="text-muted mb-1">
+    <div class="sample-create-header">
+
+        <div class="sample-create-eyebrow">
             Research Experiment
         </div>
 
-        <h1 class="h3 mb-1">
-            Create Sample
-        </h1>
+        <h1>Create Sample</h1>
 
-        <p class="text-muted mb-0">
+        <p>
             Register a new sample for this experiment.
         </p>
 
     </div>
 
-    <div class="card shadow-sm">
+    <div class="sample-create-card">
 
-        <div class="card-body">
+        <div class="sample-create-card-heading">
+            <div class="sample-create-icon">🧫</div>
 
-            <form asp-action="Create"
-                  method="post">
+            <div>
+                <h2>Sample Information</h2>
+                <p>اطلاعات نمونه جدید را وارد کنید.</p>
+            </div>
+        </div>
 
-                <input asp-for="ExperimentId"
-                       type="hidden" />
+        <form asp-action="Create" method="post">
 
-                <input asp-for="WorkItemId"
-                       type="hidden" />
+            <input asp-for="ExperimentId" type="hidden" />
+            <input asp-for="WorkItemId" type="hidden" />
+            <input asp-for="ProjectId" type="hidden" />
+            <input asp-for="BoardId" type="hidden" />
 
-                <input asp-for="ProjectId"
-                       type="hidden" />
+            <div asp-validation-summary="ModelOnly"
+                 class="sample-validation-summary">
+            </div>
 
-                <input asp-for="BoardId"
-                       type="hidden" />
+            <div class="sample-form-section">
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+                <div class="sample-form-section-title">
+                    مشخصات اصلی
                 </div>
 
-                <div class="row">
+                <div class="row g-3">
 
-                    <div class="col-md-6 mb-3">
-
+                    <div class="col-md-6">
                         <label asp-for="SampleCode"
                                class="form-label">
                         </label>
@@ -60,11 +68,9 @@
                         <span asp-validation-for="SampleCode"
                               class="text-danger">
                         </span>
-
                     </div>
 
-                    <div class="col-md-6 mb-3">
-
+                    <div class="col-md-6">
                         <label asp-for="Name"
                                class="form-label">
                         </label>
@@ -76,15 +82,9 @@
                         <span asp-validation-for="Name"
                               class="text-danger">
                         </span>
-
                     </div>
 
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-
+                    <div class="col-md-6">
                         <label asp-for="SampleType"
                                class="form-label">
                         </label>
@@ -96,11 +96,9 @@
                         <span asp-validation-for="SampleType"
                               class="text-danger">
                         </span>
-
                     </div>
 
-                    <div class="col-md-6 mb-3">
-
+                    <div class="col-md-6">
                         <label asp-for="Matrix"
                                class="form-label">
                         </label>
@@ -112,13 +110,19 @@
                         <span asp-validation-for="Matrix"
                               class="text-danger">
                         </span>
-
                     </div>
 
                 </div>
 
-                <div class="mb-3">
+            </div>
 
+            <div class="sample-form-section">
+
+                <div class="sample-form-section-title">
+                    آماده‌سازی و جمع‌آوری
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="PreparationMethod"
                            class="form-label">
                     </label>
@@ -126,19 +130,16 @@
                     <textarea asp-for="PreparationMethod"
                               class="form-control"
                               rows="5"
-                              placeholder="Describe sample preparation, extraction, dilution, solvent, concentration, etc.">
-                    </textarea>
+                              placeholder="Describe sample preparation, extraction, dilution, solvent, concentration, etc."></textarea>
 
                     <span asp-validation-for="PreparationMethod"
                           class="text-danger">
                     </span>
-
                 </div>
 
-                <div class="row">
+                <div class="row g-3">
 
-                    <div class="col-md-6 mb-3">
-
+                    <div class="col-md-6">
                         <label asp-for="CollectedAt"
                                class="form-label">
                         </label>
@@ -150,11 +151,9 @@
                         <span asp-validation-for="CollectedAt"
                               class="text-danger">
                         </span>
-
                     </div>
 
-                    <div class="col-md-6 mb-3">
-
+                    <div class="col-md-6">
                         <label asp-for="ExternalReference"
                                class="form-label">
                         </label>
@@ -166,13 +165,19 @@
                         <span asp-validation-for="ExternalReference"
                               class="text-danger">
                         </span>
-
                     </div>
 
                 </div>
 
-                <div class="mb-3">
+            </div>
 
+            <div class="sample-form-section">
+
+                <div class="sample-form-section-title">
+                    توضیحات و یادداشت‌ها
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="Description"
                            class="form-label">
                     </label>
@@ -180,17 +185,14 @@
                     <textarea asp-for="Description"
                               class="form-control"
                               rows="5"
-                              placeholder="Describe the sample and its purpose...">
-                    </textarea>
+                              placeholder="Describe the sample and its purpose..."></textarea>
 
                     <span asp-validation-for="Description"
                           class="text-danger">
                     </span>
-
                 </div>
 
-                <div class="mb-4">
-
+                <div>
                     <label asp-for="Notes"
                            class="form-label">
                     </label>
@@ -198,37 +200,35 @@
                     <textarea asp-for="Notes"
                               class="form-control"
                               rows="5"
-                              placeholder="Additional observations or laboratory notes...">
-                    </textarea>
+                              placeholder="Additional observations or laboratory notes..."></textarea>
 
                     <span asp-validation-for="Notes"
                           class="text-danger">
                     </span>
-
                 </div>
 
-                <div class="d-flex gap-2">
+            </div>
 
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Create Sample
-                    </button>
+            <div class="sample-form-actions">
 
-                    <a asp-area="Research"
-                        asp-controller="WorkItems"
-                       asp-action="Details"
-                       asp-route-id="@Model.WorkItemId"
-                       asp-route-projectId="@Model.ProjectId"
-                       asp-route-boardId="@Model.BoardId"
-                       class="btn btn-outline-secondary">
-                        Cancel
-                    </a>
+                <button type="submit"
+                        class="sample-submit-button">
+                    Create Sample
+                </button>
 
-                </div>
+                <a asp-area="Research"
+                   asp-controller="WorkItems"
+                   asp-action="Details"
+                   asp-route-id="@Model.WorkItemId"
+                   asp-route-projectId="@Model.ProjectId"
+                   asp-route-boardId="@Model.BoardId"
+                   class="sample-cancel-button">
+                    Cancel
+                </a>
 
-            </form>
+            </div>
 
-        </div>
+        </form>
 
     </div>
 

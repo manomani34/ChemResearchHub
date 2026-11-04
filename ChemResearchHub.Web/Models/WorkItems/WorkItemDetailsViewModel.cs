@@ -5,9 +5,9 @@ using ChemResearchHub.Application.WorkItemBlocks.Dtos;
 using ChemResearchHub.Application.Experiments.Dtos;
 using ChemResearchHub.Application.Results.Dtos;
 using ChemResearchHub.Application.Samples.Dtos;
-using ChemResearchHub.Domain.Enums;
 using ChemResearchHub.Application.Tags.Dtos;
-
+using ChemResearchHub.Application.Meetings.DTOs;
+using ChemResearchHub.Domain.Enums;
 
 namespace ChemResearchHub.Web.Models.WorkItems;
 
@@ -41,37 +41,37 @@ public class WorkItemDetailsViewModel
 
     public string? AssignedToUserName { get; set; }
 
-    public IReadOnlyList<TagDto> Tags { get; set; } = Array.Empty<TagDto>();
+    public IReadOnlyList<TagDto> Tags { get; set; }
+        = Array.Empty<TagDto>();
 
     public IReadOnlyList<ExperimentDto> Experiments { get; set; }
         = Array.Empty<ExperimentDto>();
 
-    public IReadOnlyDictionary<int, IReadOnlyList<SampleDto>> SamplesByExperimentId
-    {
-        get;
-        set;
-    } = new Dictionary<int, IReadOnlyList<SampleDto>>();
+    public IReadOnlyDictionary<int, IReadOnlyList<SampleDto>>
+        SamplesByExperimentId
+    { get; set; }
+        = new Dictionary<int, IReadOnlyList<SampleDto>>();
 
-    public IReadOnlyDictionary<int, IReadOnlyList<ResultDto>> ResultsBySampleId
-    {
-        get;
-        set;
-    } = new Dictionary<int, IReadOnlyList<ResultDto>>();
+    public IReadOnlyDictionary<int, IReadOnlyList<ResultDto>>
+        ResultsBySampleId
+    { get; set; }
+        = new Dictionary<int, IReadOnlyList<ResultDto>>();
 
     public IReadOnlyList<AttachmentDto> Attachments { get; set; }
-    = Array.Empty<AttachmentDto>();
+        = Array.Empty<AttachmentDto>();
 
     public IReadOnlyList<DecisionLogDto> DecisionLogs { get; set; }
-    = Array.Empty<DecisionLogDto>();
+        = Array.Empty<DecisionLogDto>();
 
     public IReadOnlyList<WorkItemTransitionDto> Transitions { get; set; }
-    = Array.Empty<WorkItemTransitionDto>();
+        = Array.Empty<WorkItemTransitionDto>();
 
-    public WorkItemFlowMetricsDto FlowMetrics { get; set; }
-        = new();
+    public WorkItemFlowMetricsDto FlowMetrics { get; set; } = new();
 
     public WorkItemBlockDto? CurrentBlock { get; set; }
 
     public IReadOnlyList<WorkItemBlockDto> BlockHistory { get; set; }
         = Array.Empty<WorkItemBlockDto>();
+
+    public MeetingActionItemDto? MeetingActionItem { get; set; }
 }

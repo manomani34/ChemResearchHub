@@ -1,60 +1,246 @@
-﻿@model ChemResearchHub.Web.Areas.Admin.Models.Tags.TagFormViewModel
+﻿
+@model ChemResearchHub.Web.Areas.Admin.Models.Tags.TagFormViewModel
 
 @{
     ViewData["Title"] = "Edit Tag";
 }
 
-<div class="container py-4">
-    <div class="mb-4">
-        <div class="text-muted mb-1">Work Item Management</div>
-        <h1 class="h3">Edit Tag</h1>
-    </div>
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/tag-form.css"
+          asp-append-version="true" />
+}
 
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-            <form asp-action="Edit" method="post">
-                <input asp-for="Id" type="hidden" />
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="tag-form-page" dir="ltr">
 
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+    <div class="tag-form-header">
+        <div>
+            <div class="tag-form-eyebrow">
+                <span class="tag-form-eyebrow-icon">
+                    <i class="bi bi-tags"></i>
+                </span>
+                Work Item Management
+            </div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label"></label>
-                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+            <h1>Edit Tag</h1>
 
-                <div class="mb-4">
-                    <label asp-for="Color" class="form-label"></label>
-                    <div class="d-flex gap-2 align-items-center">
-                        <input type="color" id="colorPicker" value="@Model.Color"
-                               class="form-control form-control-color" />
-                        <input asp-for="Color" id="colorHex" class="form-control" />
-                    </div>
-                    <span asp-validation-for="Color" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-            </form>
+            <p>
+                Update the classification tag and its visual appearance.
+            </p>
         </div>
+
+        <a asp-action="Index" class="tag-form-back-link">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Tags</span>
+        </a>
     </div>
+
+    <div class="tag-form-layout">
+
+        <div class="tag-form-main-card">
+
+            <div class="tag-form-card-header">
+                <div class="tag-form-section-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+
+                <div>
+                    <h2>Tag Information</h2>
+                    <p>Modify the name, description and appearance.</p>
+                </div>
+            </div>
+
+            <div class="tag-form-card-body">
+
+                <form asp-action="Edit" method="post">
+
+                    <input asp-for="Id" type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="tag-form-validation-summary">
+                    </div>
+
+                    <div class="tag-form-section">
+                        <div class="tag-form-section-heading">
+                            <span class="tag-form-section-number">01</span>
+                            <div>
+                                <h3>Basic Information</h3>
+                                <p>Update the tag details.</p>
+                            </div>
+                        </div>
+
+                        <div class="tag-form-field">
+                            <label asp-for="Name" class="form-label">
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="tag-form-field">
+                            <label asp-for="Description" class="form-label">
+                            </label>
+
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      rows="4">
+                            </textarea>
+
+                            <span asp-validation-for="Description"
+                                  class="text-danger">
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="tag-form-section">
+                        <div class="tag-form-section-heading">
+                            <span class="tag-form-section-number">02</span>
+                            <div>
+                                <h3>Visual Appearance</h3>
+                                <p>Update the tag color.</p>
+                            </div>
+                        </div>
+
+                        <div class="tag-form-field">
+                            <label asp-for="Color" class="form-label">
+                            </label>
+
+                            <div class="tag-form-color-control">
+                                <div class="tag-form-color-picker-wrapper">
+                                    <input type="color"
+                                           id="colorPicker"
+                                           value="@Model.Color"
+                                           class="form-control form-control-color" />
+                                </div>
+
+                                <div class="tag-form-color-input-wrapper">
+                                    <input asp-for="Color"
+                                           id="colorHex"
+                                           class="form-control" />
+
+                                    <span class="tag-form-color-hint">
+                                        HEX color code
+                                    </span>
+                                </div>
+                            </div>
+
+                            <span asp-validation-for="Color"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="tag-form-preview">
+                            <span class="tag-form-preview-label">
+                                Tag Preview
+                            </span>
+
+                            <span id="tagPreview"
+                                  class="tag-form-preview-badge">
+                                @(string.IsNullOrWhiteSpace(Model.Name)
+                                    ? "Tag Preview"
+                                    : Model.Name)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="tag-form-footer">
+                        <button type="submit"
+                                class="btn tag-form-submit-button">
+                            <i class="bi bi-check-lg"></i>
+                            Save Changes
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn tag-form-cancel-button">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <aside class="tag-form-info-card">
+            <div class="tag-form-info-icon">
+                <i class="bi bi-info-circle"></i>
+            </div>
+
+            <h3>Editing a Tag</h3>
+
+            <p>
+                Changes to a tag's name, description or color may affect how it
+                appears across categorized work items.
+            </p>
+
+            <div class="tag-form-info-divider"></div>
+
+            <div class="tag-form-info-item">
+                <i class="bi bi-pencil"></i>
+                <div>
+                    <strong>Update Carefully</strong>
+                    <span>Keep the tag meaning clear and consistent.</span>
+                </div>
+            </div>
+
+            <div class="tag-form-info-item">
+                <i class="bi bi-palette"></i>
+                <div>
+                    <strong>Color Preview</strong>
+                    <span>Review the appearance before saving changes.</span>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script>
-        const picker = document.getElementById('colorPicker');
-        const hex = document.getElementById('colorHex');
-        picker.addEventListener('input', () => hex.value = picker.value.toUpperCase());
-        hex.addEventListener('input', () => {
-            if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value;
-        });
+        (() => {
+            const picker = document.getElementById('colorPicker');
+            const hex = document.getElementById('colorHex');
+            const preview = document.getElementById('tagPreview');
+            const nameInput = document.getElementById('Name');
+
+            if (!picker || !hex) return;
+
+            const isValidHex = value =>
+                /^#[0-9A-Fa-f]{6}$/.test(value);
+
+            const updatePreview = () => {
+                if (isValidHex(hex.value)) {
+                    preview.style.backgroundColor = hex.value;
+                    preview.style.borderColor = hex.value;
+                }
+
+                preview.textContent =
+                    nameInput?.value.trim() || 'Tag Preview';
+            };
+
+            picker.addEventListener('input', () => {
+                hex.value = picker.value.toUpperCase();
+                updatePreview();
+            });
+
+            hex.addEventListener('input', () => {
+                if (isValidHex(hex.value)) {
+                    picker.value = hex.value;
+                }
+
+                updatePreview();
+            });
+
+            nameInput?.addEventListener('input', updatePreview);
+
+            updatePreview();
+        })();
     </script>
 }

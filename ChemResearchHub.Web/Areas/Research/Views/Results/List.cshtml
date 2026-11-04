@@ -4,86 +4,62 @@
     ViewData["Title"] = "نتایج";
 }
 
-<style>
-    .result-reference-copy {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/results-index.css"
+          asp-append-version="true" />
 }
 
-.result-copy-button {
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border: 0;
-    border-radius: 5px;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 11px;
-}
-
-.result-copy-button:hover {
-    background: #e2e8f0;
-    color: #4f46e5;
-}
-
-.result-copy-button.copied {
-    color: #16a34a;
-    background: #dcfce7;
-}
-</style>
-
-<div class="results-page">
+<div class="results-index-page">
 
     <div class="results-header">
-
-        <div>
-            <h1>نتایج</h1>
-
-            <p>
-                فهرست نتایج ثبت‌شده برای نمونه‌های پژوهشی
-            </p>
+        <div class="results-heading">
+            <div class="results-eyebrow">Research Data</div>
+            <h1>نتایج پژوهشی</h1>
+            <p>فهرست نتایج ثبت‌شده برای نمونه‌های پژوهشی</p>
         </div>
 
         <div class="results-count">
-            @Model.Items.Count نتیجه
+            <strong>@Model.Items.Count</strong>
+            <span>نتیجه</span>
         </div>
-
     </div>
 
     @if (Model.Items.Count == 0)
     {
         <div class="results-empty">
+            <div class="results-empty-icon">📊</div>
 
-            <div class="results-empty-icon">
-                📊
-            </div>
-
-            <h3>
-                هنوز نتیجه‌ای ثبت نشده است
-            </h3>
+            <h3>هنوز نتیجه‌ای ثبت نشده است</h3>
 
             <p>
                 نتایج از داخل نمونه‌های ثبت‌شده در بخش کارهای پژوهشی ایجاد می‌شوند.
             </p>
 
-            <a asp-area="Research" asp-controller="Samples"
+            <a asp-area="Research"
+               asp-controller="Samples"
                asp-action="List"
-               class="crh-btn crh-btn-primary">
+               class="results-btn results-btn-primary">
                 مشاهده نمونه‌ها
             </a>
-
         </div>
     }
     else
     {
         <div class="results-table-card">
+            <div class="results-table-header">
+                <div>
+                    <h2>فهرست نتایج</h2>
+                    <p>اطلاعات اندازه‌گیری‌ها و ارزیابی‌های ثبت‌شده</p>
+                </div>
+
+                <span class="results-table-total">
+                    @Model.Items.Count مورد
+                </span>
+            </div>
 
             <div class="table-responsive">
-
-                <table class="table crh-table align-middle">
-
+                <table class="table results-table align-middle">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -99,26 +75,24 @@
                     </thead>
 
                     <tbody>
-
                         @foreach (var item in Model.Items)
                         {
                             <tr>
-
                                 <td>
-    <div class="result-reference-copy">
-        <span class="crh-id">
-            @item.ReferenceCode
-        </span>
+                                    <div class="result-reference-copy">
+                                        <span class="result-reference-code">
+                                            @item.ReferenceCode
+                                        </span>
 
-        <button type="button"
-                class="result-copy-button"
-                data-reference="@item.ReferenceCode"
-                title="کپی شناسه"
-                aria-label="کپی شناسه @item.ReferenceCode">
-            📋
-        </button>
-    </div>
-</td>
+                                        <button type="button"
+                                                class="result-copy-button"
+                                                data-reference="@item.ReferenceCode"
+                                                title="کپی شناسه"
+                                                aria-label="کپی شناسه @item.ReferenceCode">
+                                            📋
+                                        </button>
+                                    </div>
+                                </td>
 
                                 <td>
                                     <div class="result-sample-code">
@@ -127,18 +101,18 @@
 
                                     @if (!string.IsNullOrWhiteSpace(item.SampleName))
                                     {
-                                        <div class="crh-secondary-text">
+                                        <div class="result-secondary-text">
                                             @item.SampleName
                                         </div>
                                     }
 
-                                    <div class="crh-secondary-text">
+                                    <div class="result-secondary-text">
                                         نمونه #@item.SampleId
                                     </div>
                                 </td>
 
                                 <td>
-                                    <div class="crh-primary-text">
+                                    <div class="result-primary-text">
                                         @item.MetricName
                                     </div>
                                 </td>
@@ -146,9 +120,9 @@
                                 <td>
                                     @{
                                         var displayValue =
-                                        item.NumericValue.HasValue
-                                        ? item.NumericValue.Value.ToString("0.######")
-                                        : item.TextValue;
+                                            item.NumericValue.HasValue
+                                                ? item.NumericValue.Value.ToString("0.######")
+                                                : item.TextValue;
                                     }
 
                                     @if (!string.IsNullOrWhiteSpace(displayValue))
@@ -159,9 +133,7 @@
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="result-muted">—</span>
                                     }
                                 </td>
 
@@ -174,9 +146,7 @@
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="result-muted">—</span>
                                     }
                                 </td>
 
@@ -187,28 +157,26 @@
                                     }
                                     else
                                     {
-                                        <span class="crh-muted">
-                                            —
-                                        </span>
+                                        <span class="result-muted">—</span>
                                     }
                                 </td>
 
                                 <td>
-                                    <div class="crh-primary-text">
+                                    <div class="result-primary-text">
                                         @item.ExperimentTitle
                                     </div>
 
-                                    <div class="crh-secondary-text">
+                                    <div class="result-secondary-text">
                                         آزمایش #@item.ExperimentId
                                     </div>
                                 </td>
 
                                 <td>
-                                    <div class="crh-primary-text">
+                                    <div class="result-primary-text">
                                         @item.WorkItemTitle
                                     </div>
 
-                                    <div class="crh-secondary-text">
+                                    <div class="result-secondary-text">
                                         کار #@item.WorkItemId
                                     </div>
                                 </td>
@@ -216,48 +184,47 @@
                                 <td>
                                     @{
                                         var statusClass =
-                                        item.Status?.ToLowerInvariant() switch
-                                        {
-                                            "pass" => "result-status-pass",
-                                            "fail" => "result-status-fail",
-                                            "inconclusive" => "result-status-inconclusive",
-                                            _ => "result-status-pending"
-                                        };
+                                            item.Status?.ToLowerInvariant() switch
+                                            {
+                                                "pass" => "result-status-pass",
+                                                "fail" => "result-status-fail",
+                                                "inconclusive" => "result-status-inconclusive",
+                                                _ => "result-status-pending"
+                                            };
 
                                         var statusText =
-                                        item.Status?.ToLowerInvariant() switch
-                                        {
-                                            "pass" => "موفق",
-                                            "fail" => "رد شده",
-                                            "inconclusive" => "نامشخص",
-                                            _ => "در انتظار"
-                                        };
+                                            item.Status?.ToLowerInvariant() switch
+                                            {
+                                                "pass" => "موفق",
+                                                "fail" => "رد شده",
+                                                "inconclusive" => "نامشخص",
+                                                _ => "در انتظار"
+                                            };
                                     }
 
                                     <span class="result-status @statusClass">
                                         @statusText
                                     </span>
                                 </td>
-
                             </tr>
                         }
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
     }
-
 </div>
 
-                                            @section Scripts {
+@section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-            document.querySelectorAll(".result-copy-button")
+            const page = document.querySelector(".results-index-page");
+
+            if (!page)
+                return;
+
+            page.querySelectorAll(".result-copy-button")
                 .forEach(function (button) {
 
                     button.addEventListener("click", async function (event) {

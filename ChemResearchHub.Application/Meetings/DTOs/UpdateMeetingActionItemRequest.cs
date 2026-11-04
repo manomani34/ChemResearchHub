@@ -21,4 +21,7 @@ public class UpdateMeetingActionItemRequest
 
     [StringLength(2000)]
     public string? AcceptanceCriteria { get; set; }
+
+    // null یعنی Action Item بدون اتصال باشد.
+    public int? WorkItemId { get; set; }
 }

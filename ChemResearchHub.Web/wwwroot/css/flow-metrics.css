@@ -1,0 +1,473 @@
+﻿.flow-metrics-page {
+    direction: ltr;
+    color: #252943;
+    padding: 1.5rem 0 2.5rem;
+}
+
+    .flow-metrics-page .flow-metrics-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .flow-metrics-page .flow-metrics-eyebrow {
+        color: #8178c9;
+        font-size: 0.75rem;
+        font-weight: 650;
+        margin-bottom: 0.35rem;
+    }
+
+    .flow-metrics-page .flow-metrics-heading h1 {
+        color: #252943;
+        font-size: 1.55rem;
+        font-weight: 750;
+        margin: 0 0 0.45rem;
+    }
+
+    .flow-metrics-page .flow-metrics-heading p {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #8990a5;
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    .flow-metrics-page .flow-header-separator {
+        color: #c2c5d1;
+    }
+
+    .flow-metrics-page .flow-back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        min-height: 40px;
+        padding: 0.55rem 0.9rem;
+        color: #626a80;
+        background: #fff;
+        border: 1px solid #e3e5ed;
+        border-radius: 9px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+
+        .flow-metrics-page .flow-back-button:hover {
+            color: #5144bd;
+            background: #f7f6ff;
+            border-color: #d8d3fa;
+        }
+
+        .flow-metrics-page .flow-back-button span {
+            font-size: 1rem;
+        }
+
+    .flow-metrics-page .flow-period-card,
+    .flow-metrics-page .flow-completed-card {
+        background: #fff;
+        border: 1px solid #e9eaf1;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(30, 35, 70, 0.035);
+    }
+
+    .flow-metrics-page .flow-period-card {
+        padding: 1.3rem 1.4rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .flow-metrics-page .flow-period-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .flow-metrics-page .flow-period-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 11px;
+        background: #f0efff;
+        font-size: 1.1rem;
+    }
+
+    .flow-metrics-page .flow-period-heading h2 {
+        color: #292d46;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem;
+    }
+
+    .flow-metrics-page .flow-period-heading p {
+        color: #9298aa;
+        font-size: 0.76rem;
+        margin: 0;
+    }
+
+    .flow-metrics-page .flow-period-form {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+        align-items: end;
+        gap: 1rem;
+    }
+
+    .flow-metrics-page .flow-period-field label {
+        display: block;
+        color: #555c73;
+        font-size: 0.8rem;
+        font-weight: 650;
+        margin-bottom: 0.45rem;
+    }
+
+    .flow-metrics-page .flow-period-field .form-control {
+        min-height: 42px;
+        color: #30354c;
+        border: 1px solid #e2e4ed;
+        border-radius: 9px;
+        font-size: 0.83rem;
+        box-shadow: none;
+    }
+
+        .flow-metrics-page .flow-period-field .form-control:focus {
+            border-color: #9288e2;
+            box-shadow: 0 0 0 3px rgba(101, 88, 211, 0.1);
+        }
+
+    .flow-metrics-page .flow-primary-button {
+        min-height: 42px;
+        padding: 0.6rem 1.2rem;
+        color: #fff;
+        background: #6558d3;
+        border: 1px solid #6558d3;
+        border-radius: 9px;
+        font-size: 0.82rem;
+        font-weight: 650;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .flow-metrics-page .flow-primary-button:hover {
+            background: #5144bd;
+            border-color: #5144bd;
+            transform: translateY(-1px);
+        }
+
+    .flow-metrics-page .flow-metric-explanation {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem 1.5rem;
+        margin-top: 1.1rem;
+        padding-top: 0.9rem;
+        border-top: 1px solid #f0f1f5;
+        color: #858ba0;
+        font-size: 0.75rem;
+    }
+
+        .flow-metrics-page .flow-metric-explanation div {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .flow-metrics-page .flow-metric-explanation strong {
+            color: #555c73;
+            font-weight: 700;
+        }
+
+    .flow-metrics-page .flow-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .flow-metrics-page .flow-kpi-card {
+        min-width: 0;
+        padding: 1.2rem 1.3rem;
+        background: #fff;
+        border: 1px solid #e9eaf1;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(30, 35, 70, 0.035);
+    }
+
+    .flow-metrics-page .flow-kpi-top {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 1rem;
+    }
+
+    .flow-metrics-page .flow-kpi-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        background: #f0efff;
+        color: #6558d3;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .flow-metrics-page .flow-kpi-throughput .flow-kpi-icon {
+        color: #16834b;
+        background: #e9f7ef;
+    }
+
+    .flow-metrics-page .flow-kpi-lead .flow-kpi-icon {
+        color: #a36b13;
+        background: #fff6e5;
+    }
+
+    .flow-metrics-page .flow-kpi-cycle .flow-kpi-icon {
+        color: #6558d3;
+        background: #f0efff;
+    }
+
+    .flow-metrics-page .flow-kpi-label {
+        color: #777e94;
+        font-size: 0.82rem;
+        font-weight: 650;
+    }
+
+    .flow-metrics-page .flow-kpi-value {
+        color: #292d46;
+        font-size: 2rem;
+        font-weight: 750;
+        line-height: 1.2;
+        margin-bottom: 0.35rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .flow-metrics-page .flow-kpi-duration {
+        font-size: 1.55rem;
+    }
+
+    .flow-metrics-page .flow-kpi-description {
+        color: #9298aa;
+        font-size: 0.76rem;
+    }
+
+    .flow-metrics-page .flow-kpi-median {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding-top: 0.65rem;
+        margin-top: 0.7rem;
+        border-top: 1px solid #f0f1f5;
+        color: #9298aa;
+        font-size: 0.75rem;
+    }
+
+        .flow-metrics-page .flow-kpi-median strong {
+            color: #555c73;
+            font-weight: 700;
+        }
+
+    .flow-metrics-page .flow-completed-card {
+        overflow: hidden;
+    }
+
+    .flow-metrics-page .flow-completed-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.15rem 1.35rem;
+        border-bottom: 1px solid #eef0f5;
+    }
+
+        .flow-metrics-page .flow-completed-header h2 {
+            color: #292d46;
+            font-size: 0.98rem;
+            font-weight: 700;
+            margin: 0 0 0.3rem;
+        }
+
+        .flow-metrics-page .flow-completed-header p {
+            color: #9298aa;
+            font-size: 0.76rem;
+            margin: 0;
+        }
+
+    .flow-metrics-page .flow-completed-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 29px;
+        padding: 0 0.55rem;
+        color: #6558d3;
+        background: #f0efff;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .flow-metrics-page .flow-completed-table {
+        min-width: 650px;
+        margin: 0;
+        color: #41465d;
+        font-size: 0.83rem;
+    }
+
+        .flow-metrics-page .flow-completed-table thead th {
+            padding: 0.85rem 1.2rem;
+            color: #858ba0;
+            background: #fafaff;
+            border-bottom: 1px solid #eceef4;
+            font-size: 0.75rem;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .flow-metrics-page .flow-completed-table tbody td {
+            padding: 0.95rem 1.2rem;
+            border-bottom: 1px solid #f0f1f5;
+        }
+
+        .flow-metrics-page .flow-completed-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .flow-metrics-page .flow-completed-table tbody tr:hover {
+            background: #fbfbff;
+        }
+
+    .flow-metrics-page .flow-work-item-link {
+        color: #5144bd;
+        font-weight: 650;
+        text-decoration: none;
+    }
+
+        .flow-metrics-page .flow-work-item-link:hover {
+            color: #6558d3;
+            text-decoration: underline;
+        }
+
+    .flow-metrics-page .flow-work-item-id {
+        color: #9298aa;
+        font-size: 0.73rem;
+        margin-top: 0.2rem;
+    }
+
+    .flow-metrics-page .flow-completed-date {
+        color: #626a80;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .flow-metrics-page .flow-duration-value {
+        display: inline-block;
+        padding: 0.3rem 0.55rem;
+        color: #555c73;
+        background: #f6f7fb;
+        border: 1px solid #eceef4;
+        border-radius: 7px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .flow-metrics-page .flow-empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2.5rem 1rem;
+    }
+
+    .flow-metrics-page .flow-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 0.85rem;
+        background: #f0efff;
+        border-radius: 13px;
+        font-size: 1.25rem;
+    }
+
+    .flow-metrics-page .flow-empty-state h3 {
+        color: #343950;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 0 0 0.35rem;
+    }
+
+    .flow-metrics-page .flow-empty-state p {
+        color: #9298aa;
+        font-size: 0.8rem;
+        margin: 0;
+    }
+
+@media (max-width: 900px) {
+    .flow-metrics-page .flow-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .flow-metrics-page .flow-kpi-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .flow-metrics-page .flow-metrics-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .flow-metrics-page .flow-period-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .flow-metrics-page .flow-period-action {
+        grid-column: 1 / -1;
+    }
+
+    .flow-metrics-page .flow-primary-button {
+        width: 100%;
+    }
+
+    .flow-metrics-page .flow-metric-explanation {
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .flow-metrics-page {
+        padding-top: 1rem;
+    }
+
+        .flow-metrics-page .flow-kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .flow-metrics-page .flow-kpi-card:last-child {
+            grid-column: auto;
+        }
+
+        .flow-metrics-page .flow-period-card {
+            padding: 1rem;
+        }
+
+        .flow-metrics-page .flow-period-form {
+            grid-template-columns: 1fr;
+        }
+
+        .flow-metrics-page .flow-period-action {
+            grid-column: auto;
+        }
+}

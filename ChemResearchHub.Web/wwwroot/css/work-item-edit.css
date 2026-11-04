@@ -1,0 +1,433 @@
+﻿.work-item-edit-page {
+    --wie-primary: #6558d3;
+    --wie-primary-dark: #5144bd;
+    --wie-primary-soft: #f0efff;
+    --wie-text: #25263a;
+    --wie-muted: #85879a;
+    --wie-border: #e9eaf1;
+    --wie-surface: #ffffff;
+    --wie-background: #f7f8fc;
+    color: var(--wie-text);
+    background: var(--wie-background);
+    min-height: calc(100vh - 100px);
+}
+
+    /* Header */
+
+    .work-item-edit-page .wie-header {
+        padding: 8px 2px 12px;
+    }
+
+    .work-item-edit-page .wie-eyebrow {
+        color: var(--wie-primary);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .work-item-edit-page .wie-title {
+        font-size: 1.8rem;
+        font-weight: 750;
+        letter-spacing: -0.04em;
+        margin-bottom: 7px;
+        color: var(--wie-text);
+    }
+
+    .work-item-edit-page .wie-subtitle {
+        color: var(--wie-muted);
+        font-size: 0.94rem;
+    }
+
+    .work-item-edit-page .wie-header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--wie-primary-soft);
+        color: var(--wie-primary);
+        font-size: 1.55rem;
+    }
+
+    /* Cards */
+
+    .work-item-edit-page .wie-card {
+        background: var(--wie-surface);
+        border: 1px solid var(--wie-border);
+        border-radius: 17px;
+        box-shadow: 0 4px 18px rgba(35, 37, 70, 0.035);
+        overflow: hidden;
+    }
+
+    .work-item-edit-page .wie-card-header {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 20px 23px;
+        border-bottom: 1px solid var(--wie-border);
+    }
+
+    .work-item-edit-page .wie-section-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        border-radius: 12px;
+        background: var(--wie-primary-soft);
+        color: var(--wie-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+    }
+
+    .work-item-edit-page .wie-card-header h5 {
+        font-size: 0.98rem;
+        font-weight: 700;
+        margin: 0 0 4px;
+        color: var(--wie-text);
+    }
+
+    .work-item-edit-page .wie-card-header p {
+        color: var(--wie-muted);
+        font-size: 0.8rem;
+        margin: 0;
+    }
+
+    .work-item-edit-page .wie-card-body {
+        padding: 23px;
+    }
+
+    /* Form */
+
+    .work-item-edit-page .wie-label {
+        display: block;
+        color: #44465d;
+        font-size: 0.86rem;
+        font-weight: 650;
+        margin-bottom: 9px;
+    }
+
+    .work-item-edit-page .wie-control {
+        min-height: 45px;
+        border: 1px solid #e2e3ec;
+        border-radius: 10px;
+        background-color: #fff;
+        color: var(--wie-text);
+        font-size: 0.9rem;
+        padding: 10px 13px;
+        box-shadow: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .work-item-edit-page textarea.wie-control {
+        min-height: 130px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .work-item-edit-page .wie-control:focus {
+        border-color: var(--wie-primary);
+        box-shadow: 0 0 0 3px rgba(101, 88, 211, 0.11);
+        outline: none;
+    }
+
+    .work-item-edit-page .text-danger {
+        display: block;
+        font-size: 0.78rem;
+        margin-top: 6px;
+    }
+
+    .work-item-edit-page .wie-validation-summary {
+        border-radius: 12px;
+        font-size: 0.88rem;
+    }
+
+    /* Tags */
+
+    .work-item-edit-page .wie-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .work-item-edit-page .wie-tag-option {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 12px;
+        border: 1px solid var(--wie-border);
+        border-radius: 10px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+        .work-item-edit-page .wie-tag-option:hover {
+            border-color: var(--wie-primary);
+            background: #faf9ff;
+        }
+
+        .work-item-edit-page .wie-tag-option .form-check-input {
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--wie-primary);
+        }
+
+        .work-item-edit-page .wie-tag-option .badge {
+            font-size: 0.76rem;
+            font-weight: 650;
+            padding: 6px 9px;
+            border-radius: 7px;
+        }
+
+    .work-item-edit-page .wie-empty-state {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 13px 15px;
+        border-radius: 10px;
+        background: #f8f9fc;
+        color: var(--wie-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Collaborators */
+
+    .work-item-edit-page .wie-collaborator-hint {
+        color: var(--wie-muted);
+        font-size: 0.8rem;
+        margin: -3px 0 12px;
+    }
+
+    .work-item-edit-page .wie-collaborator-list {
+        max-height: 190px;
+        overflow-y: auto;
+        border: 1px solid var(--wie-border);
+        border-radius: 11px;
+        padding: 5px;
+        background: #fafbfe;
+    }
+
+    .work-item-edit-page .wie-collaborator-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #4d4f65;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 0.85rem;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+        .work-item-edit-page .wie-collaborator-option:hover {
+            background: var(--wie-primary-soft);
+            color: var(--wie-primary-dark);
+        }
+
+        .work-item-edit-page .wie-collaborator-option i {
+            color: var(--wie-primary);
+            font-size: 1rem;
+        }
+
+        .work-item-edit-page .wie-collaborator-option[hidden] {
+            display: none !important;
+        }
+
+    .work-item-edit-page .wie-selected-heading {
+        color: #4d4f65;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin: 20px 0 10px;
+    }
+
+    .work-item-edit-page .wie-selected-collaborators {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+    }
+
+    .work-item-edit-page .wie-empty-collaborators {
+        color: var(--wie-muted);
+        font-size: 0.8rem;
+        padding: 8px 0;
+    }
+
+    .work-item-edit-page .wie-selected-collaborator {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 11px;
+        border-radius: 30px;
+        border: 1px solid #e5e2fa;
+        background: #f5f3ff;
+        color: #5144bd;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .work-item-edit-page .wie-remove-collaborator {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 19px;
+        height: 19px;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: #d95365;
+        font-size: 1.1rem;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+        .work-item-edit-page .wie-remove-collaborator:hover {
+            background: #ffe8eb;
+        }
+
+    /* Completion */
+
+    .work-item-edit-page .wie-completion-option {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 15px;
+        border: 1px solid var(--wie-border);
+        border-radius: 11px;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+        .work-item-edit-page .wie-completion-option:hover {
+            border-color: var(--wie-primary);
+            background: #faf9ff;
+        }
+
+        .work-item-edit-page .wie-completion-option .form-check-input {
+            width: 19px;
+            height: 19px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--wie-primary);
+        }
+
+    .work-item-edit-page .wie-completion-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .work-item-edit-page .wie-completion-content strong {
+            font-size: 0.87rem;
+            color: var(--wie-text);
+        }
+
+        .work-item-edit-page .wie-completion-content small {
+            font-size: 0.76rem;
+            color: var(--wie-muted);
+        }
+
+    /* Actions */
+
+    .work-item-edit-page .wie-action-card {
+        padding: 21px;
+        border: 1px solid #e6e3fa;
+        border-radius: 16px;
+        background: linear-gradient(145deg, #fff, #f8f7ff);
+        box-shadow: 0 4px 18px rgba(35, 37, 70, 0.035);
+    }
+
+    .work-item-edit-page .wie-action-title {
+        font-size: 0.95rem;
+        font-weight: 750;
+        color: var(--wie-text);
+        margin-bottom: 8px;
+    }
+
+        .work-item-edit-page .wie-action-title i {
+            color: var(--wie-primary);
+        }
+
+    .work-item-edit-page .wie-action-card p {
+        color: var(--wie-muted);
+        font-size: 0.8rem;
+        line-height: 1.7;
+        margin-bottom: 17px;
+    }
+
+    .work-item-edit-page .wie-save-button {
+        min-height: 45px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--wie-primary);
+        color: #fff;
+        font-size: 0.87rem;
+        font-weight: 700;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+        .work-item-edit-page .wie-save-button:hover {
+            background: var(--wie-primary-dark);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .work-item-edit-page .wie-cancel-button {
+        min-height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--wie-border);
+        border-radius: 10px;
+        background: #fff;
+        color: #62647a;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+        .work-item-edit-page .wie-cancel-button:hover {
+            border-color: #c9c5e9;
+            background: #f8f7ff;
+            color: var(--wie-primary-dark);
+        }
+
+/* Responsive */
+
+@media (max-width: 991.98px) {
+    .work-item-edit-page .wie-action-card {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .work-item-edit-page {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+        .work-item-edit-page .wie-title {
+            font-size: 1.5rem;
+        }
+
+        .work-item-edit-page .wie-card-header {
+            padding: 16px;
+        }
+
+        .work-item-edit-page .wie-card-body {
+            padding: 17px;
+        }
+
+        .work-item-edit-page .wie-header-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 1.3rem;
+        }
+}

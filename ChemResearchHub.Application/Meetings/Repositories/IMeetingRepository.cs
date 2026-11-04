@@ -2,7 +2,6 @@
 
 namespace ChemResearchHub.Application.Meetings.Repositories;
 
-
 public interface IMeetingRepository
 {
     Task<List<MeetingSession>> GetAllSessionsAsync(
@@ -57,12 +56,16 @@ public interface IMeetingRepository
         int id,
         CancellationToken cancellationToken = default);
 
+    Task<MeetingActionItem?> GetActionItemByWorkItemIdAsync(
+        int workItemId,
+        CancellationToken cancellationToken = default);
+
     Task<int> SaveChangesAsync(
         CancellationToken cancellationToken = default);
 
     Task<List<ParkingLotItem>> GetParkingLotItemsAsync(
-    int meetingSessionId,
-    CancellationToken cancellationToken = default);
+        int meetingSessionId,
+        CancellationToken cancellationToken = default);
 
     Task<List<MeetingDecision>> GetDecisionsAsync(
         int meetingSessionId,

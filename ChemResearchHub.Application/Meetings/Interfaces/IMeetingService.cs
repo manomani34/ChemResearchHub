@@ -4,6 +4,14 @@ namespace ChemResearchHub.Application.Meetings.Interfaces;
 
 public interface IMeetingService
 {
+    Task<MeetingActionItemDto?> GetActionItemByWorkItemIdAsync(
+    int workItemId,
+    CancellationToken cancellationToken = default);
+
+    Task<bool> UnlinkActionItemFromWorkItemAsync(
+        int actionItemId,
+        CancellationToken cancellationToken = default);
+
     Task<MeetingDashboardDto> GetDashboardAsync(
     string userId,
     CancellationToken cancellationToken = default);

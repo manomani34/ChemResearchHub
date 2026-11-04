@@ -21,4 +21,6 @@ public class CreateMeetingActionItemRequest
 
     [StringLength(2000)]
     public string? AcceptanceCriteria { get; set; }
+
+    public int? WorkItemId { get; set; }
 }

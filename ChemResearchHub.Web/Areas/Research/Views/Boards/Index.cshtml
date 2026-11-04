@@ -33,6 +33,12 @@
         ViewBag.AvailableTags;
 }
 
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/kanban-board.css"
+          asp-append-version="true" />
+}
+
 <style>
     .board-page {
         --board-bg: #f6f8fb;
@@ -397,7 +403,7 @@
         border-color: #c7d2fe !important;
     }
 
-        .tag-filter-dropdown {
+    .tag-filter-dropdown {
         width: 100%;
     }
 
@@ -433,14 +439,14 @@
         font-size: .85rem;
     }
 
-    .tag-option:hover {
-        background: #f3f4f6;
-    }
+        .tag-option:hover {
+            background: #f3f4f6;
+        }
 
-    .tag-option[aria-pressed="true"] {
-        background: #eef2ff;
-        color: #4338ca;
-    }
+        .tag-option[aria-pressed="true"] {
+            background: #eef2ff;
+            color: #4338ca;
+        }
 
     .tag-option-check {
         display: inline-flex;
@@ -467,9 +473,9 @@
         gap: .45rem;
     }
 
-    .selected-board-tags[hidden] {
-        display: none;
-    }
+        .selected-board-tags[hidden] {
+            display: none;
+        }
 
     .selected-tag-badge {
         display: inline-flex;
@@ -628,53 +634,53 @@
             </div>
 
             <div class="col-12 col-md-6 col-xl">
-    <label class="filter-label">برچسب‌ها</label>
+                <label class="filter-label">برچسب‌ها</label>
 
-    <div class="tag-filter-dropdown position-relative">
-        <button type="button"
-                id="tagDropdownToggle"
-                class="form-select filter-control text-start d-flex align-items-center justify-content-between"
-                aria-expanded="false"
-                aria-controls="tagDropdownMenu">
-            <span id="tagDropdownLabel">همه برچسب‌ها</span>
-        </button>
-
-        <div id="tagDropdownMenu" class="tag-dropdown-menu" hidden>
-            <input type="text"
-                   id="tagSearchInput"
-                   class="form-control form-control-sm mb-2"
-                   placeholder="جستجوی برچسب..." />
-
-            <div id="tagOptions" class="tag-options">
-                @foreach (var tag in availableTags)
-                {
+                <div class="tag-filter-dropdown position-relative">
                     <button type="button"
-                            class="tag-option"
-                            data-tag-id="@tag.Id"
-                            data-tag-name="@tag.Name"
-                            aria-pressed="false">
-                        <span class="tag-option-check">✓</span>
-                        <span>@tag.Name</span>
+                            id="tagDropdownToggle"
+                            class="form-select filter-control text-start d-flex align-items-center justify-content-between"
+                            aria-expanded="false"
+                            aria-controls="tagDropdownMenu">
+                        <span id="tagDropdownLabel">همه برچسب‌ها</span>
                     </button>
-                }
-            </div>
 
-            @if (availableTags.Count == 0)
-            {
-                <div class="small text-muted p-2">
-                    برچسبی برای این برد ثبت نشده است.
+                    <div id="tagDropdownMenu" class="tag-dropdown-menu" hidden>
+                        <input type="text"
+                               id="tagSearchInput"
+                               class="form-control form-control-sm mb-2"
+                               placeholder="جستجوی برچسب..." />
+
+                        <div id="tagOptions" class="tag-options">
+                            @foreach (var tag in availableTags)
+                            {
+                                <button type="button"
+                                        class="tag-option"
+                                        data-tag-id="@tag.Id"
+                                        data-tag-name="@tag.Name"
+                                        aria-pressed="false">
+                                    <span class="tag-option-check">✓</span>
+                                    <span>@tag.Name</span>
+                                </button>
+                            }
+                        </div>
+
+                        @if (availableTags.Count == 0)
+                        {
+                            <div class="small text-muted p-2">
+                                برچسبی برای این برد ثبت نشده است.
+                            </div>
+                        }
+                    </div>
                 </div>
-            }
-        </div>
-    </div>
-</div>
+            </div>
         </div>
 
         <div id="selectedBoardTags"
-     class="selected-board-tags mt-3"
-     aria-live="polite"
-     hidden>
-</div>
+             class="selected-board-tags mt-3"
+             aria-live="polite"
+             hidden>
+        </div>
 
         <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
             <button type="button"
@@ -804,16 +810,38 @@
                                          data-search="@searchableText">
 
                                         <div class="card-body p-3">
-                                            <div class="work-item-reference">
-                                                <span>@item.ReferenceCode</span>
 
-                                                <button type="button"
-                                                        class="reference-copy-button"
-                                                        data-reference="@item.ReferenceCode"
-                                                        title="کپی شناسه"
-                                                        aria-label="کپی شناسه @item.ReferenceCode">
-                                                    📋
-                                                </button>
+                                            @{
+                                                var avatarInitials = string.IsNullOrWhiteSpace(assigneeName)
+                                                    ? "?"
+                                                    : string.Concat(
+                                                        assigneeName
+                                                            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                                            .Take(2)
+                                                            .Select(x => x[0])
+                                                    ).ToUpperInvariant();
+                                            }
+
+                                            <div class="work-item-card-top">
+
+                                                <div class="work-item-reference">
+                                                    <span>@item.ReferenceCode</span>
+
+                                                    <button type="button"
+                                                            class="reference-copy-button"
+                                                            data-reference="@item.ReferenceCode"
+                                                            title="کپی شناسه"
+                                                            aria-label="کپی شناسه @item.ReferenceCode">
+                                                        📋
+                                                    </button>
+                                                </div>
+
+                                                <span class="work-item-assignee-avatar @(string.IsNullOrWhiteSpace(assigneeName) ? "unassigned" : "")"
+                                                      title="@(string.IsNullOrWhiteSpace(assigneeName) ? "بدون مسئول" : assigneeName)"
+                                                      aria-label="@(string.IsNullOrWhiteSpace(assigneeName) ? "بدون مسئول" : "مسئول: " + assigneeName)">
+                                                    @avatarInitials
+                                                </span>
+
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
@@ -1005,13 +1033,13 @@
             const emptyMessage = document.getElementById("boardFilterEmpty");
 
             const tagDropdownToggle = document.getElementById("tagDropdownToggle");
-const tagDropdownMenu = document.getElementById("tagDropdownMenu");
-const tagDropdownLabel = document.getElementById("tagDropdownLabel");
-const tagSearchInput = document.getElementById("tagSearchInput");
-const tagOptions = document.getElementById("tagOptions");
-const selectedBoardTags = document.getElementById("selectedBoardTags");
+            const tagDropdownMenu = document.getElementById("tagDropdownMenu");
+            const tagDropdownLabel = document.getElementById("tagDropdownLabel");
+            const tagSearchInput = document.getElementById("tagSearchInput");
+            const tagOptions = document.getElementById("tagOptions");
+            const selectedBoardTags = document.getElementById("selectedBoardTags");
 
-const selectedTagIds = new Set();
+            const selectedTagIds = new Set();
 
             let myTasksOnly = false;
 
@@ -1070,109 +1098,109 @@ const selectedTagIds = new Set();
             }
 
             function updateTagDropdownLabel() {
-    const count = selectedTagIds.size;
+                const count = selectedTagIds.size;
 
-    tagDropdownLabel.textContent = count === 0
-        ? "همه برچسب‌ها"
-        : count + " برچسب انتخاب شده";
-}
+                tagDropdownLabel.textContent = count === 0
+                    ? "همه برچسب‌ها"
+                    : count + " برچسب انتخاب شده";
+            }
 
-function renderSelectedTagBadges() {
-    selectedBoardTags.innerHTML = "";
+            function renderSelectedTagBadges() {
+                selectedBoardTags.innerHTML = "";
 
-    selectedTagIds.forEach(function(tagId) {
-        const option = tagOptions.querySelector(
-            '[data-tag-id="' + CSS.escape(tagId) + '"]'
-        );
+                selectedTagIds.forEach(function(tagId) {
+                    const option = tagOptions.querySelector(
+                        '[data-tag-id="' + CSS.escape(tagId) + '"]'
+                    );
 
-        if (!option) return;
+                    if (!option) return;
 
-        const badge = document.createElement("span");
-        badge.className = "selected-tag-badge";
+                    const badge = document.createElement("span");
+                    badge.className = "selected-tag-badge";
 
-        const name = document.createElement("span");
-        name.textContent = option.dataset.tagName;
+                    const name = document.createElement("span");
+                    name.textContent = option.dataset.tagName;
 
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.className = "selected-tag-remove";
-        remove.textContent = "×";
-        remove.title = "حذف فیلتر " + option.dataset.tagName;
-        remove.setAttribute("aria-label", "حذف " + option.dataset.tagName);
+                    const remove = document.createElement("button");
+                    remove.type = "button";
+                    remove.className = "selected-tag-remove";
+                    remove.textContent = "×";
+                    remove.title = "حذف فیلتر " + option.dataset.tagName;
+                    remove.setAttribute("aria-label", "حذف " + option.dataset.tagName);
 
-        remove.addEventListener("click", function() {
-            setTagSelected(tagId, false);
-        });
+                    remove.addEventListener("click", function() {
+                        setTagSelected(tagId, false);
+                    });
 
-        badge.appendChild(name);
-        badge.appendChild(remove);
-        selectedBoardTags.appendChild(badge);
-    });
+                    badge.appendChild(name);
+                    badge.appendChild(remove);
+                    selectedBoardTags.appendChild(badge);
+                });
 
-    selectedBoardTags.hidden = selectedTagIds.size === 0;
-    updateTagDropdownLabel();
-}
+                selectedBoardTags.hidden = selectedTagIds.size === 0;
+                updateTagDropdownLabel();
+            }
 
-function setTagSelected(tagId, selected) {
-    if (selected) {
-        selectedTagIds.add(tagId);
-    } else {
-        selectedTagIds.delete(tagId);
-    }
+            function setTagSelected(tagId, selected) {
+                if (selected) {
+                    selectedTagIds.add(tagId);
+                } else {
+                    selectedTagIds.delete(tagId);
+                }
 
-    const option = tagOptions.querySelector(
-        '[data-tag-id="' + CSS.escape(tagId) + '"]'
-    );
+                const option = tagOptions.querySelector(
+                    '[data-tag-id="' + CSS.escape(tagId) + '"]'
+                );
 
-    if (option) {
-        option.setAttribute("aria-pressed", selected ? "true" : "false");
-    }
+                if (option) {
+                    option.setAttribute("aria-pressed", selected ? "true" : "false");
+                }
 
-    renderSelectedTagBadges();
-    applyFilters();
-}
+                renderSelectedTagBadges();
+                applyFilters();
+            }
 
-tagDropdownToggle.addEventListener("click", function() {
-    const isOpen = !tagDropdownMenu.hidden;
+            tagDropdownToggle.addEventListener("click", function() {
+                const isOpen = !tagDropdownMenu.hidden;
 
-    tagDropdownMenu.hidden = isOpen;
-    tagDropdownToggle.setAttribute("aria-expanded", String(!isOpen));
+                tagDropdownMenu.hidden = isOpen;
+                tagDropdownToggle.setAttribute("aria-expanded", String(!isOpen));
 
-    if (!isOpen) {
-        tagSearchInput.focus();
-    }
-});
+                if (!isOpen) {
+                    tagSearchInput.focus();
+                }
+            });
 
-tagOptions.querySelectorAll(".tag-option").forEach(function(option) {
-    option.addEventListener("click", function() {
-        const tagId = option.dataset.tagId;
-        setTagSelected(tagId, !selectedTagIds.has(tagId));
-    });
-});
+            tagOptions.querySelectorAll(".tag-option").forEach(function(option) {
+                option.addEventListener("click", function() {
+                    const tagId = option.dataset.tagId;
+                    setTagSelected(tagId, !selectedTagIds.has(tagId));
+                });
+            });
 
-tagSearchInput.addEventListener("input", function() {
-    const search = normalize(tagSearchInput.value);
+            tagSearchInput.addEventListener("input", function() {
+                const search = normalize(tagSearchInput.value);
 
-    tagOptions.querySelectorAll(".tag-option").forEach(function(option) {
-        const name = normalize(option.dataset.tagName);
-        option.hidden = !name.includes(search);
-    });
-});
+                tagOptions.querySelectorAll(".tag-option").forEach(function(option) {
+                    const name = normalize(option.dataset.tagName);
+                    option.hidden = !name.includes(search);
+                });
+            });
 
-document.addEventListener("click", function(event) {
-    if (!event.target.closest(".tag-filter-dropdown")) {
-        tagDropdownMenu.hidden = true;
-        tagDropdownToggle.setAttribute("aria-expanded", "false");
-    }
-});
+            document.addEventListener("click", function(event) {
+                if (!event.target.closest(".tag-filter-dropdown")) {
+                    tagDropdownMenu.hidden = true;
+                    tagDropdownToggle.setAttribute("aria-expanded", "false");
+                }
+            });
 
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape" && !tagDropdownMenu.hidden) {
-        tagDropdownMenu.hidden = true;
-        tagDropdownToggle.setAttribute("aria-expanded", "false");
-        tagDropdownToggle.focus();
-    }
-});
+            document.addEventListener("keydown", function(event) {
+                if (event.key === "Escape" && !tagDropdownMenu.hidden) {
+                    tagDropdownMenu.hidden = true;
+                    tagDropdownToggle.setAttribute("aria-expanded", "false");
+                    tagDropdownToggle.focus();
+                }
+            });
 
 
             function applyFilters() {
@@ -1208,24 +1236,24 @@ document.addEventListener("keydown", function(event) {
                     const matchesPriority = !priority || cardPriority === priority;
 
                     const cardTagIds = (card.dataset.tagIds || "")
-    .split(",")
-    .filter(Boolean);
+                        .split(",")
+                        .filter(Boolean);
 
-const matchesTags = selectedTagIds.size === 0 ||
-    Array.from(selectedTagIds).some(function(tagId) {
-        return cardTagIds.includes(tagId);
-    });
+                    const matchesTags = selectedTagIds.size === 0 ||
+                        Array.from(selectedTagIds).some(function(tagId) {
+                            return cardTagIds.includes(tagId);
+                        });
 
 
                     const matchesMyTasks = !myTasksOnly ||
                         (currentUser.length > 0 && cardAssignee === currentUser);
 
                     const visible = matchesSearch &&
-    matchesAssignee &&
-    matchesStatus &&
-    matchesPriority &&
-    matchesTags &&
-    matchesMyTasks;
+                        matchesAssignee &&
+                        matchesStatus &&
+                        matchesPriority &&
+                        matchesTags &&
+                        matchesMyTasks;
 
 
                     card.style.display = visible ? "" : "none";
@@ -1315,16 +1343,16 @@ const matchesTags = selectedTagIds.size === 0 ||
 
                 selectedTagIds.clear();
 
-tagOptions.querySelectorAll(".tag-option").forEach(function(option) {
-    option.setAttribute("aria-pressed", "false");
-    option.hidden = false;
-});
+                tagOptions.querySelectorAll(".tag-option").forEach(function(option) {
+                    option.setAttribute("aria-pressed", "false");
+                    option.hidden = false;
+                });
 
-tagSearchInput.value = "";
-tagDropdownMenu.hidden = true;
-tagDropdownToggle.setAttribute("aria-expanded", "false");
+                tagSearchInput.value = "";
+                tagDropdownMenu.hidden = true;
+                tagDropdownToggle.setAttribute("aria-expanded", "false");
 
-renderSelectedTagBadges();
+                renderSelectedTagBadges();
 
                 applyFilters();
             });

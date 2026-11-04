@@ -1,4 +1,5 @@
-﻿using ChemResearchHub.Domain.Common;
+﻿
+using ChemResearchHub.Domain.Common;
 using ChemResearchHub.Domain.Enums.Meetings;
 
 namespace ChemResearchHub.Domain.Entities.Meetings;
@@ -63,13 +64,13 @@ public class MeetingActionItem : BaseEntity
     public DateTime? CompletedAt { get; private set; }
 
     public void Update(
-    string title,
-    string? description,
-    string? assignedToUserId,
-    DateTime? dueDate,
-    int? projectId,
-    int? decisionId,
-    string? acceptanceCriteria)
+        string title,
+        string? description,
+        string? assignedToUserId,
+        DateTime? dueDate,
+        int? projectId,
+        int? decisionId,
+        string? acceptanceCriteria)
     {
         SetTitle(title);
 
@@ -127,12 +128,30 @@ public class MeetingActionItem : BaseEntity
         if (workItemId <= 0)
             throw new ArgumentOutOfRangeException(nameof(workItemId));
 
-        if (WorkItemId.HasValue && WorkItemId.Value != workItemId)
+        if (Type == MeetingActionItemType.ConvertedWorkItem)
+        {
             throw new InvalidOperationException(
-                "This action item is already linked to another work item.");
+                "A converted action item cannot change its linked work item.");
+        }
 
         WorkItemId = workItemId;
         Type = MeetingActionItemType.LinkedWorkItem;
+        ModifiedAt = DateTime.UtcNow;
+    }
+
+    public void UnlinkWorkItem()
+    {
+        if (!WorkItemId.HasValue)
+            return;
+
+        if (Type == MeetingActionItemType.ConvertedWorkItem)
+        {
+            throw new InvalidOperationException(
+                "A converted action item cannot be unlinked.");
+        }
+
+        WorkItemId = null;
+        Type = MeetingActionItemType.Independent;
         ModifiedAt = DateTime.UtcNow;
     }
 

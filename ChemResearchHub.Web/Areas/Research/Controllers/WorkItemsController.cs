@@ -2,25 +2,26 @@ using ChemResearchHub.Application.Attachments.Interfaces;
 using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.DecisionLogs.Interfaces;
 using ChemResearchHub.Application.Experiments.Interfaces;
+using ChemResearchHub.Application.Meetings.Interfaces;
+using ChemResearchHub.Application.Notifications.Interfaces;
+using ChemResearchHub.Application.Notifications.Models;
 using ChemResearchHub.Application.Projects.Interfaces;
 using ChemResearchHub.Application.Results.Dtos;
 using ChemResearchHub.Application.Results.Interfaces;
 using ChemResearchHub.Application.Samples.Dtos;
 using ChemResearchHub.Application.Samples.Interfaces;
-using ChemResearchHub.Application.Users.Interfaces;
-using ChemResearchHub.Application.WorkItems.Interfaces;
 using ChemResearchHub.Application.Tags.Interfaces;
-using ChemResearchHub.Application.WorkItemTransitions.Interfaces;
+using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.WorkItemBlocks.Interfaces;
-using System.Security.Claims;
-using ChemResearchHub.Web.Models.WorkItems;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using ChemResearchHub.Application.WorkItems.Interfaces;
+using ChemResearchHub.Application.WorkItemTransitions.Interfaces;
 using ChemResearchHub.Application.WorkItemUserAlerts.Interfaces;
-using Microsoft.AspNetCore.SignalR;
 using ChemResearchHub.Web.Hubs;
-using ChemResearchHub.Application.Notifications.Interfaces;
-using ChemResearchHub.Application.Notifications.Models;
+using ChemResearchHub.Web.Models.WorkItems;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace ChemResearchHub.Web.Areas.Research.Controllers;
 
@@ -45,6 +46,7 @@ public class WorkItemsController : Controller
     private readonly IAuthorizationService _authorizationService;
     private readonly IWorkItemUserAlertService _alertService;
     private readonly IHubContext<WorkItemAlertHub> _hubContext;
+    private readonly IMeetingService _meetingService;
 
     public WorkItemsController(IWorkItemService workItemService,
                                IBoardService boardService,
@@ -62,7 +64,8 @@ public class WorkItemsController : Controller
                                IAuthorizationService authorizationService,
                                ITagService tagService,
                                IWorkItemUserAlertService alertService,
-                               IHubContext<WorkItemAlertHub> hubContext)
+                               IHubContext<WorkItemAlertHub> hubContext,
+                               IMeetingService meetingService)
     {
         _workItemService = workItemService;
         _tagService = tagService;
@@ -81,6 +84,7 @@ public class WorkItemsController : Controller
         _authorizationService = authorizationService;
         _alertService = alertService;
         _hubContext = hubContext;
+        _meetingService = meetingService;
     }
 
     [HttpGet]
@@ -448,6 +452,11 @@ public class WorkItemsController : Controller
                 workItem.Id,
                 cancellationToken);
 
+        var meetingActionItem =
+    await _meetingService.GetActionItemByWorkItemIdAsync(
+        workItem.Id,
+        cancellationToken);
+
         var model =
             new WorkItemDetailsViewModel
             {
@@ -477,6 +486,7 @@ public class WorkItemsController : Controller
                 FlowMetrics = flowMetrics,
                 CurrentBlock = currentBlock,
                 BlockHistory = blockHistory,
+                MeetingActionItem = meetingActionItem,
             };
 
         return View(model);
