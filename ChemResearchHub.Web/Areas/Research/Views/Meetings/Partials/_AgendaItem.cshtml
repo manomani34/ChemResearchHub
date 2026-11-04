@@ -1,0 +1,58 @@
+﻿@using ChemResearchHub.Application.Meetings.DTOs
+@model AgendaItemDto
+
+<article class="crm-agenda-item">
+    <div class="crm-agenda-item__main">
+        <div class="crm-agenda-item__heading">
+            <span class="crm-agenda-item__order">
+                @Model.SortOrder
+            </span>
+
+            <h4 class="crm-agenda-item__title">
+                @Model.Title
+            </h4>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p class="crm-agenda-item__description">
+                @Model.Description
+            </p>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ExpectedOutcome))
+        {
+            <div class="crm-agenda-item__outcome">
+                <span class="crm-agenda-item__label">Expected Outcome</span>
+                <span>@Model.ExpectedOutcome</span>
+            </div>
+        }
+    </div>
+
+    <div class="crm-agenda-item__meta">
+        <span class="crm-agenda-item__badge">
+            @Model.Type
+        </span>
+
+        <span class="crm-agenda-item__badge">
+            @Model.Priority
+        </span>
+
+        <span class="crm-agenda-item__status">
+            @Model.Status
+        </span>
+
+        <span class="crm-agenda-item__duration">
+            <i class="bi bi-clock"></i>
+            @Model.DurationMinutes min
+        </span>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.PresenterUserId))
+    {
+        <div class="crm-agenda-item__presenter">
+            <i class="bi bi-person"></i>
+            <span>Presenter: @Model.PresenterUserId</span>
+        </div>
+    }
+</article>

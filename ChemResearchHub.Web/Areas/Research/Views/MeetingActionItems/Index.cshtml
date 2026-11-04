@@ -1,0 +1,330 @@
+﻿ @using ChemResearchHub.Domain.Enums.Meetings
+@using ChemResearchHub.Web.Areas.Research.Models.Meetings.ActionItems
+@model ActionItemsViewModel
+
+@{
+    ViewData["Title"] = "Action Items";
+
+    var openItems = Model.Items
+        .Where(x => x.Status == MeetingActionItemStatus.Open)
+        .ToList();
+
+    var inProgressItems = Model.Items
+        .Where(x => x.Status == MeetingActionItemStatus.InProgress)
+        .ToList();
+
+    var blockedItems = Model.Items
+        .Where(x => x.Status == MeetingActionItemStatus.Blocked)
+        .ToList();
+
+    var completedItems = Model.Items
+        .Where(x => x.Status == MeetingActionItemStatus.Completed)
+        .ToList();
+
+    var cancelledItems = Model.Items
+        .Where(x => x.Status == MeetingActionItemStatus.Cancelled)
+        .ToList();
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/research-meetings.css"
+          asp-append-version="true" />
+}
+
+<div class="crm-action-page">
+
+    <header class="crm-action-header">
+        <div>
+            <div class="crm-page-eyebrow">RESEARCH MEETING</div>
+            <h1 class="crm-page-title">Action Items</h1>
+            <p class="crm-page-description">
+                اقدامات اجرایی، مسئولیت‌ها و پیگیری خروجی‌های جلسه.
+            </p>
+        </div>
+
+        <a asp-area="Research"
+           asp-controller="Meetings"
+           asp-action="Details"
+           asp-route-id="@Model.MeetingSessionId"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right"></i>
+            بازگشت به جلسه
+        </a>
+    </header>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i>
+            @successMessage
+        </div>
+    }
+
+    <section class="crm-action-stats">
+
+        <div class="crm-action-stat">
+            <span>Total Actions</span>
+            <strong>@Model.TotalCount</strong>
+            <i class="bi bi-list-task"></i>
+        </div>
+
+        <div class="crm-action-stat">
+            <span>Open</span>
+            <strong>@Model.OpenCount</strong>
+            <i class="bi bi-circle"></i>
+        </div>
+
+        <div class="crm-action-stat">
+            <span>In Progress</span>
+            <strong>@Model.InProgressCount</strong>
+            <i class="bi bi-arrow-repeat"></i>
+        </div>
+
+        <div class="crm-action-stat">
+            <span>Blocked</span>
+            <strong>@Model.BlockedCount</strong>
+            <i class="bi bi-pause-circle"></i>
+        </div>
+
+        <div class="crm-action-stat">
+            <span>Completed</span>
+            <strong>@Model.CompletedCount</strong>
+            <i class="bi bi-check-circle"></i>
+        </div>
+
+    </section>
+
+    <div class="crm-action-layout">
+
+        <main class="crm-action-board">
+
+            @if (Model.Items.Count == 0)
+            {
+                <div class="crm-empty-state">
+                    <i class="bi bi-list-task"></i>
+                    <h3>هنوز Action Item ثبت نشده است</h3>
+                    <p>
+                        اقدامات مورد توافق جلسه را از فرم مقابل ثبت کنید.
+                    </p>
+                </div>
+            }
+            else
+            {
+                @if (openItems.Count > 0)
+                {
+                    <section class="crm-action-group">
+                        <div class="crm-action-group__heading">
+                            <h2>Open</h2>
+                            <span>@openItems.Count</span>
+                        </div>
+
+                        @foreach (var item in openItems)
+                        {
+                            <partial name="_ActionItemCard" model="item" />
+                        }
+                    </section>
+                }
+
+                @if (inProgressItems.Count > 0)
+                {
+                    <section class="crm-action-group">
+                        <div class="crm-action-group__heading">
+                            <h2>In Progress</h2>
+                            <span>@inProgressItems.Count</span>
+                        </div>
+
+                        @foreach (var item in inProgressItems)
+                        {
+                            <partial name="_ActionItemCard" model="item" />
+                        }
+                    </section>
+                }
+
+                @if (blockedItems.Count > 0)
+                {
+                    <section class="crm-action-group">
+                        <div class="crm-action-group__heading">
+                            <h2>Blocked</h2>
+                            <span>@blockedItems.Count</span>
+                        </div>
+
+                        @foreach (var item in blockedItems)
+                        {
+                            <partial name="_ActionItemCard" model="item" />
+                        }
+                    </section>
+                }
+
+                @if (completedItems.Count > 0)
+                {
+                    <section class="crm-action-group">
+                        <div class="crm-action-group__heading">
+                            <h2>Completed</h2>
+                            <span>@completedItems.Count</span>
+                        </div>
+
+                        @foreach (var item in completedItems)
+                        {
+                            <partial name="_ActionItemCard" model="item" />
+                        }
+                    </section>
+                }
+
+                @if (cancelledItems.Count > 0)
+                {
+                    <section class="crm-action-group">
+                        <div class="crm-action-group__heading">
+                            <h2>Cancelled</h2>
+                            <span>@cancelledItems.Count</span>
+                        </div>
+
+                        @foreach (var item in cancelledItems)
+                        {
+                            <partial name="_ActionItemCard" model="item" />
+                        }
+                    </section>
+                }
+            }
+
+        </main>
+
+        <aside class="crm-action-create-panel">
+
+            <div class="crm-section-heading">
+                <div>
+                    <h2>Create Action Item</h2>
+                    <p>تعریف اقدام اجرایی جدید</p>
+                </div>
+            </div>
+
+            <form asp-area="Research"
+                  asp-controller="MeetingActionItems"
+                  asp-action="Create"
+                  asp-route-meetingSessionId="@Model.MeetingSessionId"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.Title" class="form-label">
+                        عنوان اقدام
+                    </label>
+
+                    <input asp-for="CreateRequest.Title"
+                           class="form-control"
+                           placeholder="مثلاً بررسی نتایج آزمایش..." />
+
+                    <span asp-validation-for="CreateRequest.Title"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.Description" class="form-label">
+                        توضیحات
+                    </label>
+
+                    <textarea asp-for="CreateRequest.Description"
+                              class="form-control"
+                              rows="4"
+                              placeholder="شرح اقدام و جزئیات مورد انتظار..."></textarea>
+
+                    <span asp-validation-for="CreateRequest.Description"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.AssignedToUserId"
+                           class="form-label">
+                        مسئول انجام
+                    </label>
+
+                    <select asp-for="CreateRequest.AssignedToUserId"
+                            asp-items="Model.Users"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.AssignedToUserId"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.DueDate" class="form-label">
+                        موعد تحویل
+                    </label>
+
+                    <input asp-for="CreateRequest.DueDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="CreateRequest.DueDate"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.AcceptanceCriteria"
+                           class="form-label">
+                        Acceptance Criteria
+                    </label>
+
+                    <textarea asp-for="CreateRequest.AcceptanceCriteria"
+                              class="form-control"
+                              rows="3"
+                              placeholder="شرایطی که نشان می‌دهد کار با موفقیت انجام شده است..."></textarea>
+
+                    <span asp-validation-for="CreateRequest.AcceptanceCriteria"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.ProjectId"
+                           class="form-label">
+                        پروژه مرتبط (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.ProjectId"
+                            asp-items="Model.Projects"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.ProjectId"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.DecisionId"
+                           class="form-label">
+                        تصمیم مرتبط (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.DecisionId"
+                            asp-items="Model.Decisions"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.DecisionId"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-lg"></i>
+                    Create Action Item
+                </button>
+
+            </form>
+
+        </aside>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

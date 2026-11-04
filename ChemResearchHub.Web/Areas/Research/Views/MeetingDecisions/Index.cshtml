@@ -1,0 +1,328 @@
+﻿ @using ChemResearchHub.Domain.Enums.Meetings
+@using ChemResearchHub.Web.Areas.Research.Models.Meetings.Decisions
+@model DecisionLogViewModel
+
+@{
+    ViewData["Title"] = "Decision Log";
+
+    var activeDecisions = Model.Decisions
+        .Where(x => x.Status == MeetingDecisionStatus.Active)
+        .ToList();
+
+    var historicalDecisions = Model.Decisions
+        .Where(x => x.Status != MeetingDecisionStatus.Active)
+        .ToList();
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/research-meetings.css"
+          asp-append-version="true" />
+}
+
+<div class="crm-decision-page">
+
+    <header class="crm-decision-header">
+
+        <div>
+            <div class="crm-page-eyebrow">
+                RESEARCH MEETING
+            </div>
+
+            <h1 class="crm-page-title">Decision Log</h1>
+
+            <p class="crm-page-description">
+                ثبت، مشاهده و پیگیری تصمیم‌های رسمی جلسه پژوهشی.
+            </p>
+        </div>
+
+        <a asp-area="Research"
+           asp-controller="Meetings"
+           asp-action="Details"
+           asp-route-id="@Model.MeetingSessionId"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right"></i>
+            بازگشت به جلسه
+        </a>
+
+    </header>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i>
+            @successMessage
+        </div>
+    }
+
+    <section class="crm-decision-stats">
+
+        <div class="crm-decision-stat">
+            <span>Total Decisions</span>
+            <strong>@Model.TotalCount</strong>
+            <i class="bi bi-journal-text"></i>
+        </div>
+
+        <div class="crm-decision-stat">
+            <span>Active</span>
+            <strong>@Model.ActiveCount</strong>
+            <i class="bi bi-check-circle"></i>
+        </div>
+
+        <div class="crm-decision-stat">
+            <span>Superseded</span>
+            <strong>@Model.SupersededCount</strong>
+            <i class="bi bi-arrow-repeat"></i>
+        </div>
+
+        <div class="crm-decision-stat">
+            <span>Archived</span>
+            <strong>@Model.ArchivedCount</strong>
+            <i class="bi bi-archive"></i>
+        </div>
+
+    </section>
+
+    <div class="crm-decision-layout">
+
+        <main class="crm-decision-list-panel">
+
+            <div class="crm-section-heading">
+                <div>
+                    <h2>Active Decisions</h2>
+                    <p>تصمیم‌های معتبر و جاری جلسه</p>
+                </div>
+
+                <span class="crm-count-badge">
+                    @activeDecisions.Count
+                </span>
+            </div>
+
+            @if (activeDecisions.Count == 0)
+            {
+                <div class="crm-empty-state">
+                    <i class="bi bi-journal-text"></i>
+                    <h3>هنوز تصمیم فعالی ثبت نشده است</h3>
+                    <p>
+                        تصمیم‌های رسمی جلسه را می‌توانید از فرم مقابل ثبت کنید.
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="crm-decision-list">
+
+                    @foreach (var decision in activeDecisions)
+                    {
+                        <article class="crm-decision-card">
+
+                            <div class="crm-decision-card__header">
+
+                                <div class="crm-decision-icon">
+                                    <i class="bi bi-check2-circle"></i>
+                                </div>
+
+                                <span class="crm-decision-status crm-decision-status--active">
+                                    Active
+                                </span>
+
+                            </div>
+
+                            <h3>@decision.Title</h3>
+
+                            @if (!string.IsNullOrWhiteSpace(decision.Description))
+                            {
+                                <p class="crm-decision-description">
+                                    @decision.Description
+                                </p>
+                            }
+
+                            <div class="crm-decision-meta">
+
+                                <span>
+                                    <i class="bi bi-person"></i>
+                                    @decision.DecidedByUserId
+                                </span>
+
+                                <span>
+                                    <i class="bi bi-calendar3"></i>
+                                    @decision.CreatedAt.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+                                </span>
+
+                                @if (decision.ProjectId.HasValue)
+                                {
+                                    <span>
+                                        <i class="bi bi-folder2"></i>
+                                        Project #@decision.ProjectId
+                                    </span>
+                                }
+
+                                @if (decision.AgendaItemId.HasValue)
+                                {
+                                    <span>
+                                        <i class="bi bi-list-check"></i>
+                                        Agenda #@decision.AgendaItemId
+                                    </span>
+                                }
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+            }
+
+            @if (historicalDecisions.Count > 0)
+            {
+                <div class="crm-decision-history">
+
+                    <div class="crm-section-heading">
+                        <div>
+                            <h2>Decision History</h2>
+                            <p>تصمیم‌های جایگزین‌شده یا بایگانی‌شده</p>
+                        </div>
+
+                        <span class="crm-count-badge">
+                            @historicalDecisions.Count
+                        </span>
+                    </div>
+
+                    @foreach (var decision in historicalDecisions)
+                    {
+                        <article class="crm-decision-history-item">
+
+                            <div>
+                                <h3>@decision.Title</h3>
+
+                                <span class="crm-decision-status
+                                    @(decision.Status == MeetingDecisionStatus.Superseded
+                                        ? "crm-decision-status--superseded"
+                                        : "crm-decision-status--archived")">
+                                    @decision.Status
+                                </span>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(decision.Description))
+                            {
+                                <p>@decision.Description</p>
+                            }
+
+                            <span class="crm-decision-history-meta">
+                                <i class="bi bi-person"></i>
+                                @decision.DecidedByUserId
+                            </span>
+
+                        </article>
+                    }
+
+                </div>
+            }
+
+        </main>
+
+        <aside class="crm-decision-create-panel">
+
+            <div class="crm-section-heading">
+                <div>
+                    <h2>Record a Decision</h2>
+                    <p>ثبت یک تصمیم رسمی جدید</p>
+                </div>
+            </div>
+
+            <form asp-area="Research"
+                  asp-controller="MeetingDecisions"
+                  asp-action="Create"
+                  asp-route-meetingSessionId="@Model.MeetingSessionId"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+
+                    <label asp-for="CreateRequest.Title"
+                           class="form-label">
+                        عنوان تصمیم
+                    </label>
+
+                    <input asp-for="CreateRequest.Title"
+                           class="form-control"
+                           placeholder="عنوان تصمیم را وارد کنید..." />
+
+                    <span asp-validation-for="CreateRequest.Title"
+                          class="text-danger"></span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="CreateRequest.Description"
+                           class="form-label">
+                        شرح تصمیم
+                    </label>
+
+                    <textarea asp-for="CreateRequest.Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="جزئیات و توضیحات تصمیم..."></textarea>
+
+                    <span asp-validation-for="CreateRequest.Description"
+                          class="text-danger"></span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="CreateRequest.ProjectId"
+                           class="form-label">
+                        پروژه مرتبط (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.ProjectId"
+                            asp-items="Model.Projects"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.ProjectId"
+                          class="text-danger"></span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="CreateRequest.AgendaItemId"
+                           class="form-label">
+                        دستورجلسه مرتبط (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.AgendaItemId"
+                            asp-items="Model.AgendaItems"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.AgendaItemId"
+                          class="text-danger"></span>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-lg"></i>
+                    ثبت تصمیم
+                </button>
+
+            </form>
+
+        </aside>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,5 +1,4 @@
-﻿
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.DecisionLogs.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;

@@ -50,6 +50,8 @@
     }
 </style>
 
+@await RenderSectionAsync("Styles", required: false)
+
 </head>
 
 <body>
@@ -339,6 +341,42 @@
         </span>
 
     </a>
+
+    <!-- RMO -->
+
+    <a asp-area="Admin"
+       asp-controller="Tags"
+       asp-action="Index"
+       class="sidebar-link">
+
+        <span class="sidebar-link-icon">
+            🏷️
+        </span>
+
+        <span>
+            مدیریت برچسب‌ها
+        </span>
+
+    </a>
+
+    <div class="sidebar-section-title mt-4">
+        Research Meeting Orchestrator
+    </div>
+
+    <a asp-area="Research"
+       asp-controller="Meetings"
+       asp-action="Index"
+       class="sidebar-link">
+
+        <span class="sidebar-link-icon">
+            📅
+        </span>
+
+        <span>
+            RMO
+        </span>        
+    </a>
+
     <!-- Reviews -->
 
     <a asp-area=""

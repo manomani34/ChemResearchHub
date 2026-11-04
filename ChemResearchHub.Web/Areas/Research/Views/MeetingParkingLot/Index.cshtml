@@ -1,0 +1,258 @@
+﻿ @using ChemResearchHub.Domain.Enums.Meetings
+@using ChemResearchHub.Web.Areas.Research.Models.Meetings.ParkingLot
+@model ParkingLotBoardViewModel
+
+@{
+    ViewData["Title"] = "Parking Lot";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/research-meetings.css"
+          asp-append-version="true" />
+}
+
+<div class="crm-parking-page">
+
+    <div class="crm-parking-header">
+        <div>
+            <div class="crm-page-eyebrow">
+                RESEARCH MEETING
+            </div>
+
+            <h1 class="crm-page-title">Parking Lot</h1>
+
+            <p class="crm-page-description">
+                موضوعات و بحث‌هایی که برای بررسی در زمان مناسب‌تری ثبت شده‌اند.
+            </p>
+        </div>
+
+        <a asp-area="Research"
+           asp-controller="Meetings"
+           asp-action="Details"
+           asp-route-id="@Model.MeetingSessionId"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right"></i>
+            بازگشت به جلسه
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success crm-alert">
+            <i class="bi bi-check-circle"></i>
+            @successMessage
+        </div>
+    }
+
+    <div class="crm-parking-stats">
+
+        <div class="crm-stat-card">
+            <span class="crm-stat-label">Total Topics</span>
+            <strong>@Model.TotalCount</strong>
+            <i class="bi bi-inboxes"></i>
+        </div>
+
+        <div class="crm-stat-card">
+            <span class="crm-stat-label">Submitted</span>
+            <strong>@Model.SubmittedCount</strong>
+            <i class="bi bi-inbox"></i>
+        </div>
+
+        <div class="crm-stat-card">
+            <span class="crm-stat-label">Under Review</span>
+            <strong>@Model.UnderReviewCount</strong>
+            <i class="bi bi-search"></i>
+        </div>
+
+        <div class="crm-stat-card">
+            <span class="crm-stat-label">Resolved</span>
+            <strong>@Model.ResolvedCount</strong>
+            <i class="bi bi-check2-circle"></i>
+        </div>
+
+    </div>
+
+    <div class="crm-parking-layout">
+
+        <section class="crm-parking-board">
+
+            <div class="crm-section-heading">
+                <div>
+                    <h2>Registered Topics</h2>
+                    <p>موضوعات ثبت‌شده برای بررسی و پیگیری</p>
+                </div>
+
+                <span class="crm-count-badge">
+                    @Model.TotalCount
+                </span>
+            </div>
+
+            @if (Model.Items.Count == 0)
+            {
+                <div class="crm-empty-state">
+                    <i class="bi bi-inboxes"></i>
+                    <h3>هنوز موضوعی ثبت نشده است</h3>
+                    <p>
+                        موضوعات خارج از دستور جلسه را می‌توانید از فرم مقابل ثبت کنید.
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="crm-parking-list">
+
+                    @foreach (var item in Model.Items.OrderByDescending(x => x.CreatedAt))
+                    {
+                        <article class="crm-parking-item">
+
+                            <div class="crm-parking-item__top">
+
+                                <div class="crm-parking-item__title">
+                                    <h3>@item.Title</h3>
+
+                                    <span class="crm-parking-status crm-status-@item.Status.ToString().ToLowerInvariant()">
+                                        @item.Status
+                                    </span>
+                                </div>
+
+                                <span class="crm-priority">
+                                    Priority: @item.Priority
+                                </span>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(item.Summary))
+                            {
+                                <p class="crm-parking-item__summary">
+                                    @item.Summary
+                                </p>
+                            }
+
+                            <div class="crm-parking-item__footer">
+
+                                <span>
+                                    <i class="bi bi-person"></i>
+                                    @item.RaisedByUserId
+                                </span>
+
+                                <span>
+                                    <i class="bi bi-calendar3"></i>
+                                    @item.CreatedAt.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+                                </span>
+
+                                @if (!string.IsNullOrWhiteSpace(item.AssignedToUserId))
+                                {
+                                    <span>
+                                        <i class="bi bi-person-check"></i>
+                                        @item.AssignedToUserId
+                                    </span>
+                                }
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+            }
+
+        </section>
+
+        <aside class="crm-parking-create">
+
+            <div class="crm-section-heading">
+                <div>
+                    <h2>Add a Topic</h2>
+                    <p>ثبت موضوع جدید در Parking Lot</p>
+                </div>
+            </div>
+
+            <form asp-area="Research"
+                  asp-controller="MeetingParkingLot"
+                  asp-action="Create"
+                  asp-route-meetingSessionId="@Model.MeetingSessionId"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.Title"
+                           class="form-label">
+                        عنوان موضوع
+                    </label>
+
+                    <input asp-for="CreateRequest.Title"
+                           class="form-control"
+                           placeholder="عنوان موضوع را وارد کنید..." />
+
+                    <span asp-validation-for="CreateRequest.Title"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.Summary"
+                           class="form-label">
+                        توضیحات
+                    </label>
+
+                    <textarea asp-for="CreateRequest.Summary"
+                              class="form-control"
+                              rows="5"
+                              placeholder="توضیح مختصری درباره موضوع..."></textarea>
+
+                    <span asp-validation-for="CreateRequest.Summary"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.ProjectId"
+                           class="form-label">
+                        پروژه مرتبط (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.ProjectId"
+                            asp-items="Model.Projects"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.ProjectId"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreateRequest.AgendaItemId"
+                           class="form-label">
+                        دستور جلسه مرتبط (اختیاری)
+                    </label>
+
+                    <select asp-for="CreateRequest.AgendaItemId"
+                            asp-items="Model.AgendaItems"
+                            class="form-select">
+                        <option value="">انتخاب نشده</option>
+                    </select>
+
+                    <span asp-validation-for="CreateRequest.AgendaItemId"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-lg"></i>
+                    Add to Parking Lot
+                </button>
+
+            </form>
+
+        </aside>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

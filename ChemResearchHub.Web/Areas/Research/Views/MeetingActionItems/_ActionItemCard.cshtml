@@ -1,0 +1,91 @@
+﻿@using ChemResearchHub.Application.Meetings.DTOs
+@model MeetingActionItemDto
+
+<article class="crm-action-card">
+
+    <div class="crm-action-card__header">
+
+        <h3>@Model.Title</h3>
+
+        <span class="crm-action-type">
+            @Model.Type
+        </span>
+
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p class="crm-action-card__description">
+            @Model.Description
+        </p>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.AcceptanceCriteria))
+    {
+        <div class="crm-action-acceptance">
+            <strong>Acceptance Criteria</strong>
+            <p>@Model.AcceptanceCriteria</p>
+        </div>
+    }
+
+    <div class="crm-action-card__meta">
+
+        @if (!string.IsNullOrWhiteSpace(Model.AssignedToUserId))
+        {
+            <span>
+                <i class="bi bi-person"></i>
+                @Model.AssignedToUserId
+            </span>
+        }
+        else
+        {
+            <span class="crm-action-unassigned">
+                <i class="bi bi-person-x"></i>
+                Unassigned
+            </span>
+        }
+
+        @if (Model.DueDate.HasValue)
+        {
+            <span>
+                <i class="bi bi-calendar-event"></i>
+                @Model.DueDate.Value.ToLocalTime().ToString("yyyy/MM/dd")
+            </span>
+        }
+
+        @if (Model.ProjectId.HasValue)
+        {
+            <span>
+                <i class="bi bi-folder2"></i>
+                Project #@Model.ProjectId
+            </span>
+        }
+
+        @if (Model.MeetingDecisionId.HasValue)
+        {
+            <span>
+                <i class="bi bi-journal-check"></i>
+                Decision #@Model.MeetingDecisionId
+            </span>
+        }
+
+        @if (Model.WorkItemId.HasValue)
+        {
+            <span class="crm-action-workitem">
+                <i class="bi bi-kanban"></i>
+                Work Item #@Model.WorkItemId
+            </span>
+        }
+
+    </div>
+
+    @if (Model.CompletedAt.HasValue)
+    {
+        <div class="crm-action-completed">
+            <i class="bi bi-check-circle"></i>
+            Completed at:
+            @Model.CompletedAt.Value.ToLocalTime().ToString("yyyy/MM/dd HH:mm")
+        </div>
+    }
+
+</article>

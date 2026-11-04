@@ -76,6 +76,11 @@ using ChemResearchHub.Application.Notifications.Services;
 using ChemResearchHub.Infrastructure.Notifications.Channels;
 using ChemResearchHub.Infrastructure.Notifications.Services;
 using ChemResearchHub.Web.Notifications;
+using ChemResearchHub.Application.Meetings.Interfaces;
+using ChemResearchHub.Application.Meetings.Repositories;
+using ChemResearchHub.Application.Meetings.Services;
+using ChemResearchHub.Infrastructure.Persistence.Repositories;
+using ChemResearchHub.Web.Areas.Research.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -224,9 +229,11 @@ builder.Services.AddScoped<NotificationDispatcher>();
 builder.Services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
 
 // SignalR notification publisher
-builder.Services.AddScoped<
-    INotificationRealtimePublisher,
-    SignalRNotificationRealtimePublisher>();
+builder.Services.AddScoped<INotificationRealtimePublisher, SignalRNotificationRealtimePublisher>();
+
+// Research Meeting Orchestrator
+builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
+builder.Services.AddScoped<IMeetingService, MeetingService>();
 
 
 builder.Services.AddScoped<IAttachmentStorage>(sp =>
@@ -345,6 +352,7 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.MapHub<WorkItemAlertHub>(WorkItemAlertHub.HubUrl);
+app.MapHub<LiveMeetingHub>(LiveMeetingHub.HubUrl);
 
 using (var scope = app.Services.CreateScope())
 {

@@ -1,0 +1,119 @@
+﻿@model ChemResearchHub.Web.Models.Meetings.CreateMeetingViewModel
+
+@{
+    ViewData["Title"] = "ایجاد جلسه پژوهشی";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/research-meetings.css" asp-append-version="true" />
+}
+
+<div class="rmo-page rmo-form-page">
+
+    <div class="rmo-header">
+        <div>
+            <div class="rmo-eyebrow">MEETING MANAGEMENT</div>
+            <h1>ایجاد جلسه پژوهشی</h1>
+            <p>اطلاعات پایه جلسه را وارد کنید.</p>
+        </div>
+
+        <a asp-action="Index" class="rmo-btn rmo-btn-light">
+            <i class="bi bi-arrow-right"></i>
+            بازگشت
+        </a>
+    </div>
+
+    <div class="rmo-form-card">
+
+        <div class="rmo-form-card-heading">
+            <div class="rmo-form-heading-icon">
+                <i class="bi bi-calendar-plus"></i>
+            </div>
+            <div>
+                <h2>اطلاعات جلسه</h2>
+                <p>مشخصات اولیه جلسه و زمان‌بندی آن</p>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="rmo-validation-summary"></div>
+
+            <div class="rmo-form-grid">
+
+                <div class="rmo-field rmo-field-full">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title"
+                           class="rmo-input"
+                           placeholder="مثلاً جلسه هفتگی گروه پژوهشی شیمی" />
+                    <span asp-validation-for="Title"
+                          class="rmo-field-error"></span>
+                </div>
+
+                <div class="rmo-field rmo-field-full">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description"
+                              class="rmo-input rmo-textarea"
+                              rows="4"
+                              placeholder="هدف و توضیحات جلسه..."></textarea>
+                    <span asp-validation-for="Description"
+                          class="rmo-field-error"></span>
+                </div>
+
+                <div class="rmo-field">
+                    <label asp-for="ScheduledStartAt"></label>
+                    <input asp-for="ScheduledStartAt"
+                           type="datetime-local"
+                           class="rmo-input"
+                           asp-format="{0:yyyy-MM-ddTHH:mm}" />
+                    <span asp-validation-for="ScheduledStartAt"
+                          class="rmo-field-error"></span>
+                </div>
+
+                <div class="rmo-field">
+                    <label asp-for="PlannedDurationMinutes"></label>
+
+                    <select asp-for="PlannedDurationMinutes"
+                            class="rmo-input">
+                        <option value="30">۳۰ دقیقه</option>
+                        <option value="60">۶۰ دقیقه</option>
+                        <option value="90">۹۰ دقیقه</option>
+                        <option value="120">۱۲۰ دقیقه</option>
+                        <option value="150">۱۵۰ دقیقه</option>
+                        <option value="180">۱۸۰ دقیقه</option>
+                    </select>
+
+                    <span asp-validation-for="PlannedDurationMinutes"
+                          class="rmo-field-error"></span>
+                </div>
+
+            </div>
+
+            <div class="rmo-form-note">
+                <i class="bi bi-info-circle"></i>
+                پس از ایجاد جلسه، می‌توانید بخش‌های دستور جلسه،
+                زمان هر بخش و ارائه‌دهندگان را مشخص کنید.
+            </div>
+
+            <div class="rmo-form-actions">
+                <button type="submit" class="rmo-btn rmo-btn-primary">
+                    <i class="bi bi-check-lg"></i>
+                    ایجاد جلسه
+                </button>
+
+                <a asp-action="Index" class="rmo-btn rmo-btn-light">
+                    انصراف
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

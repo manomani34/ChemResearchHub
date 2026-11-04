@@ -1,0 +1,557 @@
+﻿@model ChemResearchHub.Application.Meetings.DTOs.MeetingSessionDto
+
+@using ChemResearchHub.Domain.Enums.Meetings
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+
+    var currentItem = Model.AgendaItems
+        .FirstOrDefault(x =>
+            x.Status == AgendaItemStatus.InProgress ||
+            x.Status == AgendaItemStatus.Overtime);
+
+    var nextItem = Model.AgendaItems
+        .Where(x => x.Status == AgendaItemStatus.Pending)
+        .OrderBy(x => x.SortOrder)
+        .FirstOrDefault();
+
+    var completedCount = Model.AgendaItems.Count(x =>
+        x.Status == AgendaItemStatus.Completed);
+
+    var progress = Model.AgendaItems.Count == 0
+        ? 0
+        : (int)Math.Round(
+            completedCount * 100.0 / Model.AgendaItems.Count);
+
+    var isDraft = Model.Status == MeetingSessionStatus.Draft;
+    var isPublished = Model.Status == MeetingSessionStatus.Published;
+    var isRunning = Model.Status == MeetingSessionStatus.InProgress;
+    var isPaused = Model.TimerState == MeetingTimerState.Paused;
+    var isCompleted = Model.Status == MeetingSessionStatus.Completed;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/research-meetings.css" asp-append-version="true" />
+}
+
+<div class="rmo-page rmo-details-page"
+     id="rmoMeeting"
+     data-meeting-remaining="@Model.RemainingSeconds"
+     data-timer-state="@Model.TimerState"
+     data-session-status="@Model.Status">
+
+    <div class="rmo-header rmo-details-header">
+
+        <div>
+            <div class="rmo-eyebrow">
+                RESEARCH MEETING / SESSION #@Model.Id
+            </div>
+
+            <h1>@Model.Title</h1>
+
+            <div class="d-flex flex-wrap gap-2">
+
+    <a asp-area="Research"
+       asp-controller="MeetingParkingLot"
+       asp-action="Index"
+       asp-route-meetingSessionId="@Model.Id"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-inboxes"></i>
+        Parking Lot
+    </a>
+
+    <a asp-area="Research"
+       asp-controller="MeetingDecisions"
+       asp-action="Index"
+       asp-route-meetingSessionId="@Model.Id"
+       class="btn btn-outline-primary">
+        <i class="bi bi-journal-check"></i>
+        Decision Log
+    </a>
+
+    <a asp-area="Research"
+   asp-controller="MeetingActionItems"
+   asp-action="Index"
+   asp-route-meetingSessionId="@Model.Id"
+   class="btn btn-outline-primary">
+    <i class="bi bi-list-task"></i>
+    Action Items
+</a>
+
+<a asp-area="Research"
+   asp-controller="MeetingLive"
+   asp-action="Index"
+   asp-route-meetingSessionId="@Model.Id"
+   class="btn btn-primary">
+    <i class="bi bi-broadcast"></i>
+    Live Meeting Room
+</a>
+
+</div>
+
+            <p>
+                <i class="bi bi-calendar3"></i>
+                @Model.ScheduledStartAt.ToString("yyyy/MM/dd")
+                <span class="rmo-dot"></span>
+                <i class="bi bi-clock"></i>
+                @Model.ScheduledStartAt.ToString("HH:mm")
+                <span class="rmo-dot"></span>
+                @Model.PlannedDurationMinutes دقیقه
+            </p>
+        </div>
+
+        <div class="rmo-header-actions">
+
+            <span class="rmo-status-badge"
+                  data-status="@Model.Status">
+                @Model.Status
+            </span>
+
+            @if (isDraft || isPublished)
+            {
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="rmo-btn rmo-btn-light">
+                    <i class="bi bi-pencil"></i>
+                    ویرایش
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="rmo-alert rmo-alert-success">
+            <i class="bi bi-check-circle"></i>
+            @success
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="rmo-alert rmo-alert-danger">
+            <i class="bi bi-exclamation-circle"></i>
+            @error
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <div class="rmo-description-card">
+            <i class="bi bi-info-circle"></i>
+            <span>@Model.Description</span>
+        </div>
+    }
+
+    <div class="rmo-workspace-grid">
+
+        <!-- Agenda -->
+        <section class="rmo-panel rmo-agenda-panel">
+
+            <div class="rmo-panel-heading">
+                <div>
+                    <h2>
+                        <i class="bi bi-list-ol"></i>
+                        Agenda
+                    </h2>
+                    <span>
+                        @completedCount از @Model.AgendaItems.Count بخش تکمیل شده
+                    </span>
+                </div>
+
+                <span class="rmo-panel-count">
+                    @Model.AgendaItems.Count
+                </span>
+            </div>
+
+            <div class="rmo-progress">
+                <div class="rmo-progress-bar"
+                     style="width:@progress%">
+                </div>
+            </div>
+
+            @if (Model.AgendaItems.Count == 0)
+            {
+                <div class="rmo-panel-empty">
+                    <i class="bi bi-list-task"></i>
+                    <strong>دستور جلسه خالی است</strong>
+                    <span>اولین موضوع را به Agenda اضافه کنید.</span>
+                </div>
+            }
+            else
+            {
+                <div class="rmo-agenda-list">
+
+                    @foreach (var item in Model.AgendaItems.OrderBy(x => x.SortOrder))
+                    {
+                        var itemRunning =
+                            item.Status == AgendaItemStatus.InProgress ||
+                            item.Status == AgendaItemStatus.Overtime;
+
+                        <div class="rmo-agenda-item @(itemRunning ? "is-current" : "")">
+
+                            <div class="rmo-agenda-number">
+                                @if (item.Status == AgendaItemStatus.Completed)
+                                {
+                                    <i class="bi bi-check-lg"></i>
+                                }
+                                else
+                                {
+                                    @(item.SortOrder + 1)
+                                }
+                            </div>
+
+                            <div class="rmo-agenda-content">
+                                <strong>@item.Title</strong>
+
+                                <div class="rmo-agenda-meta">
+                                    <span>
+                                        <i class="bi bi-clock"></i>
+                                        @item.DurationMinutes دقیقه
+                                    </span>
+
+                                    <span class="rmo-status-badge"
+                                          data-status="@item.Status">
+                                        @item.Status
+                                    </span>
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(item.ExpectedOutcome))
+                                {
+                                    <p>@item.ExpectedOutcome</p>
+                                }
+
+                                @if (!string.IsNullOrWhiteSpace(item.PresenterUserId))
+                                {
+                                    <div class="rmo-presenter">
+                                        <i class="bi bi-person-circle"></i>
+                                        @item.PresenterUserId
+                                    </div>
+                                }
+
+                                @if (isRunning && itemRunning)
+                                {
+                                    <div class="rmo-inline-actions">
+
+                                        <form asp-action="CompleteAgendaItem"
+                                              asp-route-meetingSessionId="@Model.Id"
+                                              asp-route-agendaItemId="@item.Id"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button class="rmo-mini-btn success"
+                                                    type="submit">
+                                                <i class="bi bi-check2"></i>
+                                                پایان بخش
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="SkipAgendaItem"
+                                              asp-route-meetingSessionId="@Model.Id"
+                                              asp-route-agendaItemId="@item.Id"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button class="rmo-mini-btn"
+                                                    type="submit">
+                                                رد شدن
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                }
+                                else if (isRunning &&
+                                         item.Status == AgendaItemStatus.Pending)
+                                {
+                                    <form asp-action="StartAgendaItem"
+                                          asp-route-meetingSessionId="@Model.Id"
+                                          asp-route-agendaItemId="@item.Id"
+                                          method="post"
+                                          class="rmo-start-item-form">
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="rmo-mini-btn primary">
+                                            <i class="bi bi-play-fill"></i>
+                                            شروع این بخش
+                                        </button>
+                                    </form>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+            @if (isDraft || isPublished)
+            {
+                <div class="rmo-add-agenda">
+
+                    <h3>
+                        <i class="bi bi-plus-circle"></i>
+                        افزودن بخش به Agenda
+                    </h3>
+
+                    <form asp-action="AddAgendaItem"
+                          asp-route-meetingSessionId="@Model.Id"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="rmo-field">
+                            <label for="agendaTitle">عنوان بخش</label>
+                            <input id="agendaTitle"
+                                   name="Title"
+                                   class="rmo-input"
+                                   required
+                                   maxlength="250"
+                                   placeholder="مثلاً بررسی نتایج آزمایش NMR" />
+                        </div>
+
+                        <div class="rmo-form-grid">
+
+                            <div class="rmo-field">
+                                <label for="agendaDuration">مدت (دقیقه)</label>
+                                <input id="agendaDuration"
+                                       name="DurationMinutes"
+                                       type="number"
+                                       min="1"
+                                       max="720"
+                                       value="15"
+                                       class="rmo-input"
+                                       required />
+                            </div>
+
+                            <div class="rmo-field">
+                                <label for="agendaType">نوع بخش</label>
+                                <select id="agendaType"
+                                        name="Type"
+                                        class="rmo-input">
+                                    @foreach (var value in Enum.GetValues<AgendaItemType>())
+                                    {
+                                        <option value="@value">@value</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="rmo-field">
+                                <label for="agendaPriority">اولویت</label>
+                                <select id="agendaPriority"
+                                        name="Priority"
+                                        class="rmo-input">
+                                    @foreach (var value in Enum.GetValues<AgendaItemPriority>())
+                                    {
+                                        <option value="@value">@value</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="rmo-field">
+                            <label for="agendaDescription">توضیحات</label>
+                            <textarea id="agendaDescription"
+                                      name="Description"
+                                      rows="2"
+                                      class="rmo-input"></textarea>
+                        </div>
+
+                        <div class="rmo-field">
+                            <label for="agendaOutcome">خروجی مورد انتظار</label>
+                            <input id="agendaOutcome"
+                                   name="ExpectedOutcome"
+                                   class="rmo-input"
+                                   maxlength="2000"
+                                   placeholder="مثلاً تعیین مرحله بعد آزمایش" />
+                        </div>
+
+                        <button type="submit"
+                                class="rmo-btn rmo-btn-primary rmo-btn-block">
+                            <i class="bi bi-plus-lg"></i>
+                            افزودن به دستور جلسه
+                        </button>
+
+                    </form>
+                </div>
+            }
+
+        </section>
+
+        <!-- Live Workspace -->
+        <section class="rmo-panel rmo-live-panel">
+
+            <div class="rmo-panel-heading">
+                <div>
+                    <h2>
+                        <i class="bi bi-stopwatch"></i>
+                        Live Workspace
+                    </h2>
+                    <span>کنترل زمان و جریان جلسه</span>
+                </div>
+
+                @if (isRunning)
+                {
+                    <span class="rmo-live-indicator">
+                        <span></span>
+                        LIVE
+                    </span>
+                }
+            </div>
+
+            <div class="rmo-timer-card">
+
+                <div class="rmo-timer-label">
+                    زمان باقی‌مانده جلسه
+                </div>
+
+                <div class="rmo-main-timer"
+                     id="meetingCountdown">
+                    --:--
+                </div>
+
+                <div class="rmo-timer-subtitle">
+                    از @Model.PlannedDurationMinutes دقیقه زمان برنامه‌ریزی‌شده
+                </div>
+
+                <div class="rmo-timer-divider"></div>
+
+                <div class="rmo-current-section-label">
+                    بخش جاری
+                </div>
+
+                @if (currentItem is not null)
+                {
+                    <div class="rmo-current-section">
+                        @currentItem.Title
+                    </div>
+
+                    <div class="rmo-section-timer"
+                         id="sectionCountdown"
+                         data-started="@currentItem.ActualStartedAt?.ToString("O")"
+                         data-duration="@currentItem.DurationMinutes"
+                         data-extended="@currentItem.ExtendedSeconds">
+                        --:--
+                    </div>
+                }
+                else
+                {
+                    <div class="rmo-no-current">
+                        هنوز بخشی در حال اجرا نیست.
+                    </div>
+                }
+
+                @if (nextItem is not null)
+                {
+                    <div class="rmo-next-section">
+                        <span>بخش بعدی</span>
+                        <strong>@nextItem.Title</strong>
+                    </div>
+                }
+
+            </div>
+
+            <div class="rmo-timer-controls">
+
+                @if (isDraft)
+                {
+                    <form asp-action="Publish"
+                          asp-route-id="@Model.Id"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="rmo-btn rmo-btn-light rmo-btn-block"
+                                type="submit">
+                            <i class="bi bi-send"></i>
+                            انتشار Agenda
+                        </button>
+                    </form>
+                }
+
+                @if (isPublished)
+                {
+                    <form asp-action="Start"
+                          asp-route-id="@Model.Id"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="rmo-btn rmo-btn-primary rmo-btn-block"
+                                type="submit">
+                            <i class="bi bi-play-fill"></i>
+                            شروع جلسه
+                        </button>
+                    </form>
+                }
+
+                @if (isRunning)
+                {
+                    <form asp-action="Pause"
+                          asp-route-id="@Model.Id"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="rmo-btn rmo-btn-light rmo-btn-block"
+                                type="submit">
+                            <i class="bi bi-pause-fill"></i>
+                            توقف موقت
+                        </button>
+                    </form>
+
+                    <form asp-action="Complete"
+                          asp-route-id="@Model.Id"
+                          method="post"
+                          onsubmit="return confirm('آیا از پایان جلسه مطمئن هستید؟');">
+                        @Html.AntiForgeryToken()
+                        <button class="rmo-btn rmo-btn-danger rmo-btn-block"
+                                type="submit">
+                            <i class="bi bi-stop-fill"></i>
+                            پایان جلسه
+                        </button>
+                    </form>
+                }
+
+                @if (isPaused)
+                {
+                    <form asp-action="Resume"
+                          asp-route-id="@Model.Id"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="rmo-btn rmo-btn-primary rmo-btn-block"
+                                type="submit">
+                            <i class="bi bi-play-fill"></i>
+                            ادامه جلسه
+                        </button>
+                    </form>
+
+                    <form asp-action="Complete"
+                          asp-route-id="@Model.Id"
+                          method="post"
+                          onsubmit="return confirm('آیا از پایان جلسه مطمئن هستید؟');">
+                        @Html.AntiForgeryToken()
+                        <button class="rmo-btn rmo-btn-danger rmo-btn-block"
+                                type="submit">
+                            <i class="bi bi-stop-fill"></i>
+                            پایان جلسه
+                        </button>
+                    </form>
+                }
+
+                @if (isCompleted)
+                {
+                    <div class="rmo-completed-notice">
+                        <i class="bi bi-check-circle-fill"></i>
+                        این جلسه به پایان رسیده است.
+                    </div>
+                }
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/research-meetings.js" asp-append-version="true"></script>
+}

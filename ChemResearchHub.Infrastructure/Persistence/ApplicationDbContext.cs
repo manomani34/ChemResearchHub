@@ -2,6 +2,8 @@
 using ChemResearchHub.Domain.Entities.Board;
 using ChemResearchHub.Domain.Entities.DecisionLog;
 using ChemResearchHub.Domain.Entities.Experiment;
+using ChemResearchHub.Domain.Entities.Meetings;
+using ChemResearchHub.Domain.Entities.Notification;
 using ChemResearchHub.Domain.Entities.Project;
 using ChemResearchHub.Domain.Entities.Result;
 using ChemResearchHub.Domain.Entities.Sample;
@@ -15,7 +17,6 @@ using ChemResearchHub.Domain.Entities.WorkItemUserAlert;
 using ChemResearchHub.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ChemResearchHub.Domain.Entities.Notification;
 
 namespace ChemResearchHub.Infrastructure.Persistence;
 
@@ -28,12 +29,19 @@ public class ApplicationDbContext
     {
     }
     public DbSet<WorkItemAssignment> WorkItemAssignments => Set<WorkItemAssignment>();
+
     public DbSet<DecisionLog> DecisionLogs => Set<DecisionLog>();
+
     public DbSet<Attachment> Attachments => Set<Attachment>();
+
     public DbSet<Result> Results => Set<Result>();
+
     public DbSet<Sample> Samples => Set<Sample>();
+
     public DbSet<Experiment> Experiments => Set<Experiment>();
+
     public DbSet<Project> Projects => Set<Project>();
+
     public DbSet<Tag> Tags => Set<Tag>();
 
     public DbSet<WorkItemTag> WorkItemTags => Set<WorkItemTag>();
@@ -51,6 +59,24 @@ public class ApplicationDbContext
     public DbSet<WorkItemUserAlert> WorkItemUserAlerts=> Set<WorkItemUserAlert>();
 
     public DbSet<Notification> Notifications => Set<Notification>();
+
+    public DbSet<MeetingSeries> MeetingSeries => Set<MeetingSeries>();
+
+    public DbSet<MeetingSession> MeetingSessions => Set<MeetingSession>();
+
+    public DbSet<AgendaItem> MeetingAgendaItems => Set<AgendaItem>();
+
+    public DbSet<MeetingParticipant> MeetingParticipants => Set<MeetingParticipant>();
+
+    public DbSet<ParkingLotItem> MeetingParkingLotItems => Set<ParkingLotItem>();
+
+    public DbSet<MeetingDecision> MeetingDecisions => Set<MeetingDecision>();
+
+    public DbSet<MeetingActionItem> MeetingActionItems => Set<MeetingActionItem>();
+
+    public DbSet<MeetingTimerEvent> MeetingTimerEvents => Set<MeetingTimerEvent>();
+
+    public DbSet<MeetingTemplate> MeetingTemplates => Set<MeetingTemplate>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)

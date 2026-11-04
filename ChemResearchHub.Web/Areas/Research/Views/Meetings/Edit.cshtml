@@ -1,0 +1,101 @@
+﻿@model ChemResearchHub.Web.Models.Meetings.EditMeetingViewModel
+
+@{
+    ViewData["Title"] = "ویرایش جلسه";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/research-meetings.css" asp-append-version="true" />
+}
+
+<div class="rmo-page rmo-form-page">
+
+    <div class="rmo-header">
+        <div>
+            <div class="rmo-eyebrow">MEETING MANAGEMENT</div>
+            <h1>ویرایش جلسه</h1>
+            <p>به‌روزرسانی اطلاعات جلسه پژوهشی</p>
+        </div>
+
+        <a asp-action="Details"
+           asp-route-id="@Model.Id"
+           class="rmo-btn rmo-btn-light">
+            <i class="bi bi-arrow-right"></i>
+            بازگشت به جلسه
+        </a>
+    </div>
+
+    <div class="rmo-form-card">
+
+        <form asp-action="Edit"
+              asp-route-id="@Model.Id"
+              method="post">
+
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="rmo-validation-summary"></div>
+
+            <div class="rmo-form-grid">
+
+                <div class="rmo-field rmo-field-full">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" class="rmo-input" />
+                    <span asp-validation-for="Title"
+                          class="rmo-field-error"></span>
+                </div>
+
+                <div class="rmo-field rmo-field-full">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description"
+                              class="rmo-input rmo-textarea"
+                              rows="5"></textarea>
+                    <span asp-validation-for="Description"
+                          class="rmo-field-error"></span>
+                </div>
+
+                <div class="rmo-field">
+                    <label asp-for="ScheduledStartAt"></label>
+                    <input asp-for="ScheduledStartAt"
+                           type="datetime-local"
+                           asp-format="{0:yyyy-MM-ddTHH:mm}"
+                           class="rmo-input" />
+                    <span asp-validation-for="ScheduledStartAt"
+                          class="rmo-field-error"></span>
+                </div>
+
+                <div class="rmo-field">
+                    <label asp-for="PlannedDurationMinutes"></label>
+                    <input asp-for="PlannedDurationMinutes"
+                           type="number"
+                           min="1"
+                           max="720"
+                           class="rmo-input" />
+                    <span asp-validation-for="PlannedDurationMinutes"
+                          class="rmo-field-error"></span>
+                </div>
+
+            </div>
+
+            <div class="rmo-form-actions">
+                <button type="submit" class="rmo-btn rmo-btn-primary">
+                    <i class="bi bi-check-lg"></i>
+                    ذخیره تغییرات
+                </button>
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.Id"
+                   class="rmo-btn rmo-btn-light">
+                    انصراف
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

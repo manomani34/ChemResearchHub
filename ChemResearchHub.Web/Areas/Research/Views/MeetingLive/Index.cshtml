@@ -1,0 +1,338 @@
+﻿@using ChemResearchHub.Domain.Enums.Meetings
+@model ChemResearchHub.Web.Areas.Research.Models.Meetings.Live.LiveMeetingViewModel
+
+@{
+    ViewData["Title"] = "Live Meeting Room";
+
+    var meeting = Model.Meeting;
+    var isPresentation = Model.IsPresentation;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/research-meeting-live.css"
+          asp-append-version="true" />
+}
+
+<div id="liveMeetingRoom"
+     class="crm-live-room @(isPresentation ? "crm-presentation-mode" : "")"
+     data-meeting-id="@meeting.Id"
+     data-hub-url="@Model.HubUrl"
+     data-can-control="@Model.CanControl.ToString().ToLowerInvariant()"
+     data-presentation="@isPresentation.ToString().ToLowerInvariant()">
+
+    <header class="crm-live-header">
+        <div class="crm-live-header-main">
+            <a asp-area="Research"
+               asp-controller="Meetings"
+               asp-action="Details"
+               asp-route-id="@meeting.Id"
+               class="crm-live-back">
+                <span aria-hidden="true">←</span>
+                Back to meeting
+            </a>
+
+            <div class="crm-live-title-group">
+                <span class="crm-live-eyebrow">RESEARCH MEETING ORCHESTRATOR</span>
+                <h1 id="meetingTitle">@meeting.Title</h1>
+                <div class="crm-live-connection">
+                    <span id="connectionIndicator"
+                          class="crm-connection-dot"></span>
+                    <span id="connectionText">Connecting...</span>
+                    <span class="crm-live-separator">·</span>
+                    <span id="meetingStatus">@meeting.Status</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="crm-live-header-actions">
+            <a class="crm-live-icon-button"
+               href="@Url.Action("Index", "MeetingLive",
+                    new { area = "Research", meetingSessionId = meeting.Id,
+                          presentation = !isPresentation })">
+                @(isPresentation ? "Exit presentation" : "Presentation view")
+            </a>
+
+            <button type="button"
+                    id="fullscreenButton"
+                    class="crm-live-icon-button">
+                Fullscreen
+            </button>
+        </div>
+    </header>
+
+    <main class="crm-live-content">
+
+        <section class="crm-live-timer-grid">
+
+            <article class="crm-live-timer-card crm-meeting-timer">
+                <div class="crm-timer-card-header">
+                    <div>
+                        <span class="crm-live-eyebrow">MEETING TIMER</span>
+                        <h2>Overall session</h2>
+                    </div>
+
+                    <span id="timerStateBadge"
+                          class="crm-live-status-badge">
+                        @meeting.TimerState
+                    </span>
+                </div>
+
+                <div id="meetingTimer"
+     class="crm-timer-value"
+     aria-live="off">
+    @(TimeSpan.FromSeconds(meeting.RemainingSeconds).ToString(@"hh\:mm\:ss"))
+</div>
+
+                <div class="crm-timer-caption">
+                    <span>Remaining time</span>
+                    <span id="meetingElapsed">
+                        Elapsed: 00:00:00
+                    </span>
+                </div>
+
+                <div class="crm-timer-progress">
+                    <div id="meetingProgress"
+                         class="crm-timer-progress-fill">
+                    </div>
+                </div>
+
+                <div class="crm-timer-footer">
+                    <span>
+                        Planned duration:
+                        <strong id="plannedDuration">
+                            @meeting.PlannedDurationMinutes min
+                        </strong>
+                    </span>
+                    <span id="meetingTimerMessage">
+                        Waiting for meeting
+                    </span>
+                </div>
+            </article>
+
+            <article class="crm-live-timer-card crm-section-timer">
+                <div class="crm-timer-card-header">
+                    <div>
+                        <span class="crm-live-eyebrow">CURRENT AGENDA</span>
+                        <h2>Section timer</h2>
+                    </div>
+
+                    <span id="sectionStatusBadge"
+                          class="crm-live-status-badge">
+                        Not started
+                    </span>
+                </div>
+
+                <div id="currentAgendaTitle"
+                     class="crm-current-agenda-title">
+                    No active agenda item
+                </div>
+
+                <div id="sectionTimer"
+                     class="crm-timer-value crm-section-timer-value">
+                    --:--
+                </div>
+
+                <div class="crm-timer-caption">
+                    <span id="sectionTimerCaption">
+                        Waiting for section
+                    </span>
+                    <span id="sectionDuration">
+                        Duration: --
+                    </span>
+                </div>
+
+                <div class="crm-timer-footer">
+                    <span id="sectionPresenter">
+                        Presenter: --
+                    </span>
+                    <span id="sectionOvertimeMessage"></span>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="crm-live-main-grid">
+
+            <article class="crm-live-panel crm-agenda-panel">
+                <div class="crm-live-panel-header">
+                    <div>
+                        <span class="crm-live-eyebrow">MEETING STRUCTURE</span>
+                        <h2>Agenda</h2>
+                    </div>
+
+                    <span id="agendaCount"
+                          class="crm-live-count">
+                        @meeting.AgendaItems.Count items
+                    </span>
+                </div>
+
+                <div id="agendaList" class="crm-agenda-list">
+
+                    @foreach (var item in meeting.AgendaItems
+                        .OrderBy(x => x.SortOrder))
+                    {
+                        <div class="crm-agenda-item"
+                             data-agenda-id="@item.Id">
+
+                            <div class="crm-agenda-order">
+                                @(item.SortOrder + 1)
+                            </div>
+
+                            <div class="crm-agenda-item-content">
+                                <div class="crm-agenda-item-title">
+                                    @item.Title
+                                </div>
+
+                                <div class="crm-agenda-item-meta">
+                                    <span>@item.Type</span>
+                                    <span>@item.DurationMinutes min</span>
+                                    <span>@item.Status</span>
+                                </div>
+                            </div>
+
+                            <div class="crm-agenda-item-state"
+                                 data-agenda-state="@item.Id">
+                                @item.Status
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </article>
+
+            @if (!isPresentation && Model.CanControl)
+            {
+                <aside class="crm-live-panel crm-control-panel">
+
+                    <div class="crm-live-panel-header">
+                        <div>
+                            <span class="crm-live-eyebrow">FACILITATOR WORKSPACE</span>
+                            <h2>Control panel</h2>
+                        </div>
+
+                        <span class="crm-control-indicator">
+                            Authorized
+                        </span>
+                    </div>
+
+                    <div class="crm-control-section">
+                        <h3>Meeting controls</h3>
+
+                        <div class="crm-control-button-grid">
+
+                            <button type="button"
+                                    class="crm-control-button crm-control-primary"
+                                    data-action="start-meeting">
+                                Start meeting
+                            </button>
+
+                            <button type="button"
+                                    class="crm-control-button"
+                                    data-action="pause-meeting">
+                                Pause
+                            </button>
+
+                            <button type="button"
+                                    class="crm-control-button"
+                                    data-action="resume-meeting">
+                                Resume
+                            </button>
+
+                            <button type="button"
+                                    class="crm-control-button crm-control-danger"
+                                    data-action="complete-meeting">
+                                End meeting
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="crm-control-divider"></div>
+
+                    <div class="crm-control-section">
+                        <h3>Agenda controls</h3>
+
+                        <label class="crm-control-label"
+                               for="agendaItemSelector">
+                            Select agenda item
+                        </label>
+
+                        <select id="agendaItemSelector"
+                                class="crm-control-select">
+                            <option value="">Select an item</option>
+
+                            @foreach (var item in meeting.AgendaItems
+                                .OrderBy(x => x.SortOrder))
+                            {
+                                <option value="@item.Id">
+                                    @(item.SortOrder + 1). @item.Title
+                                </option>
+                            }
+                        </select>
+
+                        <div class="crm-control-button-grid">
+
+                            <button type="button"
+                                    class="crm-control-button crm-control-primary"
+                                    data-action="start-agenda">
+                                Start section
+                            </button>
+
+                            <button type="button"
+                                    class="crm-control-button"
+                                    data-action="complete-agenda">
+                                Complete section
+                            </button>
+
+                            <button type="button"
+                                    class="crm-control-button"
+                                    data-action="skip-agenda">
+                                Skip section
+                            </button>
+
+                            <button type="button"
+                                    class="crm-control-button"
+                                    data-action="extend-agenda">
+                                + 1 minute
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="crm-control-divider"></div>
+
+                    <div class="crm-control-section">
+                        <h3>Live room</h3>
+
+                        <p class="crm-control-description">
+                            Changes are synchronized with all connected
+                            participants in this meeting.
+                        </p>
+
+                        <div id="liveRoomFeedback"
+                             class="crm-live-feedback"
+                             role="status">
+                            Ready
+                        </div>
+                    </div>
+
+                </aside>
+            }
+
+        </section>
+
+        <footer class="crm-live-footer">
+            <span>Research Meeting Orchestrator</span>
+            <span id="serverClock">Server time: --:--:--</span>
+        </footer>
+
+    </main>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/9.0.0/signalr.min.js"></script>
+
+    <script src="~/js/research-meeting-live.js"
+            asp-append-version="true"></script>
+}

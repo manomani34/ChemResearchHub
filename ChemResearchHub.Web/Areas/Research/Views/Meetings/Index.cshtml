@@ -1,0 +1,218 @@
+﻿@model ChemResearchHub.Application.Meetings.DTOs.MeetingDashboardDto
+
+@using ChemResearchHub.Domain.Enums.Meetings
+
+@{
+    ViewData["Title"] = "Research Meeting Orchestrator";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/research-meetings.css" asp-append-version="true" />
+}
+
+<div class="rmo-page">
+
+    <div class="rmo-header">
+        <div>
+            <div class="rmo-eyebrow">
+                CHEMRESEARCHHUB / COLLABORATION
+            </div>
+
+            <h1>Research Meeting Orchestrator</h1>
+
+            <p>
+                مدیریت جلسات پژوهشی، دستور جلسه و پیگیری خروجی‌ها
+            </p>
+        </div>
+
+        <a asp-area="Research"
+           asp-controller="Meetings"
+           asp-action="Create"
+           class="rmo-btn rmo-btn-primary">
+            <i class="bi bi-plus-lg"></i>
+            جلسه جدید
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="rmo-alert rmo-alert-success">
+            <i class="bi bi-check-circle"></i>
+            @success
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="rmo-alert rmo-alert-danger">
+            <i class="bi bi-exclamation-circle"></i>
+            @error
+        </div>
+    }
+
+    <div class="rmo-stats-grid">
+
+        <div class="rmo-stat-card">
+            <div class="rmo-stat-icon purple">
+                <i class="bi bi-calendar2-week"></i>
+            </div>
+            <div>
+                <span>کل جلسات</span>
+                <strong>@Model.TotalMeetings</strong>
+            </div>
+        </div>
+
+        <div class="rmo-stat-card">
+            <div class="rmo-stat-icon blue">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div>
+                <span>جلسات آینده</span>
+                <strong>@Model.UpcomingMeetings</strong>
+            </div>
+        </div>
+
+        <div class="rmo-stat-card">
+            <div class="rmo-stat-icon green">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+            <div>
+                <span>جلسات تکمیل‌شده</span>
+                <strong>@Model.CompletedMeetings</strong>
+            </div>
+        </div>
+
+        <div class="rmo-stat-card">
+            <div class="rmo-stat-icon orange">
+                <i class="bi bi-broadcast"></i>
+            </div>
+            <div>
+                <span>جلسات در حال اجرا</span>
+                <strong>@Model.InProgressMeetings</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="rmo-section-heading">
+        <div>
+            <h2>جلسات پیش‌رو</h2>
+            <p>جلسات برنامه‌ریزی‌شده گروه پژوهشی</p>
+        </div>
+
+        <a asp-action="All" class="rmo-link">
+            مشاهده همه جلسات
+            <i class="bi bi-arrow-left"></i>
+        </a>
+    </div>
+
+    @if (Model.Upcoming.Count == 0)
+    {
+        <div class="rmo-empty">
+            <div class="rmo-empty-icon">
+                <i class="bi bi-calendar-plus"></i>
+            </div>
+            <h3>جلسه‌ای برنامه‌ریزی نشده است</h3>
+            <p>اولین جلسه پژوهشی خود را ایجاد کنید.</p>
+
+            <a asp-action="Create" class="rmo-btn rmo-btn-primary">
+                ایجاد جلسه
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="rmo-meeting-list">
+
+            @foreach (var meeting in Model.Upcoming)
+            {
+                <a asp-action="Details"
+                   asp-route-id="@meeting.Id"
+                   class="rmo-meeting-card">
+
+                    <div class="rmo-meeting-date">
+                        <strong>@meeting.ScheduledStartAt.ToString("dd")</strong>
+                        <span>@meeting.ScheduledStartAt.ToString("MMM")</span>
+                    </div>
+
+                    <div class="rmo-meeting-info">
+                        <h3>@meeting.Title</h3>
+
+                        <p>
+                            <i class="bi bi-clock"></i>
+                            @meeting.ScheduledStartAt.ToString("HH:mm")
+                            <span class="rmo-dot"></span>
+                            @meeting.PlannedDurationMinutes دقیقه
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(meeting.Description))
+                        {
+                            <div class="rmo-meeting-description">
+                                @meeting.Description
+                            </div>
+                        }
+                    </div>
+
+                    <div class="rmo-meeting-meta">
+                        <span class="rmo-status-badge"
+                              data-status="@meeting.Status">
+                            @meeting.Status
+                        </span>
+
+                        <span class="rmo-agenda-count">
+                            <i class="bi bi-list-task"></i>
+                            @meeting.AgendaItemCount بخش
+                        </span>
+                    </div>
+
+                    <i class="bi bi-chevron-left rmo-card-arrow"></i>
+                </a>
+            }
+
+        </div>
+    }
+
+    <div class="rmo-section-heading rmo-recent-heading">
+        <div>
+            <h2>جلسات اخیر</h2>
+            <p>مرور جلسات برگزارشده</p>
+        </div>
+    </div>
+
+    @if (Model.Recent.Count == 0)
+    {
+        <div class="rmo-muted-empty">
+            هنوز جلسه‌ای برگزار نشده است.
+        </div>
+    }
+    else
+    {
+        <div class="rmo-recent-list">
+            @foreach (var meeting in Model.Recent)
+            {
+                <a asp-action="Details"
+                   asp-route-id="@meeting.Id"
+                   class="rmo-recent-item">
+
+                    <div class="rmo-recent-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+
+                    <div class="rmo-recent-info">
+                        <strong>@meeting.Title</strong>
+                        <span>
+                            @meeting.ScheduledStartAt.ToString("yyyy/MM/dd HH:mm")
+                        </span>
+                    </div>
+
+                    <span class="rmo-status-badge"
+                          data-status="@meeting.Status">
+                        @meeting.Status
+                    </span>
+                </a>
+            }
+        </div>
+    }
+
+</div>

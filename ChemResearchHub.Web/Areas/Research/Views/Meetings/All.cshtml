@@ -1,0 +1,70 @@
+﻿@model List<ChemResearchHub.Application.Meetings.DTOs.MeetingSessionListItemDto>
+
+@{
+    ViewData["Title"] = "تمام جلسات";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/research-meetings.css" asp-append-version="true" />
+}
+
+<div class="rmo-page">
+
+    <div class="rmo-header">
+        <div>
+            <div class="rmo-eyebrow">MEETING MANAGEMENT</div>
+            <h1>تمام جلسات پژوهشی</h1>
+            <p>فهرست جلسات ایجادشده در Research Meeting Orchestrator</p>
+        </div>
+
+        <a asp-action="Create" class="rmo-btn rmo-btn-primary">
+            <i class="bi bi-plus-lg"></i>
+            جلسه جدید
+        </a>
+    </div>
+
+    <div class="rmo-recent-list">
+
+        @if (Model.Count == 0)
+        {
+            <div class="rmo-muted-empty">
+                هنوز جلسه‌ای ایجاد نشده است.
+            </div>
+        }
+        else
+        {
+            @foreach (var meeting in Model)
+            {
+                <a asp-action="Details"
+                   asp-route-id="@meeting.Id"
+                   class="rmo-recent-item">
+
+                    <div class="rmo-recent-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+
+                    <div class="rmo-recent-info">
+                        <strong>@meeting.Title</strong>
+                        <span>
+                            @meeting.ScheduledStartAt.ToString("yyyy/MM/dd HH:mm")
+                            ·
+                            @meeting.PlannedDurationMinutes دقیقه
+                            ·
+                            @meeting.AgendaItemCount بخش
+                        </span>
+                    </div>
+
+                    <span class="rmo-status-badge"
+                          data-status="@meeting.Status">
+                        @meeting.Status
+                    </span>
+
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            }
+        }
+
+    </div>
+
+</div>
