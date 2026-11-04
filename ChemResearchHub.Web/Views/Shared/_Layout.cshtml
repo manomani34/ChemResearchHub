@@ -1,3 +1,43 @@
+@{
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+
+    string IsActive(string area, string controller, string? action = null)
+    {
+        var areaMatches = string.Equals(
+            currentArea,
+            area,
+            StringComparison.OrdinalIgnoreCase);
+
+        var controllerMatches = string.Equals(
+            currentController,
+            controller,
+            StringComparison.OrdinalIgnoreCase);
+
+        var actionMatches = action == null ||
+            string.Equals(
+                currentAction,
+                action,
+                StringComparison.OrdinalIgnoreCase);
+
+        return areaMatches && controllerMatches && actionMatches
+            ? "active"
+            : "";
+    }
+
+    string IsIdentityActive(string page)
+    {
+        return string.Equals(
+            currentPage,
+            page,
+            StringComparison.OrdinalIgnoreCase)
+            ? "active"
+            : "";
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,6 +88,169 @@
         font-weight: 700;
         line-height: 1;
     }
+
+    /* =========================================================
+   ChemResearchHub - Light Sidebar Theme
+   ========================================================= */
+
+.app-sidebar {
+    background: #f7f8fc !important;
+    border-left: 1px solid #e9eaf1;
+    box-shadow: 5px 0 25px rgba(30, 35, 70, .04);
+}
+
+.app-sidebar .sidebar-inner {
+    background: #f7f8fc;
+}
+
+.app-sidebar .sidebar-brand {
+    background: #fff;
+    border-bottom: 1px solid #e9eaf1;
+}
+
+.app-sidebar .sidebar-brand-icon {
+    background: #f0efff;
+    color: #6558d3;
+    border-radius: 12px;
+}
+
+.app-sidebar .sidebar-brand-title {
+    color: #292b3c;
+    font-weight: 750;
+}
+
+.app-sidebar .sidebar-brand-subtitle {
+    color: #9294a5;
+}
+
+.app-sidebar .sidebar-nav {
+    background: #f7f8fc;
+    padding: 18px 14px;
+}
+
+.app-sidebar .sidebar-section-title {
+    color: #999bad;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: .4px;
+    padding: 0 12px;
+    margin-bottom: 9px;
+}
+
+.app-sidebar .sidebar-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 44px;
+    margin-bottom: 5px;
+    padding: 10px 13px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    color: #626579;
+    font-size: 13px;
+    font-weight: 550;
+    text-decoration: none;
+    background: transparent;
+    transition:
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.app-sidebar .sidebar-link:hover {
+    color: #5144bd;
+    background: #f0efff;
+    border-color: #e8e5ff;
+    transform: translateX(-2px);
+}
+
+.app-sidebar .sidebar-link.active {
+    color: #5144bd;
+    background: #eeecff;
+    border-color: #e3dfff;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(81, 68, 189, .06);
+}
+
+.app-sidebar .sidebar-link.active::before {
+    content: "";
+    position: absolute;
+    right: -14px;
+    top: 9px;
+    bottom: 9px;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+    background: #6558d3;
+}
+
+.app-sidebar .sidebar-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: background .2s ease;
+}
+
+.app-sidebar .sidebar-link.active .sidebar-link-icon {
+    background: #e2deff;
+}
+
+.app-sidebar .sidebar-footer {
+    background: #fff;
+    border-top: 1px solid #e9eaf1;
+    padding: 15px;
+}
+
+.app-sidebar .sidebar-user-card {
+    background: #f7f8fc;
+    border: 1px solid #ececf3;
+    border-radius: 13px;
+    padding: 11px;
+}
+
+.app-sidebar .sidebar-user-icon {
+    background: #f0efff;
+    color: #6558d3;
+    border-radius: 10px;
+}
+
+.app-sidebar .sidebar-user-name {
+    color: #34364a;
+    font-weight: 700;
+}
+
+.app-sidebar .sidebar-user-role {
+    color: #9294a5;
+}
+
+.app-sidebar .sidebar-logout {
+    margin-top: 12px;
+}
+
+/* Work Item Notification Badge */
+
+.app-sidebar .work-item-alert-badge {
+    margin-right: auto;
+    flex-shrink: 0;
+}
+
+/* Mobile */
+
+@@media (max-width: 991.98px) {
+    .app-sidebar {
+        box-shadow: -8px 0 30px rgba(30, 35, 70, .10);
+    }
+
+    .app-sidebar .sidebar-link.active::before {
+        right: -14px;
+    }
+}
 </style>
 
 @await RenderSectionAsync("Styles", required: false)
@@ -99,308 +302,213 @@
 
                 </div>
 
-                <nav class="sidebar-nav"
-                     dir="rtl">
+                <nav class="sidebar-nav" dir="rtl">
 
-                    <div class="sidebar-section-title">
-                        اصلی
-                    </div>
-
-                    <a asp-area=""
-                       asp-controller="Home"
-                       asp-action="Index"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            🏠
-                        </span>
-
-                        <span>
-                            داشبورد
-                        </span>
-
-                    </a>
-
-                    <a asp-area="Research" asp-controller="Projects"
-                       asp-action="Index"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            📁
-                        </span>
-
-                        <span>
-                            پروژه‌ها
-                        </span>
-
-                    </a>
-
-                    <a asp-area="Research"
-                       asp-controller="Boards"
-                       asp-action="List"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            📋
-                        </span>
-
-                        <span>
-                            بوردهای پژوهشی
-                        </span>
-
-                    </a>
-
-
-                    <div class="sidebar-section-title mt-4">
-                        پژوهش
-                    </div>
-
-                   <a asp-area="Research"
-   asp-controller="WorkItems"
-   asp-action="Index"
-   class="sidebar-link"
-   id="workItemsMenuLink">
-
-    <span class="sidebar-link-icon">
-        ✅
-    </span>
-
-    <span>
-        کارهای پژوهشی
-    </span>
-
-    <span id="workItemAlertBadge"
-          class="work-item-alert-badge"
-          style="display:none;">
-        0
-    </span>
-
-</a>
-
-                    <a asp-area="Research" asp-controller="Experiments"
-                       asp-action="List"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            🧪
-                        </span>
-
-                        <span>
-                            آزمایش‌ها
-                        </span>
-
-                    </a>
-
-                    <a asp-area="Research" asp-controller="Samples"
-                       asp-action="List"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            🧫
-                        </span>
-
-                        <span>
-                            نمونه‌ها
-                        </span>
-
-                    </a>
-
-                    <a asp-area="Research"
-   asp-controller="Results"
-   asp-action="List"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            📊
-                        </span>
-
-                        <span>
-                            نتایج
-                        </span>
-
-                    </a>
-
-                    <a asp-area=""
-                       asp-controller="Attachments"
-                       asp-action="List"
-                       class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            📎
-                        </span>
-
-                        <span>
-                            پیوست‌ها
-                        </span>
-
-                    </a>
-
-                    <a asp-area="Research"
-   asp-controller="DecisionLogs"
-   asp-action="List"
-   class="sidebar-link">
-
-                        <span class="sidebar-link-icon">
-                            📋
-                        </span>
-
-                        <span>
-                            تصمیمات
-                        </span>
-
-                    </a>
-
-
-@if (User.IsInRole("Admin"))
-{
-    <div class="sidebar-section-title mt-4">
-        مدیریت
+    <div class="sidebar-section-title">
+        اصلی
     </div>
 
-    <!-- Admin Dashboard -->
-
-    <a asp-area="Admin"
-       asp-controller="Dashboard"
+    <a asp-area=""
+       asp-controller="Home"
        asp-action="Index"
-       class="sidebar-link">
+       class="sidebar-link @IsActive("", "Home", "Index")">
 
-        <span class="sidebar-link-icon">
-            📊
-        </span>
-
-        <span>
-            داشبورد مدیریت
-        </span>
+        <span class="sidebar-link-icon">🏠</span>
+        <span>داشبورد</span>
 
     </a>
 
-
-    <!-- Reports -->
-
-    <a asp-area="Admin"
-       asp-controller="Reports"
+    <a asp-area="Research"
+       asp-controller="Projects"
        asp-action="Index"
-       class="sidebar-link">
+       class="sidebar-link @IsActive("Research", "Projects")">
 
-        <span class="sidebar-link-icon">
-            📈
-        </span>
-
-        <span>
-            گزارش‌ها
-        </span>
+        <span class="sidebar-link-icon">📁</span>
+        <span>پروژه‌ها</span>
 
     </a>
 
+    <a asp-area="Research"
+       asp-controller="Boards"
+       asp-action="List"
+       class="sidebar-link @IsActive("Research", "Boards")">
 
-    <!-- Users -->
-
-    <a asp-area="Admin"
-   asp-controller="Users"
-   asp-action="Index"
-       class="sidebar-link">
-
-        <span class="sidebar-link-icon">
-            👥
-        </span>
-
-        <span>
-            مدیریت کاربران
-        </span>
-
-    </a>
-    <a asp-area="Admin"
-   asp-controller="Roles"
-   asp-action="Index"
-   class="sidebar-link">
-
-    <span class="sidebar-link-icon">
-        🛡️
-    </span>
-
-    <span>
-        مدیریت نقش‌ها
-    </span>
-
-</a>
-
-
-    <!-- Tags -->
-
-    <a asp-area="Admin"
-       asp-controller="Tags"
-       asp-action="Index"
-       class="sidebar-link">
-
-        <span class="sidebar-link-icon">
-            🏷️
-        </span>
-
-        <span>
-            مدیریت برچسب‌ها
-        </span>
+        <span class="sidebar-link-icon">📋</span>
+        <span>بوردهای پژوهشی</span>
 
     </a>
 
-    <!-- RMO --> 
 
     <div class="sidebar-section-title mt-4">
-        Research Meeting Orchestrator
+        پژوهش
     </div>
 
     <a asp-area="Research"
-       asp-controller="Meetings"
+       asp-controller="WorkItems"
        asp-action="Index"
-       class="sidebar-link">
+       class="sidebar-link @IsActive("Research", "WorkItems")"
+       id="workItemsMenuLink">
 
-        <span class="sidebar-link-icon">
-            📅
+        <span class="sidebar-link-icon">✅</span>
+        <span>کارهای پژوهشی</span>
+
+        <span id="workItemAlertBadge"
+              class="work-item-alert-badge"
+              style="display:none;">
+            0
         </span>
 
-        <span>
-            RMO
-        </span>        
     </a>
 
-    <!-- Reviews -->
+    <a asp-area="Research"
+       asp-controller="Experiments"
+       asp-action="List"
+       class="sidebar-link @IsActive("Research", "Experiments")">
+
+        <span class="sidebar-link-icon">🧪</span>
+        <span>آزمایش‌ها</span>
+
+    </a>
+
+    <a asp-area="Research"
+       asp-controller="Samples"
+       asp-action="List"
+       class="sidebar-link @IsActive("Research", "Samples")">
+
+        <span class="sidebar-link-icon">🧫</span>
+        <span>نمونه‌ها</span>
+
+    </a>
+
+    <a asp-area="Research"
+       asp-controller="Results"
+       asp-action="List"
+       class="sidebar-link @IsActive("Research", "Results")">
+
+        <span class="sidebar-link-icon">📊</span>
+        <span>نتایج</span>
+
+    </a>
 
     <a asp-area=""
-       asp-controller="Reviews"
-       asp-action="Index"
-       class="sidebar-link">
+       asp-controller="Attachments"
+       asp-action="List"
+       class="sidebar-link @IsActive("", "Attachments")">
 
-        <span class="sidebar-link-icon">
-            🔍
-        </span>
-
-        <span>
-            بازبینی‌های پژوهشی
-        </span>
+        <span class="sidebar-link-icon">📎</span>
+        <span>پیوست‌ها</span>
 
     </a>
-}
+
+    <a asp-area="Research"
+       asp-controller="DecisionLogs"
+       asp-action="List"
+       class="sidebar-link @IsActive("Research", "DecisionLogs")">
+
+        <span class="sidebar-link-icon">📋</span>
+        <span>تصمیمات</span>
+
+    </a>
 
 
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="sidebar-section-title mt-4">
+            مدیریت
+        </div>
 
-                    <div class="sidebar-section-title mt-4">
-                        حساب کاربری
-                    </div>
+        <a asp-area="Admin"
+           asp-controller="Dashboard"
+           asp-action="Index"
+           class="sidebar-link @IsActive("Admin", "Dashboard")">
 
-                    <a asp-area="Identity"
-                       asp-page="/Account/Manage/Index"
-                       class="sidebar-link">
+            <span class="sidebar-link-icon">📊</span>
+            <span>داشبورد مدیریت</span>
 
-                        <span class="sidebar-link-icon">
-                            👤
-                        </span>
+        </a>
 
-                        <span>
-                            حساب من
-                        </span>
+        <a asp-area="Admin"
+           asp-controller="Reports"
+           asp-action="Index"
+           class="sidebar-link @IsActive("Admin", "Reports")">
 
-                    </a>
+            <span class="sidebar-link-icon">📈</span>
+            <span>گزارش‌ها</span>
 
-                </nav>
+        </a>
+
+        <a asp-area="Admin"
+           asp-controller="Users"
+           asp-action="Index"
+           class="sidebar-link @IsActive("Admin", "Users")">
+
+            <span class="sidebar-link-icon">👥</span>
+            <span>مدیریت کاربران</span>
+
+        </a>
+
+        <a asp-area="Admin"
+           asp-controller="Roles"
+           asp-action="Index"
+           class="sidebar-link @IsActive("Admin", "Roles")">
+
+            <span class="sidebar-link-icon">🛡️</span>
+            <span>مدیریت نقش‌ها</span>
+
+        </a>
+
+        <a asp-area="Admin"
+           asp-controller="Tags"
+           asp-action="Index"
+           class="sidebar-link @IsActive("Admin", "Tags")">
+
+            <span class="sidebar-link-icon">🏷️</span>
+            <span>مدیریت برچسب‌ها</span>
+
+        </a>
+
+
+        <div class="sidebar-section-title mt-4">
+            Research Meeting Orchestrator
+        </div>
+
+        <a asp-area="Research"
+           asp-controller="Meetings"
+           asp-action="Index"
+           class="sidebar-link @IsActive("Research", "Meetings")">
+
+            <span class="sidebar-link-icon">📅</span>
+            <span>RMO</span>
+
+        </a>
+
+
+        <a asp-area=""
+           asp-controller="Reviews"
+           asp-action="Index"
+           class="sidebar-link @IsActive("", "Reviews")">
+
+            <span class="sidebar-link-icon">🔍</span>
+            <span>بازبینی‌های پژوهشی</span>
+
+        </a>
+    }
+
+
+    <div class="sidebar-section-title mt-4">
+        حساب کاربری
+    </div>
+
+    <a asp-area="Identity"
+       asp-page="/Account/Manage/Index"
+       class="sidebar-link @IsIdentityActive("/Account/Manage/Index")">
+
+        <span class="sidebar-link-icon">👤</span>
+        <span>حساب من</span>
+
+    </a>
+
+</nav>
 
                 <div class="sidebar-footer">
 
