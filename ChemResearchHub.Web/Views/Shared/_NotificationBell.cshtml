@@ -1,5 +1,33 @@
 ﻿@using System.Security.Claims
 
+<style>
+    .notification-container .notification-bell-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #6558d3;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+        .notification-container .notification-bell-icon svg {
+            width: 21px;
+            height: 21px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+    .notification-container .notification-trigger:hover .notification-bell-icon {
+        color: #5144bd;
+    }
+
+        .notification-container .notification-trigger:hover .notification-bell-icon svg {
+            transform: translateY(-1px);
+        }
+</style>
+
 @if (User.Identity?.IsAuthenticated == true)
 {
     <div class="notification-container" id="notificationContainer" dir="rtl">
@@ -11,7 +39,12 @@
                 aria-expanded="false"
                 aria-controls="notificationDropdown">
 
-            <span class="notification-bell-icon">🔔</span>
+            <span class="notification-bell-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                    <path d="M10 21h4" />
+                </svg>
+            </span>
 
             <span class="notification-count"
                   id="notificationCount"
@@ -50,11 +83,11 @@
             </div>
 
             <a asp-area="User"
-   asp-controller="Notification"
-   asp-action="All"
-   class="notification-footer">
-    مشاهده همه اعلان‌ها
-</a>
+               asp-controller="Notification"
+               asp-action="All"
+               class="notification-footer">
+                مشاهده همه اعلان‌ها
+            </a>
 
         </section>
 

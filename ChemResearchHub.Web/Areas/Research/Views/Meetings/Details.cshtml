@@ -50,48 +50,56 @@
 
             <h1>@Model.Title</h1>
 
-            <div class="d-flex flex-wrap gap-2">
+            <div class="rmo-quick-actions">
 
-    <a asp-area="Research"
-       asp-controller="MeetingParkingLot"
-       asp-action="Index"
-       asp-route-meetingSessionId="@Model.Id"
-       class="btn btn-outline-secondary">
-        <i class="bi bi-inboxes"></i>
-        Parking Lot
-    </a>
+                <a asp-area="Research"
+                   asp-controller="MeetingLive"
+                   asp-action="Index"
+                   asp-route-meetingSessionId="@Model.Id"
+                   class="rmo-quick-action rmo-quick-action-primary">
 
-    <a asp-area="Research"
-       asp-controller="MeetingDecisions"
-       asp-action="Index"
-       asp-route-meetingSessionId="@Model.Id"
-       class="btn btn-outline-primary">
-        <i class="bi bi-journal-check"></i>
-        Decision Log
-    </a>
+                    <i class="bi bi-broadcast"></i>
+                    <span>Live Meeting Room</span>
 
-    <a asp-area="Research"
-   asp-controller="MeetingActionItems"
-   asp-action="Index"
-   asp-route-meetingSessionId="@Model.Id"
-   class="btn btn-outline-primary">
-    <i class="bi bi-list-task"></i>
-    Action Items
-</a>
+                </a>
 
-<a asp-area="Research"
-   asp-controller="MeetingLive"
-   asp-action="Index"
-   asp-route-meetingSessionId="@Model.Id"
-   class="btn btn-primary">
-    <i class="bi bi-broadcast"></i>
-    Live Meeting Room
-</a>
+                <a asp-area="Research"
+                   asp-controller="MeetingActionItems"
+                   asp-action="Index"
+                   asp-route-meetingSessionId="@Model.Id"
+                   class="rmo-quick-action">
 
-</div>
+                    <i class="bi bi-list-task"></i>
+                    <span>Action Items</span>
 
-            <p>
-                <i class="bi bi-calendar3"></i>
+                </a>
+
+                <a asp-area="Research"
+                   asp-controller="MeetingDecisions"
+                   asp-action="Index"
+                   asp-route-meetingSessionId="@Model.Id"
+                   class="rmo-quick-action">
+
+                    <i class="bi bi-journal-check"></i>
+                    <span>Decision Log</span>
+
+                </a>
+
+                <a asp-area="Research"
+                   asp-controller="MeetingParkingLot"
+                   asp-action="Index"
+                   asp-route-meetingSessionId="@Model.Id"
+                   class="rmo-quick-action">
+
+                    <i class="bi bi-inboxes"></i>
+                    <span>Parking Lot</span>
+
+                </a>
+
+            </div>
+
+            <p class="mt-3">
+                <i class="bi bi-calendar3 "></i>
                 @Model.ScheduledStartAt.ToString("yyyy/MM/dd")
                 <span class="rmo-dot"></span>
                 <i class="bi bi-clock"></i>

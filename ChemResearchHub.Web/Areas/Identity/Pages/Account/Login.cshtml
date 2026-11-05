@@ -7,353 +7,522 @@
 }
 
 <!DOCTYPE html>
-
 <html lang="fa" dir="rtl">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    
     <title>@ViewData["Title"] - ChemResearchHub</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+            /* =====================================================
+                       ChemResearchHub - Login Page
+                       ===================================================== */
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
-            font-family: Tahoma, Arial, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            background: radial-gradient(circle at top right, rgba(255,255,255,0.16), transparent 32%), radial-gradient(circle at bottom left, rgba(255,255,255,0.10), transparent 28%), linear-gradient(135deg, #0f172a 0%, #1d4ed8 45%, #2563eb 100%);
-        }
-
-        .login-wrapper {
-            width: 100%;
-            max-width: 430px;
-        }
-
-        .login-card {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 36px 34px 30px;
-            box-shadow: 0 25px 70px rgba(15, 23, 42, 0.28);
-        }
-
-        .brand {
-            text-align: center;
-            margin-bottom: 26px;
-        }
-
-        .brand-icon {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 18px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 34px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #ffffff;
-            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
-        }
-
-        .brand-title {
-            margin: 0;
-            color: #111827;
-            font-size: 26px;
-            font-weight: 700;
-        }
-
-        .brand-subtitle {
-            margin: 10px 0 0;
-            color: #6b7280;
-            font-size: 13px;
-            line-height: 1.9;
-        }
-
-        .validation-summary {
-            margin-bottom: 18px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-
-            .validation-summary:empty {
-                display: none;
+            * {
+                box-sizing: border-box;
             }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #374151;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            top: 50%;
-            right: 14px;
-            transform: translateY(-50%);
-            width: 22px;
-            text-align: center;
-            font-size: 18px;
-            color: #6b7280;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .form-control {
-            width: 100%;
-            height: 52px;
-            border: 1px solid #d1d5db;
-            border-radius: 14px;
-            background: #f9fafb;
-            color: #111827;
-            font-family: Tahoma, Arial, sans-serif;
-            font-size: 14px;
-            padding: 0 46px 0 46px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-        }
-
-            .form-control::placeholder {
-                color: #9ca3af;
+            html {
+                min-height: 100%;
             }
 
-            .form-control:focus {
-                border-color: #2563eb;
-                background: #ffffff;
-                box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+            body.login-page {
+                margin: 0;
+                min-height: 100vh;
+                font-family: Tahoma, Arial, sans-serif;
+                background: radial-gradient(circle at 90% 10%, rgba(101, 88, 211, .07), transparent 28%), radial-gradient(circle at 10% 90%, rgba(101, 88, 211, .06), transparent 25%), #f7f8fc;
+                color: #292b3c;
             }
 
-        .password-toggle {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            width: 34px;
-            height: 34px;
-            border: 0;
-            border-radius: 10px;
-            background: transparent;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 17px;
-        }
-
-            .password-toggle:hover {
-                background: #f3f4f6;
-                color: #2563eb;
+            .login-page {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 35px 18px;
             }
 
-        .field-validation-error {
-            display: block;
-            margin-top: 6px;
-            color: #dc2626;
-            font-size: 12px;
-        }
+                .login-page .login-wrapper {
+                    width: 100%;
+                    max-width: 440px;
+                }
 
-        .remember-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 4px 0 22px;
-        }
+                /* =====================================================
+                       Main Card
+                       ===================================================== */
 
-        .remember-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            color: #4b5563;
-            font-size: 13px;
-        }
+                .login-page .login-card {
+                    width: 100%;
+                    padding: 38px 36px 28px;
+                    background: #ffffff;
+                    border: 1px solid #e9eaf1;
+                    border-radius: 20px;
+                    box-shadow: 0 15px 45px rgba(36, 39, 75, .055), 0 2px 8px rgba(36, 39, 75, .025);
+                }
 
-        .remember-checkbox {
-            width: 17px;
-            height: 17px;
-            margin: 0;
-            accent-color: #2563eb;
-            cursor: pointer;
-        }
+                /* =====================================================
+                       Brand
+                       ===================================================== */
 
-        .login-button {
-            width: 100%;
-            height: 52px;
-            border: 0;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #ffffff;
-            font-family: Tahoma, Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
+                .login-page .brand {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
 
-            .login-button:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
+                .login-page .brand-icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 68px;
+                    height: 68px;
+                    margin: 0 auto 18px;
+                    border-radius: 19px;
+                    background: #f0efff;
+                    color: #6558d3;
+                }
+
+                    .login-page .brand-icon svg {
+                        width: 35px;
+                        height: 35px;
+                        fill: none;
+                        stroke: currentColor;
+                        stroke-width: 1.5;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                    }
+
+                .login-page .brand-title {
+                    margin: 0;
+                    color: #292b3c;
+                    font-size: 23px;
+                    font-weight: 750;
+                }
+
+                .login-page .brand-subtitle {
+                    margin: 10px 0 0;
+                    color: #9294a5;
+                    font-size: 12px;
+                    line-height: 2;
+                }
+
+                /* =====================================================
+                       Validation
+                       ===================================================== */
+
+                .login-page .validation-summary {
+                    margin-bottom: 20px;
+                    padding: 12px 14px;
+                    border: 1px solid #f4d1d4;
+                    border-radius: 11px;
+                    background: #fff5f5;
+                    color: #c2414b;
+                    font-size: 12px;
+                    line-height: 1.9;
+                }
+
+                    .login-page .validation-summary:empty {
+                        display: none;
+                    }
+
+                    .login-page .validation-summary ul {
+                        margin: 0;
+                        padding-right: 18px;
+                    }
+
+                /* =====================================================
+                       Form
+                       ===================================================== */
+
+                .login-page .form-group {
+                    margin-bottom: 19px;
+                }
+
+                .login-page .form-label {
+                    display: block;
+                    margin-bottom: 9px;
+                    color: #45475b;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+
+                .login-page .input-wrapper {
+                    position: relative;
+                }
+
+                .login-page .input-icon {
+                    position: absolute;
+                    top: 50%;
+                    right: 15px;
+                    z-index: 2;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 20px;
+                    height: 20px;
+                    transform: translateY(-50%);
+                    color: #9290b5;
+                    pointer-events: none;
+                }
+
+                    .login-page .input-icon svg {
+                        width: 19px;
+                        height: 19px;
+                        fill: none;
+                        stroke: currentColor;
+                        stroke-width: 1.5;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                    }
+
+                .login-page .form-control {
+                    width: 100%;
+                    height: 49px;
+                    padding: 0 46px 0 46px;
+                    border: 1px solid #e5e6ef;
+                    border-radius: 11px;
+                    outline: none;
+                    background: #f9f9fc;
+                    color: #34364a;
+                    font-family: Tahoma, Arial, sans-serif;
+                    font-size: 12px;
+                    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+                }
+
+                    .login-page .form-control::placeholder {
+                        color: #b0b1bf;
+                    }
+
+                    .login-page .form-control:hover {
+                        border-color: #d5d1f5;
+                    }
+
+                    .login-page .form-control:focus {
+                        border-color: #6558d3;
+                        background: #ffffff;
+                        box-shadow: 0 0 0 3px rgba(101, 88, 211, .10);
+                    }
+
+                .login-page .password-toggle {
+                    position: absolute;
+                    top: 50%;
+                    left: 9px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 34px;
+                    height: 34px;
+                    padding: 0;
+                    transform: translateY(-50%);
+                    border: 0;
+                    border-radius: 9px;
+                    background: transparent;
+                    color: #9290b5;
+                    cursor: pointer;
+                    transition: background .2s ease, color .2s ease;
+                }
+
+                    .login-page .password-toggle svg {
+                        width: 18px;
+                        height: 18px;
+                        fill: none;
+                        stroke: currentColor;
+                        stroke-width: 1.5;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                    }
+
+                    .login-page .password-toggle:hover {
+                        background: #f0efff;
+                        color: #5144bd;
+                    }
+
+                .login-page .field-validation-error {
+                    display: block;
+                    margin-top: 7px;
+                    color: #d14c59;
+                    font-size: 11px;
+                }
+
+                /* =====================================================
+                       Remember Me
+                       ===================================================== */
+
+                .login-page .remember-row {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    margin: 5px 0 23px;
+                }
+
+                .login-page .remember-label {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 9px;
+                    color: #77798c;
+                    font-size: 12px;
+                    cursor: pointer;
+                }
+
+                .login-page .remember-checkbox {
+                    width: 16px;
+                    height: 16px;
+                    margin: 0;
+                    accent-color: #6558d3;
+                    cursor: pointer;
+                }
+
+                /* =====================================================
+                       Login Button
+                       ===================================================== */
+
+                .login-page .login-button {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 9px;
+                    width: 100%;
+                    height: 49px;
+                    border: 1px solid #6558d3;
+                    border-radius: 11px;
+                    background: #6558d3;
+                    color: #ffffff;
+                    font-family: Tahoma, Arial, sans-serif;
+                    font-size: 13px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    box-shadow: 0 5px 13px rgba(101, 88, 211, .15);
+                    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+                }
+
+                    .login-page .login-button svg {
+                        width: 17px;
+                        height: 17px;
+                        fill: none;
+                        stroke: currentColor;
+                        stroke-width: 1.6;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                    }
+
+                    .login-page .login-button:hover {
+                        background: #5144bd;
+                        border-color: #5144bd;
+                        box-shadow: 0 7px 17px rgba(81, 68, 189, .2);
+                        transform: translateY(-1px);
+                    }
+
+                    .login-page .login-button:active {
+                        transform: translateY(0);
+                    }
+
+                    .login-page .login-button:focus-visible {
+                        outline: 3px solid rgba(101, 88, 211, .2);
+                        outline-offset: 3px;
+                    }
+
+                /* =====================================================
+                       Demo Accounts
+                       ===================================================== */
+
+                .login-page .demo-accounts {
+                    margin-top: 22px;
+                    padding: 13px;
+                    border: 1px solid #ececf3;
+                    border-radius: 13px;
+                    background: #fafaff;
+                }
+
+                .login-page .demo-accounts-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 7px;
+                    margin-bottom: 11px;
+                    color: #77798c;
+                    font-size: 11px;
+                    font-weight: 700;
+                }
+
+                    .login-page .demo-accounts-title svg {
+                        width: 16px;
+                        height: 16px;
+                        fill: none;
+                        stroke: #7771b5;
+                        stroke-width: 1.5;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                    }
+
+                .login-page .demo-account {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    min-width: 0;
+                    padding: 9px 10px;
+                    border: 1px solid #ececf3;
+                    border-radius: 9px;
+                    background: #ffffff;
+                }
+
+                    .login-page .demo-account + .demo-account {
+                        margin-top: 7px;
+                    }
+
+                .login-page .demo-account-role {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    min-width: 65px;
+                    padding: 5px 7px;
+                    border-radius: 7px;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+                .login-page .admin-badge {
+                    background: #f0efff;
+                    color: #5144bd;
+                }
+
+                .login-page .reviewer-badge {
+                    background: #f0f3fa;
+                    color: #58647e;
+                }
+
+                .login-page .demo-account-info {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex: 1;
+                    min-width: 0;
+                    gap: 8px;
+                    direction: ltr;
+                }
+
+                    .login-page .demo-account-info span {
+                        overflow: hidden;
+                        color: #9294a5;
+                        font-size: 10px;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                        .login-page .demo-account-info span:last-child {
+                            color: #5144bd;
+                            font-weight: 700;
+                        }
+
+                /* =====================================================
+                       Footer
+                       ===================================================== */
+
+                .login-page .login-footer {
+                    margin-top: 25px;
+                    padding-top: 19px;
+                    border-top: 1px solid #eeeeF3;
+                    text-align: center;
+                }
+
+                .login-page .login-footer-title {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 7px;
+                    margin: 0;
+                    color: #34364a;
+                    font-size: 13px;
+                    font-weight: 750;
+                }
+
+                .login-page .system-name {
+                    color: #6558d3;
+                }
+
+                .login-page .login-footer-text {
+                    margin: 8px 0 0;
+                    color: #a0a1af;
+                    font-size: 10px;
+                    line-height: 1.8;
+                }
+
+            /* =====================================================
+                       Responsive
+                       ===================================================== */
+
+            @@media (max-width: 480px) {
+                .login-page {
+                    padding: 18px 13px;
+                }
+
+                    .login-page .login-card {
+                        padding: 29px 21px 23px;
+                        border-radius: 17px;
+                    }
+
+                    .login-page .brand {
+                        margin-bottom: 25px;
+                    }
+
+                    .login-page .brand-icon {
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 17px;
+                    }
+
+                        .login-page .brand-icon svg {
+                            width: 31px;
+                            height: 31px;
+                        }
+
+                    .login-page .brand-title {
+                        font-size: 21px;
+                    }
+
+                    .login-page .demo-account {
+                        gap: 7px;
+                        padding: 8px;
+                    }
+
+                    .login-page .demo-account-role {
+                        min-width: 58px;
+                        font-size: 9px;
+                    }
+
+                    .login-page .demo-account-info {
+                        gap: 5px;
+                    }
+
+                        .login-page .demo-account-info span {
+                            font-size: 9px;
+                        }
             }
 
-            .login-button:active {
-                transform: translateY(0);
+            @@media (max-width: 350px) {
+                .login-page .demo-account-info {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
             }
-
-        .login-footer {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            text-align: center;
-        }
-
-        .login-footer-title {
-            margin: 0;
-            color: #374151;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .login-footer-text {
-            margin: 7px 0 0;
-            color: #9ca3af;
-            font-size: 11px;
-        }
-
-        .system-name {
-            color: #2563eb;
-        }
-
-        @@media (max-width: 480px) {
-            body
-
-        {
-            padding: 16px;
-        }
-
-        .login-card {
-            padding: 28px 22px 24px;
-            border-radius: 20px;
-        }
-
-        .brand-title {
-            font-size: 23px;
-        }
-
-        .brand-subtitle {
-            font-size: 12px;
-        }
-
-        }
-
-    
-.demo-accounts {
-    margin-top: 16px;
-}
-
-.demo-account {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background: #f8fafc;
-}
-
-.demo-account + .demo-account {
-    margin-top: 6px;
-}
-
-.demo-account-role {
-    flex-shrink: 0;
-    min-width: 62px;
-    padding: 4px 7px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.admin-badge {
-    background: #eff6ff;
-    color: #1d4ed8;
-}
-
-.reviewer-badge {
-    background: #f5f3ff;
-    color: #6d28d9;
-}
-
-.demo-account-info {
-    min-width: 0;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    direction: ltr;
-}
-
-.demo-account-info span {
-    color: #6b7280;
-    font-size: 10px;
-    white-space: nowrap;
-}
-
-.demo-account-info span:last-child {
-    color: #374151;
-    font-weight: 600;
-}
-
-@@media (max-width: 480px) {
-    .demo-account-info {
-        gap: 7px;
-    }
-
-    .demo-account-info span {
-        font-size: 9px;
-    }
-}
     </style>
-    
-
 </head>
 
-<body>
+<body class="login-page">
+
     <main class="login-wrapper">
+
         <div class="login-card">
 
-            
+            <!-- Brand -->
+
             <div class="brand">
+
                 <div class="brand-icon" aria-hidden="true">
-                    🧪
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 3h6M10 3v6l-5.5 9.2A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.8L14 9V3" />
+                        <path d="M8 14h8M10 17h4" />
+                    </svg>
                 </div>
 
                 <h1 class="brand-title">
@@ -363,7 +532,10 @@
                 <p class="brand-subtitle">
                     سامانه مدیریت پژوهش و داده‌های آزمایشگاهی
                 </p>
+
             </div>
+
+            <!-- Login Form -->
 
             <form id="account"
                   method="post"
@@ -373,32 +545,53 @@
                      class="validation-summary"
                      role="alert"></div>
 
+                <!-- Email -->
+
                 <div class="form-group">
+
                     <label asp-for="Input.Email" class="form-label">
                         نام کاربری / ایمیل
                     </label>
 
                     <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">👤</span>
+
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 21a8 8 0 0 1 16 0" />
+                            </svg>
+                        </span>
 
                         <input asp-for="Input.Email"
                                class="form-control"
                                autocomplete="username"
                                aria-required="true"
                                placeholder="ایمیل یا نام کاربری" />
+
                     </div>
 
                     <span asp-validation-for="Input.Email"
                           class="field-validation-error"></span>
+
                 </div>
 
+                <!-- Password -->
+
                 <div class="form-group">
+
                     <label asp-for="Input.Password" class="form-label">
                         رمز عبور
                     </label>
 
                     <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">🔒</span>
+
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4" y="10" width="16" height="11" rx="2" />
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                                <path d="M12 14v3" />
+                            </svg>
+                        </span>
 
                         <input asp-for="Input.Password"
                                id="passwordInput"
@@ -411,60 +604,108 @@
                         <button type="button"
                                 id="togglePassword"
                                 class="password-toggle"
-                                aria-label="نمایش رمز عبور">
-                            👁
+                                aria-label="نمایش رمز عبور"
+                                aria-pressed="false">
+
+                            <svg id="passwordVisibilityIcon"
+                                 viewBox="0 0 24 24"
+                                 aria-hidden="true">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+
                         </button>
+
                     </div>
 
                     <span asp-validation-for="Input.Password"
                           class="field-validation-error"></span>
+
                 </div>
 
+                <!-- Remember Me -->
+
                 <div class="remember-row">
-                    <label asp-for="Input.RememberMe" class="remember-label">
+
+                    <label asp-for="Input.RememberMe"
+                           class="remember-label">
+
                         <input class="remember-checkbox"
                                asp-for="Input.RememberMe" />
 
                         <span>
                             مرا به خاطر بسپار
                         </span>
+
                     </label>
+
                 </div>
+
+                <!-- Submit -->
 
                 <button id="login-submit"
                         type="submit"
                         class="login-button">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M10 17l5-5-5-5" />
+                        <path d="M15 12H3" />
+                        <path d="M12 3h6a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-6" />
+                    </svg>
+
                     ورود به سامانه
+
                 </button>
+
             </form>
 
-<div class="demo-accounts">
+            <!-- Demo Accounts -->
 
-    <div class="demo-account">
-        <div class="demo-account-role admin-badge">
-            Admin
-        </div>
+            <div class="demo-accounts">
 
-        <div class="demo-account-info">
-            <span>baheri1389@gmail.com</span>
-            <span>a@1233456</span>
-        </div>
-    </div>
+                <div class="demo-accounts-title">
 
-    <div class="demo-account">
-        <div class="demo-account-role reviewer-badge">
-            Reviewer
-        </div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 11v5M12 8h.01" />
+                    </svg>
 
-        <div class="demo-account-info">
-            <span>reviewer@localhost.com</span>
-            <span>aA@123456</span>
-        </div>
-    </div>
+                    حساب‌های آزمایشی
 
-</div>
+                </div>
+
+                <div class="demo-account">
+
+                    <div class="demo-account-role admin-badge">
+                        Admin
+                    </div>
+
+                    <div class="demo-account-info">
+                        <span>baheri1389@gmail.com</span>
+                        <span>a@1233456</span>
+                    </div>
+
+                </div>
+
+                <div class="demo-account">
+
+                    <div class="demo-account-role reviewer-badge">
+                        Reviewer
+                    </div>
+
+                    <div class="demo-account-info">
+                        <span>reviewer@localhost.com</span>
+                        <span>aA@123456</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Footer -->
 
             <div class="login-footer">
+
                 <p class="login-footer-title">
                     <span class="system-name">ChemResearchHub</span>
                 </p>
@@ -472,44 +713,72 @@
                 <p class="login-footer-text">
                     سامانه مدیریت پروژه‌ها و فعالیت‌های پژوهشی
                 </p>
+
             </div>
 
         </div>
+
     </main>
 
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const passwordInput = document.getElementById("passwordInput");
-            const togglePassword = document.getElementById("togglePassword");
+            document.addEventListener("DOMContentLoaded", function() {
 
-            if (!passwordInput || !togglePassword) {
-                return;
-            }
+                const passwordInput =
+                    document.getElementById("passwordInput");
 
-            togglePassword.addEventListener("click", function () {
-                const isPassword =
-                    passwordInput.getAttribute("type") === "password";
+                const togglePassword =
+                    document.getElementById("togglePassword");
 
-                passwordInput.setAttribute(
-                    "type",
-                    isPassword ? "text" : "password"
-                );
+                const passwordVisibilityIcon =
+                    document.getElementById("passwordVisibilityIcon");
 
-                togglePassword.textContent =
-                    isPassword ? "🙈" : "👁";
+                if (!passwordInput || !togglePassword || !passwordVisibilityIcon) {
+                    return;
+                }
 
-                togglePassword.setAttribute(
-                    "aria-label",
-                    isPassword
-                        ? "مخفی کردن رمز عبور"
-                        : "نمایش رمز عبور"
-                );
+                const eyeIcon = `
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                            <circle cx="12" cy="12" r="3" />
+                        `;
+
+                const eyeOffIcon = `
+                            <path d="M3 3l18 18" />
+                            <path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a16 16 0 0 1-3.1 3.8" />
+                            <path d="M6.2 6.2C3.5 8 2 12 2 12s3.5 7 10 7c1.5 0 2.8-.4 4-1" />
+                            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                        `;
+
+                togglePassword.addEventListener("click", function() {
+
+                    const isPassword =
+                        passwordInput.getAttribute("type") === "password";
+
+                    passwordInput.setAttribute(
+                        "type",
+                        isPassword ? "text" : "password"
+                    );
+
+                    passwordVisibilityIcon.innerHTML =
+                        isPassword ? eyeOffIcon : eyeIcon;
+
+                    togglePassword.setAttribute(
+                        "aria-label",
+                        isPassword
+                            ? "مخفی کردن رمز عبور"
+                            : "نمایش رمز عبور"
+                    );
+
+                    togglePassword.setAttribute(
+                        "aria-pressed",
+                        isPassword ? "true" : "false"
+                    );
+
+                });
+
             });
-        });
     </script>
-    
 
 </body>
 </html>

@@ -1136,3 +1136,202 @@
             font-size: 10px;
         }
 }
+
+/* =========================================================
+   Admin Dashboard - Unified SVG Icons
+   ========================================================= */
+
+.admin-dashboard-page .dashboard-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .dashboard-icon svg {
+        display: block;
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+/* Hero */
+
+.admin-dashboard-page .hero-badge .dashboard-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* KPI cards */
+
+.admin-dashboard-page .kpi-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: #f0efff;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .kpi-icon svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+/* Quick Actions */
+
+.admin-dashboard-page .quick-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 43px;
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+    background: #f0efff;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .quick-action-icon svg {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.admin-dashboard-page .quick-action-card:hover .quick-action-icon {
+    background: #e8e5ff;
+    color: #5144bd;
+}
+
+/* Secondary Stats */
+
+.admin-dashboard-page .secondary-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #f0efff;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .secondary-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+/* Alerts */
+
+.admin-dashboard-page .alert-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: #f0efff;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .alert-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.admin-dashboard-page .alert-danger .alert-icon {
+    background: #fff0f0;
+    color: #d9534f;
+}
+
+.admin-dashboard-page .alert-warning .alert-icon {
+    background: #fff7e8;
+    color: #d99528;
+}
+
+/* Empty States */
+
+.admin-dashboard-page .empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #f0efff;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .empty-icon svg {
+        width: 25px;
+        height: 25px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+/* Activity */
+
+.admin-dashboard-page .activity-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: #f0efff;
+    color: #6558d3;
+}
+
+    .admin-dashboard-page .activity-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+/* Calendar Navigation */
+
+.admin-dashboard-page .calendar-nav-button svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}

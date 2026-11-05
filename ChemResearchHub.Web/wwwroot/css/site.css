@@ -3363,3 +3363,323 @@ textarea.form-control {
         width: 100%;
     }
 }
+/* =========================================================
+   Sidebar Logout Button
+   ========================================================= */
+
+.app-sidebar .sidebar-logout-form {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.app-sidebar .sidebar-logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 14px;
+    background: #6558d3;
+    color: #ffffff !important;
+    border: 1px solid #6558d3;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    box-shadow: 0 3px 8px rgba(101, 88, 211, 0.12);
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+    .app-sidebar .sidebar-logout-button:hover {
+        background: #5144bd;
+        border-color: #5144bd;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(81, 68, 189, 0.2);
+    }
+
+    .app-sidebar .sidebar-logout-button:focus-visible {
+        outline: 3px solid rgba(101, 88, 211, 0.25);
+        outline-offset: 3px;
+    }
+
+    .app-sidebar .sidebar-logout-button:active {
+        background: #4539a8;
+        border-color: #4539a8;
+    }
+
+/* =========================================================
+   ChemResearchHub - Desktop Collapsible Sidebar
+   ========================================================= */
+
+@media (min-width: 992px) {
+
+    /* Desktop sidebar width transition */
+
+    .app-shell {
+        --crh-sidebar-width: 280px;
+        transition: none;
+    }
+
+        .app-shell.sidebar-collapsed {
+            --crh-sidebar-width: 80px;
+        }
+
+    .app-sidebar {
+        width: var(--crh-sidebar-width) !important;
+        min-width: var(--crh-sidebar-width);
+        transition: width .25s ease;
+    }
+
+        .app-sidebar .sidebar-inner {
+            width: 100%;
+            transition: width .25s ease;
+        }
+
+    .app-main {
+        width: calc(100% - var(--crh-sidebar-width));
+        margin-right: var(--crh-sidebar-width);
+        min-width: 0;
+        transition: width .25s ease, margin-right .25s ease;
+    }
+
+    /* Brand */
+
+    .app-sidebar .sidebar-brand {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 76px;
+        padding: 12px 14px;
+        gap: 8px;
+    }
+
+    .app-sidebar .sidebar-brand-link {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+        overflow: hidden;
+        text-decoration: none;
+    }
+
+    .sidebar-desktop-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid #e9eaf1;
+        border-radius: 9px;
+        background: #fff;
+        color: #7771a8;
+        cursor: pointer;
+        transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+
+        .sidebar-desktop-toggle:hover {
+            color: #5144bd;
+            background: #f0efff;
+            border-color: #e3dfff;
+        }
+
+    .sidebar-toggle-icon {
+        width: 17px;
+        height: 17px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: transform .25s ease;
+    }
+
+    /* Collapsed brand */
+
+    .app-shell.sidebar-collapsed .sidebar-brand {
+        justify-content: center;
+        padding: 12px 8px;
+        flex-wrap: wrap;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-brand-link {
+        justify-content: center;
+        width: 100%;
+    }
+
+        .app-shell.sidebar-collapsed .sidebar-brand-link > div:last-child {
+            display: none;
+        }
+
+    .app-shell.sidebar-collapsed .sidebar-desktop-toggle {
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        z-index: 5;
+        transform: translateX(-50%);
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(30, 35, 70, .08);
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Navigation */
+
+    .app-shell.sidebar-collapsed .sidebar-nav {
+        padding: 25px 10px 18px;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-section-title {
+        display: none !important;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-link {
+        justify-content: center;
+        gap: 0;
+        padding: 8px 5px;
+        min-height: 46px;
+        margin-bottom: 6px;
+        overflow: visible;
+    }
+
+        .app-shell.sidebar-collapsed .sidebar-link > span:not(.sidebar-link-icon):not(.work-item-alert-badge) {
+            display: none !important;
+        }
+
+    .app-shell.sidebar-collapsed .sidebar-link-icon {
+        flex: 0 0 36px;
+        width: 36px;
+        height: 36px;
+        margin: 0;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-link.active::before {
+        right: -10px;
+    }
+
+    /* Notification badge */
+
+    .app-shell.sidebar-collapsed .work-item-alert-badge {
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        min-width: 17px;
+        height: 17px;
+        padding: 0 4px;
+        margin: 0;
+        font-size: 9px;
+        border: 2px solid #f7f8fc;
+    }
+
+    /* Tooltip */
+
+    .app-shell.sidebar-collapsed .sidebar-link[data-sidebar-tooltip] {
+        position: relative;
+    }
+
+        .app-shell.sidebar-collapsed .sidebar-link[data-sidebar-tooltip]::after {
+            content: attr(data-sidebar-tooltip);
+            position: absolute;
+            top: 50%;
+            right: calc(100% + 12px);
+            transform: translateY(-50%) translateX(4px);
+            z-index: 1100;
+            padding: 8px 12px;
+            border: 1px solid #e9eaf1;
+            border-radius: 9px;
+            background: #fff;
+            color: #34364a;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 5px 18px rgba(30, 35, 70, .10);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+        }
+
+        .app-shell.sidebar-collapsed .sidebar-link[data-sidebar-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) translateX(0);
+        }
+
+    /* Footer */
+
+    .app-shell.sidebar-collapsed .sidebar-footer {
+        padding: 12px 8px;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-user-card {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 4px;
+        border: 0;
+        background: transparent;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-user-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 36px;
+        width: 36px;
+        height: 36px;
+        margin: 0;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-user-info {
+        display: none !important;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-logout {
+        display: none !important;
+    }
+
+    /* Prevent horizontal overflow */
+
+    .app-shell.sidebar-collapsed .sidebar-inner {
+        overflow-x: hidden;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-nav {
+        overflow-x: hidden;
+    }
+}
+
+/* =========================================================
+   Mobile - Keep Existing Offcanvas Behavior
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .sidebar-desktop-toggle {
+        display: none !important;
+    }
+
+    .app-shell,
+    .app-shell.sidebar-collapsed {
+        --crh-sidebar-width: 280px;
+    }
+
+        .app-shell .app-sidebar {
+            width: 280px !important;
+            max-width: 85vw;
+        }
+
+        .app-shell .app-main {
+            width: 100%;
+            margin-right: 0;
+        }
+}

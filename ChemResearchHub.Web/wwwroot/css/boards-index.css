@@ -265,3 +265,45 @@
             grid-template-columns: 1fr;
         }
 }
+
+/* =========================================
+   Boards - Inline SVG Icons
+========================================= */
+
+.boards-page .boards-empty-icon,
+.boards-page .board-card-icon,
+.boards-page .board-enter-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .boards-page .boards-empty-icon svg,
+    .boards-page .board-card-icon svg,
+    .boards-page .board-enter-arrow svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .boards-page .boards-empty-icon svg {
+        width: 38px;
+        height: 38px;
+    }
+
+    .boards-page .board-card-icon svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    .boards-page .board-enter-arrow svg {
+        width: 17px;
+        height: 17px;
+        transition: transform 0.2s ease;
+    }
+
+.boards-page .board-card-actions a:hover .board-enter-arrow svg {
+    transform: translateX(-3px);
+}

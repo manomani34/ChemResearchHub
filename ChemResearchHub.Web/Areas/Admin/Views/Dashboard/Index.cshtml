@@ -1,4 +1,3 @@
-
 @model ChemResearchHub.Web.Areas.Admin.Models.AdminDashboardViewModel
 
 @{
@@ -8,256 +7,524 @@
 
 <div class="admin-dashboard-page" dir="rtl">
 
+    <!-- =========================
+         HERO
+         ========================= -->
+
     <section class="dashboard-hero">
+
         <div class="hero-content">
+
             <div class="hero-badge">
-                <span>👑</span>
+                <span class="dashboard-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m3 8 4.5 4L12 4l4.5 8L21 8l-2 11H5L3 8Z" />
+                        <path d="M5 22h14" />
+                    </svg>
+                </span>
                 پنل مدیریت
             </div>
 
             <h1>داشبورد مدیریتی</h1>
-            <p>نمای کلی از وضعیت پروژه‌ها، فعالیت‌های پژوهشی، کاربران و داده‌های سامانه</p>
+
+            <p>
+                نمای کلی از وضعیت پروژه‌ها، فعالیت‌های پژوهشی، کاربران و داده‌های سامانه
+            </p>
+
         </div>
 
         <div class="hero-actions">
+
             <a href="/Admin/Reports"
                class="admin-dashboard-nav-btn admin-dashboard-nav-primary">
-                <span>📈</span>
+
+                <span class="dashboard-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16v-4M12 16V7M17 16v-7" />
+                    </svg>
+                </span>
+
                 <span>گزارش‌های مدیریتی</span>
+
             </a>
+
         </div>
+
     </section>
+
+
+    <!-- =========================
+         KPI CARDS
+         ========================= -->
 
     <section class="kpi-grid">
 
+        <!-- Projects -->
+
         <div class="kpi-card kpi-blue">
+
             <div class="kpi-top">
-                <div class="kpi-icon">📁</div>
+
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z" />
+                        <path d="M3 10h18" />
+                    </svg>
+                </div>
+
                 <span class="kpi-label">پروژه‌ها</span>
+
             </div>
+
             <div class="kpi-value">@Model.ProjectCount</div>
+
             <div class="kpi-footer">
                 <span class="kpi-positive">●</span>
                 @Model.ActiveProjectCount پروژه فعال
             </div>
+
         </div>
 
+
+        <!-- Work Items -->
+
         <div class="kpi-card kpi-green">
+
             <div class="kpi-top">
-                <div class="kpi-icon">📋</div>
+
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="17" rx="2" />
+                        <path d="M8 2v4M16 2v4M3 9h18" />
+                        <path d="m8 14 2 2 5-5" />
+                    </svg>
+                </div>
+
                 <span class="kpi-label">Work Itemها</span>
+
             </div>
+
             <div class="kpi-value">@Model.WorkItemCount</div>
+
             <div class="kpi-footer">
                 <span class="kpi-positive">●</span>
                 @Model.OpenWorkItemCount مورد باز
             </div>
+
         </div>
 
+
+        <!-- Users -->
+
         <div class="kpi-card kpi-orange">
+
             <div class="kpi-top">
-                <div class="kpi-icon">👥</div>
+
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="10" cy="7" r="4" />
+                        <path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+
                 <span class="kpi-label">کاربران</span>
+
             </div>
+
             <div class="kpi-value">@Model.UserCount</div>
+
             <div class="kpi-footer">
                 <span class="kpi-positive">●</span>
                 @Model.ActiveUserCount کاربر فعال
             </div>
+
         </div>
 
+
+        <!-- Experiments -->
+
         <div class="kpi-card kpi-purple">
+
             <div class="kpi-top">
-                <div class="kpi-icon">🧪</div>
+
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 3h6M10 3v6l-5.5 9.2A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.8L14 9V3" />
+                        <path d="M8 14h8" />
+                    </svg>
+                </div>
+
                 <span class="kpi-label">آزمایش‌ها</span>
+
             </div>
+
             <div class="kpi-value">@Model.ExperimentCount</div>
+
             <div class="kpi-footer">
                 <span class="kpi-positive">●</span>
                 @Model.ActiveExperimentCount آزمایش فعال
             </div>
+
         </div>
 
     </section>
 
+
+    <!-- =========================
+         QUICK ACTIONS
+         ========================= -->
+
     <section class="dashboard-section">
+
         <div class="section-title-row">
+
             <div>
                 <span class="section-kicker">دسترسی سریع</span>
                 <h2>کارهای مدیریتی</h2>
             </div>
+
             <span class="section-description">
                 دسترسی مستقیم به بخش‌های پرکاربرد سامانه
             </span>
+
         </div>
 
+
         <div class="quick-actions-grid">
+
+            <!-- Users -->
 
             <a asp-area=""
                asp-controller="Users"
                asp-action="Index"
                class="quick-action-card">
-                <div class="quick-action-icon">👥</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="10" cy="7" r="4" />
+                        <path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>اعضای تیم</h3>
                     <p>کاربران و نقش‌ها</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Reports -->
 
             <a asp-area="Admin"
                asp-controller="Reports"
                asp-action="Index"
                class="quick-action-card">
-                <div class="quick-action-icon">📊</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16v-4M12 16V7M17 16v-7" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>گزارش‌ها</h3>
                     <p>گزارش‌های مدیریتی</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Reviews -->
 
             <a asp-area=""
                asp-controller="Reviews"
                asp-action="Index"
                class="quick-action-card">
-                <div class="quick-action-icon">🔍</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="10.5" cy="10.5" r="6.5" />
+                        <path d="m16 16 5 5" />
+                        <path d="m8 10.5 1.7 1.7 3.3-3.4" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>بازبینی‌ها</h3>
                     <p>مدیریت Reviewها</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Projects -->
 
             <a asp-area="Research"
                asp-controller="Projects"
                asp-action="Index"
                class="quick-action-card">
-                <div class="quick-action-icon">📁</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z" />
+                        <path d="M3 10h18" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>پروژه‌ها</h3>
                     <p>مدیریت پروژه‌ها</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Work Items -->
 
             <a asp-area="Research"
                asp-controller="WorkItems"
                asp-action="Index"
                class="quick-action-card">
-                <div class="quick-action-icon">📋</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="17" rx="2" />
+                        <path d="M8 2v4M16 2v4M3 9h18" />
+                        <path d="m8 14 2 2 5-5" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>Work Itemها</h3>
                     <p>فعالیت‌های کاری</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Experiments -->
 
             <a asp-area="Research"
                asp-controller="Experiments"
                asp-action="List"
                class="quick-action-card">
-                <div class="quick-action-icon">🧪</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 3h6M10 3v6l-5.5 9.2A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.8L14 9V3" />
+                        <path d="M8 14h8" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>آزمایش‌ها</h3>
                     <p>آزمایش‌های پژوهشی</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Samples -->
 
             <a asp-area="Research"
                asp-controller="Samples"
                asp-action="List"
                class="quick-action-card">
-                <div class="quick-action-icon">🧫</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 3h6M10 3v5l-4 9a3 3 0 0 0 2.7 4h6.6a3 3 0 0 0 2.7-4l-4-9V3" />
+                        <path d="M8 14h8" />
+                        <path d="M10 17h4" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>نمونه‌ها</h3>
                     <p>نمونه‌های پژوهشی</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
+
+
+            <!-- Decisions -->
 
             <a asp-area="Research"
                asp-controller="DecisionLogs"
                asp-action="List"
                class="quick-action-card">
-                <div class="quick-action-icon">⚖️</div>
+
+                <div class="quick-action-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+                        <path d="M14 3v5h5M8 12h8M8 16h5" />
+                    </svg>
+                </div>
+
                 <div class="quick-action-content">
                     <h3>تصمیمات</h3>
                     <p>سوابق تصمیمات پژوهشی</p>
                 </div>
+
                 <span class="quick-action-arrow">←</span>
+
             </a>
 
         </div>
+
     </section>
+
+
+    <!-- =========================
+         SECONDARY STATS
+         ========================= -->
 
     <section class="secondary-stats">
 
         <div class="secondary-stat">
-            <div class="secondary-icon">🧫</div>
+
+            <div class="secondary-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 3h6M10 3v5l-4 9a3 3 0 0 0 2.7 4h6.6a3 3 0 0 0 2.7-4l-4-9V3" />
+                    <path d="M8 14h8" />
+                    <path d="M10 17h4" />
+                </svg>
+            </div>
+
             <div>
                 <span>Samples</span>
                 <strong>@Model.SampleCount</strong>
             </div>
+
         </div>
 
+
         <div class="secondary-stat">
-            <div class="secondary-icon">📄</div>
+
+            <div class="secondary-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16v-4M12 16V7M17 16v-7" />
+                </svg>
+            </div>
+
             <div>
                 <span>Results</span>
                 <strong>@Model.ResultCount</strong>
             </div>
+
         </div>
 
+
         <div class="secondary-stat">
-            <div class="secondary-icon">📎</div>
+
+            <div class="secondary-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m8 12.5 7.8-7.8a4 4 0 0 1 5.7 5.7L11 20.9a6 6 0 0 1-8.5-8.5L13 1.9" />
+                </svg>
+            </div>
+
             <div>
                 <span>Attachments</span>
                 <strong>@Model.AttachmentCount</strong>
             </div>
+
         </div>
 
+
         <div class="secondary-stat">
-            <div class="secondary-icon">⚖️</div>
+
+            <div class="secondary-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+                    <path d="M14 3v5h5M8 12h8M8 16h5" />
+                </svg>
+            </div>
+
             <div>
                 <span>Decisions</span>
                 <strong>@Model.DecisionCount</strong>
             </div>
+
         </div>
 
     </section>
 
+
+    <!-- =========================
+         ALERTS
+         ========================= -->
+
     @if (Model.Alerts.Any())
     {
         <section class="section-card alerts-card">
+
             <div class="section-title-row">
+
                 <div>
-                    <span class="section-kicker section-kicker-danger">نیازمند توجه</span>
+                    <span class="section-kicker section-kicker-danger">
+                        نیازمند توجه
+                    </span>
+
                     <h2>هشدارهای مدیریتی</h2>
                 </div>
+
                 <span class="section-description">
                     مواردی که نیاز به بررسی مدیر دارند
                 </span>
+
             </div>
 
+
             <div class="alerts-list">
+
                 @foreach (var alert in Model.Alerts)
                 {
                     <div class="alert-item alert-@alert.Type">
+
                         <div class="alert-icon">
+
                             @if (alert.Type == "danger")
                             {
-                                <span>⚠️</span>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M10.3 3.9 2.5 17.4A2 2 0 0 0 4.2 20h15.6a2 2 0 0 0 1.7-2.6L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+                                    <path d="M12 9v4M12 17h.01" />
+                                </svg>
                             }
                             else if (alert.Type == "warning")
                             {
-                                <span>🟠</span>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M12 8v4M12 16h.01" />
+                                </svg>
                             }
                             else
                             {
-                                <span>ℹ️</span>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M12 11v5M12 8h.01" />
+                                </svg>
                             }
+
                         </div>
 
                         <div class="alert-content">
@@ -265,28 +532,44 @@
                             <span>@alert.Description</span>
                         </div>
 
-                        <div class="alert-count">@alert.Count</div>
+                        <div class="alert-count">
+                            @alert.Count
+                        </div>
+
                     </div>
                 }
+
             </div>
+
         </section>
     }
 
+
+    <!-- =========================
+         PROJECT SCHEDULE
+         ========================= -->
+
     <section class="section-card project-schedule-card">
+
         <div class="section-title-row">
+
             <div>
                 <span class="section-kicker">زمان‌بندی پژوهشی</span>
                 <h2>برنامه زمانی پروژه‌ها</h2>
                 <p>نمای کلی تاریخ شروع و پایان پروژه‌ها</p>
             </div>
+
         </div>
+
 
         @if (Model.ProjectSchedule.Any())
         {
             <div class="project-schedule-list">
+
                 @foreach (var project in Model.ProjectSchedule)
                 {
                     <div class="project-schedule-item">
+
                         <div class="project-schedule-name">
                             <strong>@project.ReferenceCode</strong>
                             <span>@project.ProjectName</span>
@@ -296,50 +579,85 @@
                             <span>شروع: @(project.StartDateJalali ?? "-")</span>
                             <span>پایان: @(project.EndDateJalali ?? "-")</span>
                         </div>
+
                     </div>
                 }
+
             </div>
         }
         else
         {
             <div class="empty-state">
-                <div class="empty-icon">📅</div>
-                <span>هنوز برای هیچ پروژه‌ای تاریخ شروع یا پایان ثبت نشده است.</span>
+
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="17" rx="2" />
+                        <path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h5" />
+                    </svg>
+                </div>
+
+                <span>
+                    هنوز برای هیچ پروژه‌ای تاریخ شروع یا پایان ثبت نشده است.
+                </span>
+
             </div>
         }
+
     </section>
 
+
+    <!-- =========================
+         PERSIAN CALENDAR
+         ========================= -->
+
     <section class="section-card persian-calendar-card">
+
         <div class="section-title-row">
+
             <div>
                 <span class="section-kicker">تقویم پژوهشی</span>
                 <h2>تقویم زمان‌بندی پروژه‌ها</h2>
                 <p>نمایش پروژه‌ها بر اساس تاریخ شروع و پایان در تقویم شمسی</p>
             </div>
+
         </div>
+
 
         <div class="persian-calendar">
 
             <div class="calendar-header">
+
                 <button type="button"
                         class="calendar-nav-button"
                         id="calendarPrev"
                         aria-label="ماه قبل">
-                    →
+                         <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                    
+
                 </button>
+
 
                 <div class="calendar-current-month">
                     <strong id="calendarMonthName"></strong>
                     <span id="calendarYear"></span>
                 </div>
 
+
                 <button type="button"
                         class="calendar-nav-button"
                         id="calendarNext"
                         aria-label="ماه بعد">
-                    ←
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m15 18-6-6 6-6" />
+                    </svg>
+                   
+
                 </button>
+
             </div>
+
 
             <div class="calendar-weekdays">
                 <div>شنبه</div>
@@ -351,29 +669,42 @@
                 <div>جمعه</div>
             </div>
 
+
             <div class="calendar-grid" id="calendarGrid"></div>
 
+
             <div class="calendar-legend">
+
                 <div class="calendar-legend-item">
                     <span class="calendar-legend-dot calendar-project-start"></span>
                     شروع پروژه
                 </div>
+
                 <div class="calendar-legend-item">
                     <span class="calendar-legend-dot calendar-project-range"></span>
                     در بازه پروژه
                 </div>
+
                 <div class="calendar-legend-item">
                     <span class="calendar-legend-dot calendar-project-end"></span>
                     پایان پروژه
                 </div>
+
             </div>
 
         </div>
+
     </section>
+
+
+    <!-- =========================
+         CHARTS
+         ========================= -->
 
     <section class="charts-grid">
 
         <div class="section-card chart-card">
+
             <div class="section-title-row">
                 <div>
                     <span class="section-kicker">تحلیل فعالیت</span>
@@ -381,12 +712,16 @@
                     <p>وضعیت کلی فعالیت‌های کاری</p>
                 </div>
             </div>
+
             <div class="chart-container">
                 <canvas id="workItemChart"></canvas>
             </div>
+
         </div>
 
+
         <div class="section-card chart-card">
+
             <div class="section-title-row">
                 <div>
                     <span class="section-kicker">وضعیت پروژه</span>
@@ -394,12 +729,16 @@
                     <p>پروژه‌های فعال و غیرفعال</p>
                 </div>
             </div>
+
             <div class="chart-container">
                 <canvas id="projectChart"></canvas>
             </div>
+
         </div>
 
+
         <div class="section-card chart-card chart-wide">
+
             <div class="section-title-row">
                 <div>
                     <span class="section-kicker">توزیع فعالیت</span>
@@ -407,16 +746,24 @@
                     <p>توزیع فعالیت‌ها بین اعضای تیم</p>
                 </div>
             </div>
+
             <div class="chart-container chart-large">
                 <canvas id="workItemsByUserChart"></canvas>
             </div>
+
         </div>
 
     </section>
 
+
+    <!-- =========================
+         DETAILS
+         ========================= -->
+
     <section class="details-grid">
 
         <div class="section-card">
+
             <div class="section-title-row">
                 <div>
                     <span class="section-kicker">فعالیت‌ها</span>
@@ -425,7 +772,9 @@
                 </div>
             </div>
 
+
             <div class="metric-list">
+
                 <div class="metric-row">
                     <span><i class="status-dot status-open"></i>باز</span>
                     <strong>@Model.OpenWorkItemCount</strong>
@@ -445,10 +794,14 @@
                     <span><i class="status-dot status-unassigned"></i>بدون مسئول</span>
                     <strong>@Model.UnassignedWorkItemCount</strong>
                 </div>
+
             </div>
+
         </div>
 
+
         <div class="section-card">
+
             <div class="section-title-row">
                 <div>
                     <span class="section-kicker">تیم</span>
@@ -457,7 +810,9 @@
                 </div>
             </div>
 
+
             <div class="role-grid">
+
                 <div class="role-item role-admin">
                     <span>Admin</span>
                     <strong>@Model.AdminCount</strong>
@@ -477,27 +832,45 @@
                     <span>Active</span>
                     <strong>@Model.ActiveUserCount</strong>
                 </div>
+
             </div>
+
         </div>
 
     </section>
 
+
+    <!-- =========================
+         RECENT ACTIVITIES
+         ========================= -->
+
     <section class="section-card activity-card">
+
         <div class="section-title-row">
+
             <div>
                 <span class="section-kicker">آخرین رویدادها</span>
                 <h2>فعالیت‌های اخیر</h2>
                 <p>آخرین تصمیم‌های ثبت شده در سامانه</p>
             </div>
+
         </div>
+
 
         @if (Model.RecentActivities.Any())
         {
             <div class="activity-list">
+
                 @foreach (var activity in Model.RecentActivities)
                 {
                     <div class="activity-item">
-                        <div class="activity-icon">📝</div>
+
+                        <div class="activity-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                                <path d="M14 2v6h6M8 13h8M8 17h8" />
+                            </svg>
+                        </div>
 
                         <div class="activity-content">
                             <strong>@activity.Title</strong>
@@ -509,32 +882,58 @@
                                 ? activity.CreatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
                                 : "-")
                         </time>
+
                     </div>
                 }
+
             </div>
         }
         else
         {
             <div class="empty-state">
-                <div class="empty-icon">📭</div>
+
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 7h18v13H3z" />
+                        <path d="m3 7 9 7 9-7M3 7l3-3h12l3 3" />
+                    </svg>
+                </div>
+
                 <span>هنوز فعالیتی ثبت نشده است.</span>
+
             </div>
         }
+
     </section>
 
 </div>
 
+
+<!-- =========================
+     STYLES
+     ========================= -->
+
 @section Styles {
+
     <link rel="stylesheet"
           href="~/css/admin-dashboard.css"
           asp-append-version="true" />
+
 }
 
+
+<!-- =========================
+     SCRIPTS
+     ========================= -->
+
 @section Scripts {
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+
         (function () {
+
             const calendarGrid = document.getElementById("calendarGrid");
             const calendarMonthName = document.getElementById("calendarMonthName");
             const calendarYear = document.getElementById("calendarYear");
@@ -571,6 +970,7 @@
                 });
 
             function getPersianParts(date) {
+
                 const parts = persianFormatter.formatToParts(date);
 
                 return {
@@ -578,28 +978,36 @@
                     month: Number(parts.find(x => x.type === "month")?.value),
                     day: Number(parts.find(x => x.type === "day")?.value)
                 };
+
             }
 
             function getPersianDate(year, month, day) {
+
                 const approximate = new Date(Date.UTC(year + 621, month - 1, day));
 
                 for (let offset = -370; offset <= 370; offset++) {
+
                     const date = new Date(approximate);
                     date.setUTCDate(date.getUTCDate() + offset);
 
                     const parts = getPersianParts(date);
 
-                    if (parts.year === year &&
+                    if (
+                        parts.year === year &&
                         parts.month === month &&
-                        parts.day === day) {
+                        parts.day === day
+                    ) {
                         return date;
                     }
+
                 }
 
                 return null;
+
             }
 
             function daysInPersianMonth(year, month) {
+
                 const start = getPersianDate(year, month, 1);
 
                 if (!start) {
@@ -617,9 +1025,11 @@
                 return Math.round(
                     (next.getTime() - start.getTime()) / 86400000
                 );
+
             }
 
             function toDate(value) {
+
                 if (!value) {
                     return null;
                 }
@@ -627,25 +1037,31 @@
                 const date = new Date(value);
 
                 return Number.isNaN(date.getTime()) ? null : date;
+
             }
 
             function dateOnly(date) {
+
                 return new Date(
                     date.getFullYear(),
                     date.getMonth(),
                     date.getDate()
                 );
+
             }
 
             function isSameDay(a, b) {
+
                 if (!a || !b) {
                     return false;
                 }
 
                 return dateOnly(a).getTime() === dateOnly(b).getTime();
+
             }
 
             function isBetween(date, start, end) {
+
                 if (!start || !end) {
                     return false;
                 }
@@ -655,14 +1071,20 @@
                 const e = dateOnly(end).getTime();
 
                 return d >= Math.min(s, e) && d <= Math.max(s, e);
+
             }
 
             function projectState(date, project) {
+
                 const start = toDate(project.startDate);
                 const end = toDate(project.endDate);
 
-                if (start && isSameDay(date, start) &&
-                    end && isSameDay(start, end)) {
+                if (
+                    start &&
+                    isSameDay(date, start) &&
+                    end &&
+                    isSameDay(start, end)
+                ) {
                     return "start-end";
                 }
 
@@ -679,9 +1101,11 @@
                 }
 
                 return null;
+
             }
 
             function formatDate(date) {
+
                 if (!date) {
                     return "-";
                 }
@@ -689,23 +1113,29 @@
                 const parts = getPersianParts(date);
 
                 return `${parts.year}/${String(parts.month).padStart(2, "0")}/${String(parts.day).padStart(2, "0")}`;
+
             }
 
             function escapeHtml(value) {
+
                 return String(value ?? "")
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;")
                     .replace(/"/g, "&quot;")
                     .replace(/'/g, "&#039;");
+
             }
 
             const tooltip = document.createElement("div");
+
             tooltip.className = "calendar-project-tooltip";
             tooltip.style.display = "none";
+
             document.body.appendChild(tooltip);
 
             function showTooltip(element, project) {
+
                 const start = toDate(project.startDate);
                 const end = toDate(project.endDate);
 
@@ -739,6 +1169,7 @@
 
                 tooltip.style.left = `${left}px`;
                 tooltip.style.top = `${top}px`;
+
             }
 
             function hideTooltip() {
@@ -752,6 +1183,7 @@
             let currentMonth = todayParts.month;
 
             function renderPersianCalendar() {
+
                 hideTooltip();
                 calendarGrid.innerHTML = "";
 
@@ -769,12 +1201,17 @@
                 const days = daysInPersianMonth(currentYear, currentMonth);
 
                 for (let i = 0; i < leadingEmptyDays; i++) {
+
                     const empty = document.createElement("div");
+
                     empty.className = "calendar-cell calendar-cell-empty";
+
                     calendarGrid.appendChild(empty);
+
                 }
 
                 for (let day = 1; day <= days; day++) {
+
                     const date = getPersianDate(currentYear, currentMonth, day);
 
                     if (!date) {
@@ -782,6 +1219,7 @@
                     }
 
                     const cell = document.createElement("div");
+
                     cell.className = "calendar-cell";
 
                     if (isSameDay(date, today)) {
@@ -789,11 +1227,14 @@
                     }
 
                     const number = document.createElement("div");
+
                     number.className = "calendar-day-number";
                     number.textContent = String(day);
+
                     cell.appendChild(number);
 
                     projects.forEach(project => {
+
                         const state = projectState(date, project);
 
                         if (!state) {
@@ -801,6 +1242,7 @@
                         }
 
                         const item = document.createElement("a");
+
                         item.className = "calendar-project calendar-project-" + state;
                         item.href = `/Projects/Details/${project.projectId}`;
                         item.title = `${project.referenceCode} — ${project.projectName}`;
@@ -824,13 +1266,17 @@
                         item.addEventListener("blur", hideTooltip);
 
                         cell.appendChild(item);
+
                     });
 
                     calendarGrid.appendChild(cell);
+
                 }
+
             }
 
             calendarPrev?.addEventListener("click", function () {
+
                 currentMonth--;
 
                 if (currentMonth < 1) {
@@ -839,9 +1285,11 @@
                 }
 
                 renderPersianCalendar();
+
             });
 
             calendarNext?.addEventListener("click", function () {
+
                 currentMonth++;
 
                 if (currentMonth > 12) {
@@ -850,15 +1298,23 @@
                 }
 
                 renderPersianCalendar();
+
             });
 
             window.addEventListener("scroll", hideTooltip, true);
             window.addEventListener("resize", hideTooltip);
 
             renderPersianCalendar();
+
         })();
 
+
+        // =========================
+        // CHARTS
+        // =========================
+
         (function () {
+
             const workItemLabels = @Html.Raw(
                 System.Text.Json.JsonSerializer.Serialize(
                     Model.WorkItemStatusChart.Select(x => x.Label)));
@@ -892,8 +1348,11 @@
             }
 
             if (workItemCanvas) {
+
                 new Chart(workItemCanvas, {
+
                     type: "doughnut",
+
                     data: {
                         labels: workItemLabels,
                         datasets: [{
@@ -901,10 +1360,12 @@
                             borderWidth: 0
                         }]
                     },
+
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         cutout: "68%",
+
                         plugins: {
                             legend: {
                                 position: "bottom",
@@ -915,12 +1376,17 @@
                             }
                         }
                     }
+
                 });
+
             }
 
             if (projectCanvas) {
+
                 new Chart(projectCanvas, {
+
                     type: "doughnut",
+
                     data: {
                         labels: projectLabels,
                         datasets: [{
@@ -928,10 +1394,12 @@
                             borderWidth: 0
                         }]
                     },
+
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         cutout: "68%",
+
                         plugins: {
                             legend: {
                                 position: "bottom",
@@ -942,12 +1410,17 @@
                             }
                         }
                     }
+
                 });
+
             }
 
             if (userCanvas) {
+
                 new Chart(userCanvas, {
+
                     type: "bar",
+
                     data: {
                         labels: userLabels,
                         datasets: [{
@@ -957,34 +1430,47 @@
                             borderSkipped: false
                         }]
                     },
+
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         indexAxis: "y",
+
                         plugins: {
                             legend: {
                                 display: false
                             }
                         },
+
                         scales: {
+
                             x: {
                                 beginAtZero: true,
+
                                 ticks: {
                                     precision: 0
                                 },
+
                                 grid: {
                                     color: "#eef2f7"
                                 }
                             },
+
                             y: {
                                 grid: {
                                     display: false
                                 }
                             }
+
                         }
                     }
+
                 });
+
             }
+
         })();
+
     </script>
+
 }

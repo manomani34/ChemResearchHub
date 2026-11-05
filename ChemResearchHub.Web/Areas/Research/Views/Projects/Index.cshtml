@@ -4,7 +4,7 @@
     ViewData["Title"] = "پروژه‌های پژوهشی";
 }
 
-<div class="projects-page">
+<div class="projects-page" dir="rtl">
 
     @if (TempData["SuccessMessage"] is string successMessage)
     {
@@ -15,7 +15,7 @@
     }
 
     <div class="projects-header">
-        <div>
+        <div class="projects-header-content">
             <div class="projects-eyebrow">Research Workspace</div>
             <h1 class="projects-header-title">پروژه‌های پژوهشی</h1>
             <p class="projects-header-subtitle">
@@ -23,8 +23,12 @@
             </p>
         </div>
 
-        <a asp-action="Create" class="crh-btn crh-btn-primary">
-            <span class="projects-button-icon">+</span>
+        <a asp-action="Create" class="crh-btn crh-btn-primary projects-create-button">
+            <span class="projects-button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 5v14M5 12h14" />
+                </svg>
+            </span>
             پروژه جدید
         </a>
     </div>
@@ -32,11 +36,22 @@
     @if (Model.Count == 0)
     {
         <div class="projects-empty">
-            <div class="projects-empty-icon">🧪</div>
+
+            <div class="projects-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 3h6" />
+                    <path d="M10 3v5.2L5.8 16a3.5 3.5 0 0 0 3.1 5h6.2a3.5 3.5 0 0 0 3.1-5L14 8.2V3" />
+                    <path d="M8 15h8" />
+                    <path d="M10 18h.01M14 17h.01" />
+                </svg>
+            </div>
+
             <h2 class="projects-empty-title">هنوز پروژه‌ای ثبت نشده است</h2>
+
             <p class="projects-empty-text">
                 برای شروع، اولین پروژه پژوهشی خود را ایجاد کنید.
             </p>
+
             <a asp-action="Create" class="crh-btn crh-btn-primary">
                 ایجاد اولین پروژه
             </a>
@@ -49,19 +64,33 @@
                 <h2>فضای پروژه‌ها</h2>
                 <p>پروژه‌های ثبت‌شده در سامانه پژوهشی</p>
             </div>
-            <span class="projects-count">@Model.Count پروژه</span>
+
+            <span class="projects-count">
+                @Model.Count پروژه
+            </span>
         </div>
 
         <div class="projects-grid">
+
             @foreach (var project in Model)
             {
                 <article class="project-card">
 
                     <div class="project-card-header">
-                        <div class="project-card-icon">🧪</div>
+
+                        <div class="project-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 3h6" />
+                                <path d="M10 3v5.2L5.8 16a3.5 3.5 0 0 0 3.1 5h6.2a3.5 3.5 0 0 0 3.1-5L14 8.2V3" />
+                                <path d="M8 15h8" />
+                                <path d="M10 18h.01M14 17h.01" />
+                            </svg>
+                        </div>
 
                         <div class="project-card-id">
-                            <span class="project-reference-label">شناسه پروژه</span>
+                            <span class="project-reference-label">
+                                شناسه پروژه
+                            </span>
 
                             <div class="project-reference-copy">
                                 <span class="crh-id">@project.ReferenceCode</span>
@@ -71,7 +100,11 @@
                                         data-reference="@project.ReferenceCode"
                                         title="کپی شناسه"
                                         aria-label="کپی شناسه @project.ReferenceCode">
-                                    📋
+
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect x="8" y="8" width="12" height="12" rx="2" />
+                                        <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -80,10 +113,14 @@
                             <span class="project-status-dot"></span>
                             @(project.IsActive ? "فعال" : "غیرفعال")
                         </span>
+
                     </div>
 
                     <div class="project-card-body">
-                        <h3 class="project-card-title">@project.Name</h3>
+
+                        <h3 class="project-card-title">
+                            @project.Name
+                        </h3>
 
                         <div class="project-card-description">
                             @if (string.IsNullOrWhiteSpace(project.Description))
@@ -97,10 +134,12 @@
                                 @project.Description
                             }
                         </div>
+
                     </div>
 
                     <div class="project-card-footer">
                         <div class="project-card-actions">
+
                             <a asp-action="Details"
                                asp-route-id="@project.Id"
                                class="crh-btn crh-btn-soft">
@@ -120,11 +159,13 @@
                                class="crh-btn crh-btn-soft">
                                 ویرایش
                             </a>
+
                         </div>
                     </div>
 
                 </article>
             }
+
         </div>
     }
 
@@ -156,14 +197,19 @@
                         try {
                             await navigator.clipboard.writeText(referenceCode);
 
-                            const originalText = button.textContent;
+                            const originalContent = button.innerHTML;
 
-                            button.textContent = "✓";
+                            button.innerHTML = `
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="m5 12 4 4L19 6" />
+                                </svg>
+                            `;
+
                             button.classList.add("copied");
                             button.title = "کپی شد";
 
                             setTimeout(function () {
-                                button.textContent = originalText;
+                                button.innerHTML = originalContent;
                                 button.classList.remove("copied");
                                 button.title = "کپی شناسه";
                             }, 1200);

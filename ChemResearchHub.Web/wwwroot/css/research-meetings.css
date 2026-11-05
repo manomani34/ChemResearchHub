@@ -1921,3 +1921,107 @@
         padding: 15px;
     }
 }
+
+/* =========================================================
+   RMO - Meeting Quick Actions
+   ========================================================= */
+
+.rmo-details-page .rmo-quick-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 17px;
+    direction: ltr;
+}
+
+.rmo-details-page .rmo-quick-action {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 42px;
+    padding: 9px 15px;
+    border: 1px solid #dcd9f8;
+    border-radius: 11px;
+    background: #fff;
+    color: #6558d3;
+    font-size: 13px;
+    font-weight: 550;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+    .rmo-details-page .rmo-quick-action i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        line-height: 1;
+        color: inherit;
+    }
+
+    .rmo-details-page .rmo-quick-action:hover {
+        background: #f5f3ff;
+        border-color: #bcb5f3;
+        color: #5144bd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(81, 68, 189, .09);
+    }
+
+.rmo-details-page .rmo-quick-action-primary {
+    background: #6558d3;
+    border-color: #6558d3;
+    color: #fff;
+    box-shadow: 0 3px 9px rgba(101, 88, 211, .17);
+}
+
+    .rmo-details-page .rmo-quick-action-primary i {
+        color: #fff;
+    }
+
+    .rmo-details-page .rmo-quick-action-primary:hover {
+        background: #5144bd;
+        border-color: #5144bd;
+        color: #fff;
+        box-shadow: 0 5px 14px rgba(81, 68, 189, .23);
+    }
+
+/* Focus accessibility */
+
+.rmo-details-page .rmo-quick-action:focus-visible {
+    outline: 3px solid rgba(101, 88, 211, .22);
+    outline-offset: 3px;
+}
+
+/* Responsive */
+
+@media (max-width: 576px) {
+
+    .rmo-details-page .rmo-quick-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .rmo-details-page .rmo-quick-action {
+        width: 100%;
+        min-height: 43px;
+        padding: 9px 8px;
+        gap: 7px;
+        font-size: 12px;
+    }
+
+        .rmo-details-page .rmo-quick-action i {
+            font-size: 15px;
+        }
+}
+
+@media (max-width: 360px) {
+
+    .rmo-details-page .rmo-quick-actions {
+        grid-template-columns: 1fr;
+    }
+}

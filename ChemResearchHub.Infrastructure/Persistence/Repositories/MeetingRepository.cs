@@ -216,6 +216,7 @@ public class MeetingRepository : IMeetingRepository
     CancellationToken cancellationToken = default)
     {
         return await _context.MeetingActionItems
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.WorkItemId == workItemId,
                 cancellationToken);

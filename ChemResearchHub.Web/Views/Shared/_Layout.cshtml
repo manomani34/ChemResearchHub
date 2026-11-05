@@ -251,6 +251,61 @@
         right: -14px;
     }
 }
+/* =========================================================
+   Sidebar - Unified Inline SVG Icons
+   ========================================================= */
+
+.app-sidebar .sidebar-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    color: #7771a8;
+    background: transparent;
+    transition:
+        color .2s ease,
+        background .2s ease,
+        transform .2s ease;
+}
+
+.app-sidebar .sidebar-link-icon svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.app-sidebar .sidebar-link:hover .sidebar-link-icon {
+    color: #6558d3;
+    background: #f0efff;
+}
+
+.app-sidebar .sidebar-link.active .sidebar-link-icon {
+    color: #5144bd;
+    background: #e8e5ff;
+}
+
+.app-sidebar .sidebar-link.active .sidebar-link-icon svg {
+    stroke-width: 2;
+}
+
+.app-sidebar .sidebar-brand-icon svg,
+.app-sidebar .sidebar-user-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 </style>
 
 @await RenderSectionAsync("Styles", required: false)
@@ -279,8 +334,11 @@
                        class="sidebar-brand-link">
 
                         <div class="sidebar-brand-icon">
-                            🧪
-                        </div>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 3h6M10 3v6l-5.5 9.2A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.8L14 9V3" />
+        <path d="M8 14h8M10 17h4" />
+    </svg>
+</div>
 
                         <div>
                             <div class="sidebar-brand-title">
@@ -294,6 +352,22 @@
 
                     </a>
 
+<button type="button"
+        id="sidebarDesktopToggle"
+        class="sidebar-desktop-toggle"
+        aria-label="جمع کردن منو"
+        aria-expanded="true"
+        title="جمع کردن منو">
+
+    <svg class="sidebar-toggle-icon"
+         viewBox="0 0 24 24"
+         aria-hidden="true">
+        <path d="M9 5 16 12 9 19" />
+        <path d="M4 5v14" />
+    </svg>
+
+</button>
+
                     <button type="button"
                             class="btn-close d-lg-none"
                             data-bs-dismiss="offcanvas"
@@ -302,54 +376,70 @@
 
                 </div>
 
-                <nav class="sidebar-nav" dir="rtl">
+               <nav class="sidebar-nav" dir="rtl">
 
-    <div class="sidebar-section-title">
-        اصلی
-    </div>
+    <div class="sidebar-section-title">اصلی</div>
 
     <a asp-area=""
        asp-controller="Home"
        asp-action="Index"
-       class="sidebar-link @IsActive("", "Home", "Index")">
+       class="sidebar-link @(IsActive("", "Home", "Index"))">
 
-        <span class="sidebar-link-icon">🏠</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m3 10 9-7 9 7" />
+                <path d="M5 9v12h14V9" />
+                <path d="M9 21v-7h6v7" />
+            </svg>
+        </span>
         <span>داشبورد</span>
-
     </a>
 
     <a asp-area="Research"
        asp-controller="Projects"
        asp-action="Index"
-       class="sidebar-link @IsActive("Research", "Projects")">
+       class="sidebar-link @(IsActive("Research", "Projects"))">
 
-        <span class="sidebar-link-icon">📁</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" />
+                <path d="M3 10h18" />
+            </svg>
+        </span>
         <span>پروژه‌ها</span>
-
     </a>
 
     <a asp-area="Research"
        asp-controller="Boards"
        asp-action="List"
-       class="sidebar-link @IsActive("Research", "Boards")">
+       class="sidebar-link @(IsActive("Research", "Boards"))">
 
-        <span class="sidebar-link-icon">📋</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <path d="M9 4v16M15 4v16" />
+                <path d="M5.5 8h1M11 8h1M17 8h1" />
+            </svg>
+        </span>
         <span>بوردهای پژوهشی</span>
-
     </a>
 
 
-    <div class="sidebar-section-title mt-4">
-        پژوهش
-    </div>
+    <div class="sidebar-section-title mt-4">پژوهش</div>
 
     <a asp-area="Research"
        asp-controller="WorkItems"
        asp-action="Index"
-       class="sidebar-link @IsActive("Research", "WorkItems")"
+       class="sidebar-link @(IsActive("Research", "WorkItems"))"
        id="workItemsMenuLink">
 
-        <span class="sidebar-link-icon">✅</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="17" rx="2" />
+                <path d="M8 2v4M16 2v4M3 9h18" />
+                <path d="m8 14 2 2 5-5" />
+            </svg>
+        </span>
         <span>کارهای پژوهشی</span>
 
         <span id="workItemAlertBadge"
@@ -357,116 +447,157 @@
               style="display:none;">
             0
         </span>
-
     </a>
 
     <a asp-area="Research"
        asp-controller="Experiments"
        asp-action="List"
-       class="sidebar-link @IsActive("Research", "Experiments")">
+       class="sidebar-link @(IsActive("Research", "Experiments"))">
 
-        <span class="sidebar-link-icon">🧪</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 3h6M10 3v6l-5.5 9.2A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.8L14 9V3" />
+                <path d="M8 14h8M9 17h6" />
+            </svg>
+        </span>
         <span>آزمایش‌ها</span>
-
     </a>
 
     <a asp-area="Research"
        asp-controller="Samples"
        asp-action="List"
-       class="sidebar-link @IsActive("Research", "Samples")">
+       class="sidebar-link @(IsActive("Research", "Samples"))">
 
-        <span class="sidebar-link-icon">🧫</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 3h6M10 3v5l-4 9a3 3 0 0 0 2.7 4h6.6a3 3 0 0 0 2.7-4l-4-9V3" />
+                <path d="M8 14h8" />
+                <path d="M10 17h4" />
+            </svg>
+        </span>
         <span>نمونه‌ها</span>
-
     </a>
 
     <a asp-area="Research"
        asp-controller="Results"
        asp-action="List"
-       class="sidebar-link @IsActive("Research", "Results")">
+       class="sidebar-link @(IsActive("Research", "Results"))">
 
-        <span class="sidebar-link-icon">📊</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3v18h18" />
+                <path d="m7 14 4-4 3 3 6-7" />
+                <path d="M16 6h4v4" />
+            </svg>
+        </span>
         <span>نتایج</span>
-
     </a>
 
     <a asp-area=""
        asp-controller="Attachments"
        asp-action="List"
-       class="sidebar-link @IsActive("", "Attachments")">
+       class="sidebar-link @(IsActive("", "Attachments"))">
 
-        <span class="sidebar-link-icon">📎</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m8 12.5 7.8-7.8a4 4 0 0 1 5.7 5.7L11 20.9a6 6 0 0 1-8.5-8.5L13 1.9" />
+                <path d="m7 15 9.2-9.2" />
+            </svg>
+        </span>
         <span>پیوست‌ها</span>
-
     </a>
 
     <a asp-area="Research"
        asp-controller="DecisionLogs"
        asp-action="List"
-       class="sidebar-link @IsActive("Research", "DecisionLogs")">
+       class="sidebar-link @(IsActive("Research", "DecisionLogs"))">
 
-        <span class="sidebar-link-icon">📋</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+                <path d="M14 3v5h5M8 12h8M8 16h5" />
+            </svg>
+        </span>
         <span>تصمیمات</span>
-
     </a>
 
 
     @if (User.IsInRole("Admin"))
     {
-        <div class="sidebar-section-title mt-4">
-            مدیریت
-        </div>
+        <div class="sidebar-section-title mt-4">مدیریت</div>
 
         <a asp-area="Admin"
            asp-controller="Dashboard"
            asp-action="Index"
-           class="sidebar-link @IsActive("Admin", "Dashboard")">
+           class="sidebar-link @(IsActive("Admin", "Dashboard"))">
 
-            <span class="sidebar-link-icon">📊</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="8" height="8" rx="1.5" />
+                    <rect x="13" y="3" width="8" height="5" rx="1.5" />
+                    <rect x="13" y="10" width="8" height="11" rx="1.5" />
+                    <rect x="3" y="13" width="8" height="8" rx="1.5" />
+                </svg>
+            </span>
             <span>داشبورد مدیریت</span>
-
         </a>
 
         <a asp-area="Admin"
            asp-controller="Reports"
            asp-action="Index"
-           class="sidebar-link @IsActive("Admin", "Reports")">
+           class="sidebar-link @(IsActive("Admin", "Reports"))">
 
-            <span class="sidebar-link-icon">📈</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16v-4M12 16V7M17 16v-7" />
+                </svg>
+            </span>
             <span>گزارش‌ها</span>
-
         </a>
 
         <a asp-area="Admin"
            asp-controller="Users"
            asp-action="Index"
-           class="sidebar-link @IsActive("Admin", "Users")">
+           class="sidebar-link @(IsActive("Admin", "Users"))">
 
-            <span class="sidebar-link-icon">👥</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="10" cy="7" r="4" />
+                    <path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </span>
             <span>مدیریت کاربران</span>
-
         </a>
 
         <a asp-area="Admin"
            asp-controller="Roles"
            asp-action="Index"
-           class="sidebar-link @IsActive("Admin", "Roles")">
+           class="sidebar-link @(IsActive("Admin", "Roles"))">
 
-            <span class="sidebar-link-icon">🛡️</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z" />
+                    <path d="m9 12 2 2 4-4" />
+                </svg>
+            </span>
             <span>مدیریت نقش‌ها</span>
-
         </a>
 
         <a asp-area="Admin"
            asp-controller="Tags"
            asp-action="Index"
-           class="sidebar-link @IsActive("Admin", "Tags")">
+           class="sidebar-link @(IsActive("Admin", "Tags"))">
 
-            <span class="sidebar-link-icon">🏷️</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z" />
+                    <circle cx="7.5" cy="7.5" r="1.2" />
+                </svg>
+            </span>
             <span>مدیریت برچسب‌ها</span>
-
         </a>
-
 
         <div class="sidebar-section-title mt-4">
             Research Meeting Orchestrator
@@ -475,37 +606,46 @@
         <a asp-area="Research"
            asp-controller="Meetings"
            asp-action="Index"
-           class="sidebar-link @IsActive("Research", "Meetings")">
+           class="sidebar-link @(IsActive("Research", "Meetings"))">
 
-            <span class="sidebar-link-icon">📅</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="17" rx="2" />
+                    <path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h7" />
+                </svg>
+            </span>
             <span>RMO</span>
-
         </a>
-
 
         <a asp-area=""
            asp-controller="Reviews"
            asp-action="Index"
-           class="sidebar-link @IsActive("", "Reviews")">
+           class="sidebar-link @(IsActive("", "Reviews"))">
 
-            <span class="sidebar-link-icon">🔍</span>
+            <span class="sidebar-link-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="10.5" cy="10.5" r="6.5" />
+                    <path d="m16 16 5 5M8 10.5l1.7 1.7 3.3-3.4" />
+                </svg>
+            </span>
             <span>بازبینی‌های پژوهشی</span>
-
         </a>
     }
 
 
-    <div class="sidebar-section-title mt-4">
-        حساب کاربری
-    </div>
+    <div class="sidebar-section-title mt-4">حساب کاربری</div>
 
     <a asp-area="Identity"
        asp-page="/Account/Manage/Index"
-       class="sidebar-link @IsIdentityActive("/Account/Manage/Index")">
+       class="sidebar-link @(IsIdentityActive("/Account/Manage/Index"))">
 
-        <span class="sidebar-link-icon">👤</span>
+        <span class="sidebar-link-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21a8 8 0 0 1 16 0" />
+            </svg>
+        </span>
         <span>حساب من</span>
-
     </a>
 
 </nav>
@@ -516,8 +656,11 @@
                          dir="rtl">
 
                         <div class="sidebar-user-icon">
-                            👤
-                        </div>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+    </svg>
+</div>
 
                         <div class="sidebar-user-info">
 
@@ -691,6 +834,124 @@
 
     <script src="~/js/site.js"
             asp-append-version="true"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const appShell = document.querySelector(".app-shell");
+    const toggleButton = document.getElementById("sidebarDesktopToggle");
+    const sidebar = document.getElementById("appSidebar");
+
+    if (!appShell || !toggleButton || !sidebar) {
+        return;
+    }
+
+    const desktopMedia = window.matchMedia("(min-width: 992px)");
+    const storageKey = "chemresearchhub-sidebar-collapsed";
+
+    function setCollapsed(collapsed, save = false) {
+
+        if (!desktopMedia.matches) {
+            appShell.classList.remove("sidebar-collapsed");
+            return;
+        }
+
+        appShell.classList.toggle("sidebar-collapsed", collapsed);
+
+        toggleButton.setAttribute(
+            "aria-expanded",
+            String(!collapsed)
+        );
+
+        const label = collapsed
+            ? "باز کردن منو"
+            : "جمع کردن منو";
+
+        toggleButton.setAttribute("aria-label", label);
+        toggleButton.setAttribute("title", label);
+
+        if (save) {
+            try {
+                localStorage.setItem(
+                    storageKey,
+                    String(collapsed)
+                );
+            } catch (error) {
+                console.warn("Sidebar preference could not be saved.", error);
+            }
+        }
+    }
+
+    function initializeTooltips() {
+
+        const links = sidebar.querySelectorAll(".sidebar-link");
+
+        links.forEach(function (link) {
+
+            const textElement = Array.from(link.children).find(function (child) {
+                return child.tagName === "SPAN" &&
+                    !child.classList.contains("sidebar-link-icon") &&
+                    !child.classList.contains("work-item-alert-badge");
+            });
+
+            if (!textElement) {
+                return;
+            }
+
+            const label = textElement.textContent.trim();
+
+            if (label) {
+                link.setAttribute("data-sidebar-tooltip", label);
+                link.setAttribute("aria-label", label);
+            }
+        });
+    }
+
+    let savedCollapsed = false;
+
+    try {
+        savedCollapsed =
+            localStorage.getItem(storageKey) === "true";
+    } catch (error) {
+        console.warn("Sidebar preference could not be loaded.", error);
+    }
+
+    initializeTooltips();
+    setCollapsed(savedCollapsed);
+
+    toggleButton.addEventListener("click", function () {
+
+        if (!desktopMedia.matches) {
+            return;
+        }
+
+        const collapsed =
+            !appShell.classList.contains("sidebar-collapsed");
+
+        setCollapsed(collapsed, true);
+    });
+
+    desktopMedia.addEventListener("change", function (event) {
+
+        if (!event.matches) {
+            appShell.classList.remove("sidebar-collapsed");
+            return;
+        }
+
+        let preference = false;
+
+        try {
+            preference =
+                localStorage.getItem(storageKey) === "true";
+        } catch (error) {
+            console.warn("Sidebar preference could not be loaded.", error);
+        }
+
+        setCollapsed(preference);
+    });
+
+});
+</script>
 
             <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
 

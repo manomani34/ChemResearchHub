@@ -10,12 +10,9 @@
           asp-append-version="true" />
 }
 
-<div class="dashboard-page"
-     dir="rtl">
+<div class="dashboard-page" dir="rtl">
 
-    <!-- =========================================================
-         WELCOME
-         ========================================================= -->
+    <!-- WELCOME -->
 
     <div class="dashboard-hero">
 
@@ -52,41 +49,40 @@
     </div>
 
 
-    <!-- =========================================================
-         MAIN METRICS
-         ========================================================= -->
+    <!-- MAIN METRICS -->
 
     <div class="dashboard-grid dashboard-grid-4">
 
         <!-- Projects -->
 
-        <a asp-area="Research" asp-controller="Projects"
+        <a asp-area="Research"
+           asp-controller="Projects"
            asp-action="Index"
            class="dashboard-stat-card dashboard-stat-card-link">
 
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        پروژه‌ها
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.ProjectCount
-                    </div>
-
+                    <div class="dashboard-stat-label">پروژه‌ها</div>
+                    <div class="dashboard-stat-value">@Model.ProjectCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    📁
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3.5 7.5h7l2 2h8v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" />
+                        <path d="M3.5 7.5v-2a2 2 0 0 1 2-2h4l2 2h3" />
+                    </svg>
                 </div>
 
             </div>
 
             <div class="dashboard-stat-footer">
                 مشاهده پروژه‌ها
-                <span>←</span>
+                <span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </span>
             </div>
 
         </a>
@@ -99,19 +95,16 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        کل کارها
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.WorkItemCount
-                    </div>
-
+                    <div class="dashboard-stat-label">کل کارها</div>
+                    <div class="dashboard-stat-value">@Model.WorkItemCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    ✅
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 5H5.5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H17" />
+                        <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2z" />
+                        <path d="m8 14 2.5 2.5L16.5 11" />
+                    </svg>
                 </div>
 
             </div>
@@ -130,19 +123,15 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        آزمایش‌ها
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.ExperimentCount
-                    </div>
-
+                    <div class="dashboard-stat-label">آزمایش‌ها</div>
+                    <div class="dashboard-stat-value">@Model.ExperimentCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    🧪
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 3h6M10 3v6.5L5.5 18a2 2 0 0 0 1.7 3h9.6a2 2 0 0 0 1.7-3L14 9.5V3" />
+                        <path d="M7.5 16h9M9 13h6" />
+                    </svg>
                 </div>
 
             </div>
@@ -161,19 +150,17 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        نمونه‌ها
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.SampleCount
-                    </div>
-
+                    <div class="dashboard-stat-label">نمونه‌ها</div>
+                    <div class="dashboard-stat-value">@Model.SampleCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    🧫
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 3h8M9 3v4l-4.5 8.2A4 4 0 0 0 8 21h8a4 4 0 0 0 3.5-5.8L15 7V3" />
+                        <path d="M7 15h10M9 12h6" />
+                        <circle cx="10" cy="18" r=".7" />
+                        <circle cx="14" cy="17" r=".7" />
+                    </svg>
                 </div>
 
             </div>
@@ -187,9 +174,7 @@
     </div>
 
 
-    <!-- =========================================================
-         SECOND METRICS
-         ========================================================= -->
+    <!-- SECOND METRICS -->
 
     <div class="dashboard-grid dashboard-grid-4 dashboard-grid-spaced">
 
@@ -200,19 +185,19 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        نتایج
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.ResultCount
-                    </div>
-
+                    <div class="dashboard-stat-label">نتایج</div>
+                    <div class="dashboard-stat-value">@Model.ResultCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    📊
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 19V5M4 19h17" />
+                        <path d="m7 15 4-4 3 2 5-7" />
+                        <circle cx="7" cy="15" r="1" />
+                        <circle cx="11" cy="11" r="1" />
+                        <circle cx="14" cy="13" r="1" />
+                        <circle cx="19" cy="6" r="1" />
+                    </svg>
                 </div>
 
             </div>
@@ -231,19 +216,15 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        پیوست‌ها
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.AttachmentCount
-                    </div>
-
+                    <div class="dashboard-stat-label">پیوست‌ها</div>
+                    <div class="dashboard-stat-value">@Model.AttachmentCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    📎
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m8 12.5 7.2-7.2a3.5 3.5 0 0 1 5 5l-9.1 9.1a5 5 0 0 1-7.1-7.1l9.2-9.2" />
+                        <path d="m8.5 15.5 8.1-8.1" />
+                    </svg>
                 </div>
 
             </div>
@@ -262,19 +243,15 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        تصمیمات ثبت‌شده
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.DecisionLogCount
-                    </div>
-
+                    <div class="dashboard-stat-label">تصمیمات ثبت‌شده</div>
+                    <div class="dashboard-stat-value">@Model.DecisionLogCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    📋
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 3.5h7l4 4V21H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z" />
+                        <path d="M14 3.5v4h4M8.5 12h7M8.5 15.5h7M8.5 19h4" />
+                    </svg>
                 </div>
 
             </div>
@@ -293,19 +270,16 @@
             <div class="dashboard-stat-top">
 
                 <div>
-
-                    <div class="dashboard-stat-label">
-                        آزمایش‌های فعال
-                    </div>
-
-                    <div class="dashboard-stat-value">
-                        @Model.ActiveExperimentCount
-                    </div>
-
+                    <div class="dashboard-stat-label">آزمایش‌های فعال</div>
+                    <div class="dashboard-stat-value">@Model.ActiveExperimentCount</div>
                 </div>
 
                 <div class="dashboard-stat-icon">
-                    🔬
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 3h6M10 3v6.5L5.5 18a2 2 0 0 0 1.7 3h9.6a2 2 0 0 0 1.7-3L14 9.5V3" />
+                        <path d="M7.5 16h9" />
+                        <path d="m10 13 2 2 3-3" />
+                    </svg>
                 </div>
 
             </div>
@@ -319,28 +293,21 @@
     </div>
 
 
-    <!-- =========================================================
-         QUICK ACTIONS
-         ========================================================= -->
+    <!-- QUICK ACTIONS -->
 
     <div class="dashboard-panel dashboard-actions-panel">
 
         <div class="dashboard-panel-header">
 
             <div>
-
-                <h2>
-                    دسترسی سریع
-                </h2>
-
-                <p>
-                    دسترسی به بخش‌های اصلی سامانه
-                </p>
-
+                <h2>دسترسی سریع</h2>
+                <p>دسترسی به بخش‌های اصلی سامانه</p>
             </div>
 
             <span class="dashboard-panel-icon">
-                ⚡
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m13 2-9 12h7l-1 8 10-13h-7z" />
+                </svg>
             </span>
 
         </div>
@@ -350,28 +317,29 @@
 
             <!-- Projects -->
 
-            <a asp-area="Research" asp-controller="Projects"
+            <a asp-area="Research"
+               asp-controller="Projects"
                asp-action="Index"
                class="dashboard-action-card">
 
                 <div class="dashboard-action-icon">
-                    📁
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3.5 7.5h7l2 2h8v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" />
+                        <path d="M3.5 7.5v-2a2 2 0 0 1 2-2h4l2 2h3" />
+                    </svg>
                 </div>
 
                 <div class="dashboard-action-content">
-
-                    <div class="dashboard-action-title">
-                        پروژه‌ها
-                    </div>
-
+                    <div class="dashboard-action-title">پروژه‌ها</div>
                     <div class="dashboard-action-description">
                         مشاهده و مدیریت پروژه‌های پژوهشی
                     </div>
-
                 </div>
 
                 <div class="dashboard-action-arrow">
-                    ←
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
                 </div>
 
             </a>
@@ -379,28 +347,30 @@
 
             <!-- Research Work -->
 
-            <a asp-area="Research" asp-controller="Projects"
+            <a asp-area="Research"
+               asp-controller="Projects"
                asp-action="Index"
                class="dashboard-action-card">
 
                 <div class="dashboard-action-icon">
-                    ✅
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 5H5.5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H17" />
+                        <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2z" />
+                        <path d="m8 14 2.5 2.5L16.5 11" />
+                    </svg>
                 </div>
 
                 <div class="dashboard-action-content">
-
-                    <div class="dashboard-action-title">
-                        کارهای پژوهشی
-                    </div>
-
+                    <div class="dashboard-action-title">کارهای پژوهشی</div>
                     <div class="dashboard-action-description">
                         پیگیری Work Itemهای پروژه‌ها
                     </div>
-
                 </div>
 
                 <div class="dashboard-action-arrow">
-                    ←
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
                 </div>
 
             </a>
@@ -408,28 +378,29 @@
 
             <!-- Decisions -->
 
-            <a asp-area="Research" asp-controller="Projects"
+            <a asp-area="Research"
+               asp-controller="Projects"
                asp-action="Index"
                class="dashboard-action-card">
 
                 <div class="dashboard-action-icon">
-                    📋
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 3.5h7l4 4V21H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z" />
+                        <path d="M14 3.5v4h4M8.5 12h7M8.5 15.5h7M8.5 19h4" />
+                    </svg>
                 </div>
 
                 <div class="dashboard-action-content">
-
-                    <div class="dashboard-action-title">
-                        تصمیمات پژوهشی
-                    </div>
-
+                    <div class="dashboard-action-title">تصمیمات پژوهشی</div>
                     <div class="dashboard-action-description">
                         مرور تصمیم‌ها و سوابق پژوهشی
                     </div>
-
                 </div>
 
                 <div class="dashboard-action-arrow">
-                    ←
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
                 </div>
 
             </a>
@@ -439,97 +410,27 @@
     </div>
 
 
-    <!-- =========================================================
-         MIDDLE SECTION
-         ========================================================= -->
+    <!-- MIDDLE SECTION -->
 
     <div class="dashboard-grid dashboard-grid-2 dashboard-middle-grid">
 
-
-        <!-- =====================================================
-             MY WORK
-             ===================================================== -->
+        <!-- MY WORK -->
 
         <div class="dashboard-panel">
 
             <div class="dashboard-panel-header">
 
                 <div>
-
-                    <h2>
-                        کارهای من
-                    </h2>
-
-                    <p>
-                        وضعیت Work Itemهای اختصاص‌یافته به شما
-                    </p>
-
+                    <h2>کارهای من</h2>
+                    <p>وضعیت Work Itemهای اختصاص‌یافته به شما</p>
                 </div>
 
                 <span class="dashboard-panel-icon">
-                    ✅
-                </span>
-
-            </div>
-
-
-             <div class="dashboard-role-card">
-
-                <div class="dashboard-work-item">
-
-                    <div class="dashboard-work-value">
-                        @Model.MyOpenWorkItemCount
-                    </div>
-
-                    <div class="dashboard-work-label">
-                        کار باز من
-                    </div>
-
-                </div>
-
-
-                <div class="dashboard-work-divider"></div>
-
-
-                <div class="dashboard-work-item">
-
-                    <div class="dashboard-work-value">
-                        @Model.OpenWorkItemCount
-                    </div>
-
-                    <div class="dashboard-work-label">
-                        کار باز در کل سامانه
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             USER ACCOUNT
-             ===================================================== -->
-
-        <div class="dashboard-panel">
-
-            <div class="dashboard-panel-header">
-
-                <div>
-
-                    <h2>
-                        حساب کاربری
-                    </h2>
-
-                    <p>
-                        نقش و سطح دسترسی شما
-                    </p>
-
-                </div>
-
-                <span class="dashboard-panel-icon">
-                    👤
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 5H5.5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H17" />
+                        <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2z" />
+                        <path d="m8 14 2.5 2.5L16.5 11" />
+                    </svg>
                 </span>
 
             </div>
@@ -537,9 +438,47 @@
 
             <div class="dashboard-role-card">
 
-                <div class="dashboard-role-label">
-                    نقش فعلی
+                <div class="dashboard-work-item">
+                    <div class="dashboard-work-value">@Model.MyOpenWorkItemCount</div>
+                    <div class="dashboard-work-label">کار باز من</div>
                 </div>
+
+                <div class="dashboard-work-divider"></div>
+
+                <div class="dashboard-work-item">
+                    <div class="dashboard-work-value">@Model.OpenWorkItemCount</div>
+                    <div class="dashboard-work-label">کار باز در کل سامانه</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- USER ACCOUNT -->
+
+        <div class="dashboard-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div>
+                    <h2>حساب کاربری</h2>
+                    <p>نقش و سطح دسترسی شما</p>
+                </div>
+
+                <span class="dashboard-panel-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21a8 8 0 0 1 16 0" />
+                    </svg>
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-role-card">
+
+                <div class="dashboard-role-label">نقش فعلی</div>
 
                 <div class="dashboard-role-name">
                     @Model.RoleName
@@ -572,15 +511,18 @@
                    class="dashboard-inline-action">
 
                     <span>
-                        👥
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="9" cy="8" r="3.5" />
+                            <path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 8a3 3 0 0 1 0 6M18 16a5 5 0 0 1 3.5 4" />
+                        </svg>
                     </span>
 
-                    <span>
-                        مدیریت اعضای تیم
-                    </span>
+                    <span>مدیریت اعضای تیم</span>
 
                     <span class="dashboard-inline-action-arrow">
-                        ←
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
                     </span>
 
                 </a>
@@ -591,28 +533,22 @@
     </div>
 
 
-    <!-- =========================================================
-         RECENT DECISIONS
-         ========================================================= -->
+    <!-- RECENT DECISIONS -->
 
     <div class="dashboard-panel dashboard-recent-panel">
 
         <div class="dashboard-panel-header">
 
             <div>
-
-                <h2>
-                    آخرین تصمیمات پژوهشی
-                </h2>
-
-                <p>
-                    آخرین Decision Logهای ثبت‌شده در سامانه
-                </p>
-
+                <h2>آخرین تصمیمات پژوهشی</h2>
+                <p>آخرین Decision Logهای ثبت‌شده در سامانه</p>
             </div>
 
             <span class="dashboard-panel-icon">
-                📋
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 3.5h7l4 4V21H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z" />
+                    <path d="M14 3.5v4h4M8.5 12h7M8.5 15.5h7M8.5 19h4" />
+                </svg>
             </span>
 
         </div>
@@ -623,7 +559,10 @@
             <div class="dashboard-empty">
 
                 <div class="dashboard-empty-icon">
-                    📭
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <path d="M3 9 5 5h14l2 4M12 9v5M9 12l3 2 3-2" />
+                    </svg>
                 </div>
 
                 <div class="dashboard-empty-title">
@@ -655,11 +594,9 @@
                             </div>
 
                             <div class="dashboard-decision-date">
-
                                 @decision.CreatedAt
                                 .ToLocalTime()
                                 .ToString("yyyy-MM-dd HH:mm")
-
                             </div>
 
                         </div>
@@ -673,5 +610,3 @@
     </div>
 
 </div>
-
-

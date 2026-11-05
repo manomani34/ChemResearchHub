@@ -4,12 +4,16 @@
     ViewData["Title"] = "بوردهای پژوهشی";
 }
 
-<div class="boards-page">
+<div class="boards-page" dir="rtl">
 
     <div class="boards-header">
         <div>
             <div class="boards-eyebrow">Research Workspace</div>
-            <h1 class="boards-header-title">بوردهای پژوهشی</h1>
+
+            <h1 class="boards-header-title">
+                بوردهای پژوهشی
+            </h1>
+
             <p class="boards-header-subtitle">
                 مدیریت بوردها و ورود به فضای Kanban
             </p>
@@ -19,7 +23,13 @@
     @if (Model.Items.Count == 0)
     {
         <div class="boards-empty">
-            <div class="boards-empty-icon">📋</div>
+
+            <div class="boards-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="M9 4v16M15 4v16" />
+                </svg>
+            </div>
 
             <h2 class="boards-empty-title">
                 هنوز بوردی ایجاد نشده است
@@ -33,19 +43,26 @@
                asp-controller="Projects"
                asp-action="Index"
                class="crh-btn crh-btn-primary">
+
                 مشاهده پروژه‌ها
+
             </a>
+
         </div>
     }
     else
     {
         <div class="boards-section-heading">
+
             <div>
                 <h2>بوردهای در دسترس</h2>
                 <p>فضاهای کاری Kanban پروژه‌های پژوهشی</p>
             </div>
 
-            <span class="boards-count">@Model.Items.Count بورد</span>
+            <span class="boards-count">
+                @Model.Items.Count بورد
+            </span>
+
         </div>
 
         <div class="boards-grid">
@@ -55,12 +72,26 @@
                 <article class="board-card">
 
                     <div class="board-card-top">
-                        <div class="board-card-icon">📋</div>
+
+                        <div class="board-card-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="4" width="18" height="16" rx="2" />
+                                <path d="M9 4v16M15 4v16" />
+                            </svg>
+                        </div>
 
                         <div class="board-card-project">
-                            <span class="board-card-project-label">پروژه</span>
-                            <span class="board-card-project-name">@item.ProjectName</span>
+
+                            <span class="board-card-project-label">
+                                پروژه
+                            </span>
+
+                            <span class="board-card-project-name">
+                                @item.ProjectName
+                            </span>
+
                         </div>
+
                     </div>
 
                     <div class="board-card-title">
@@ -70,6 +101,7 @@
                     <div class="board-card-meta">
 
                         <div class="board-card-meta-item">
+
                             <span class="board-card-meta-label">
                                 ستون‌ها
                             </span>
@@ -77,9 +109,11 @@
                             <span class="board-card-meta-value">
                                 @item.ColumnCount
                             </span>
+
                         </div>
 
                         <div class="board-card-meta-item">
+
                             <span class="board-card-meta-label">
                                 شناسه
                             </span>
@@ -87,20 +121,31 @@
                             <span class="board-card-meta-value board-card-id">
                                 #@item.Id
                             </span>
+
                         </div>
 
                     </div>
 
                     <div class="board-card-actions">
+
                         <a asp-area="Research"
                            asp-controller="Boards"
                            asp-action="Index"
                            asp-route-projectId="@item.ProjectId"
                            asp-route-boardId="@item.Id"
                            class="crh-btn crh-btn-primary">
+
                             ورود به بورد
-                            <span class="board-enter-arrow">←</span>
+
+                            <span class="board-enter-arrow" aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14" />
+                                    <path d="m13 6 6 6-6 6" />
+                                </svg>
+                            </span>
+
                         </a>
+
                     </div>
 
                 </article>

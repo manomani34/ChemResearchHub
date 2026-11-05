@@ -593,3 +593,94 @@
         max-width: 105px;
     }
 }
+
+.dashboard-page .dashboard-stat-icon,
+.dashboard-page .dashboard-panel-icon,
+.dashboard-page .dashboard-action-icon,
+.dashboard-page .dashboard-action-arrow,
+.dashboard-page .dashboard-inline-action > span,
+.dashboard-page .dashboard-inline-action-arrow,
+.dashboard-page .dashboard-empty-icon,
+.dashboard-page .dashboard-stat-footer > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .dashboard-page .dashboard-stat-icon svg,
+    .dashboard-page .dashboard-panel-icon svg,
+    .dashboard-page .dashboard-action-icon svg,
+    .dashboard-page .dashboard-action-arrow svg,
+    .dashboard-page .dashboard-inline-action svg,
+    .dashboard-page .dashboard-empty-icon svg,
+    .dashboard-page .dashboard-stat-footer svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .dashboard-page .dashboard-stat-icon svg {
+        width: 27px;
+        height: 27px;
+    }
+
+    .dashboard-page .dashboard-panel-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .dashboard-page .dashboard-action-icon svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    .dashboard-page .dashboard-action-arrow svg,
+    .dashboard-page .dashboard-inline-action-arrow svg,
+    .dashboard-page .dashboard-stat-footer svg {
+        width: 17px;
+        height: 17px;
+        transition: transform 0.2s ease;
+    }
+
+.dashboard-page .dashboard-action-card:hover .dashboard-action-arrow svg,
+.dashboard-page .dashboard-stat-card-link:hover .dashboard-stat-footer svg,
+.dashboard-page .dashboard-inline-action:hover .dashboard-inline-action-arrow svg {
+    transform: translateX(-3px);
+}
+
+.dashboard-page .dashboard-empty-icon svg {
+    width: 36px;
+    height: 36px;
+}
+
+/* Dashboard SVG Icon Colors */
+
+.dashboard-page .dashboard-stat-icon,
+.dashboard-page .dashboard-panel-icon,
+.dashboard-page .dashboard-action-icon,
+.dashboard-page .dashboard-action-arrow,
+.dashboard-page .dashboard-inline-action > span,
+.dashboard-page .dashboard-inline-action-arrow,
+.dashboard-page .dashboard-empty-icon,
+.dashboard-page .dashboard-stat-footer > span {
+    color: #6558d3;
+}
+
+.dashboard-page .dashboard-stat-card-link:hover .dashboard-stat-icon,
+.dashboard-page .dashboard-action-card:hover .dashboard-action-icon {
+    color: #5144bd;
+}
+
+.dashboard-page .dashboard-stat-icon svg,
+.dashboard-page .dashboard-panel-icon svg,
+.dashboard-page .dashboard-action-icon svg,
+.dashboard-page .dashboard-action-arrow svg,
+.dashboard-page .dashboard-inline-action svg,
+.dashboard-page .dashboard-empty-icon svg,
+.dashboard-page .dashboard-stat-footer svg {
+    stroke: currentColor;
+}
