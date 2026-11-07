@@ -544,6 +544,151 @@
         </section>
     }
 
+    
+<!-- =========================
+     KANBAN BOTTLENECK ALERTS
+     ========================= -->
+
+@if (Model.BottleneckAlerts?.Any() == true)
+{
+    <section class="section-card bottleneck-section">
+
+        <div class="section-title-row">
+
+            <div>
+                <span class="section-kicker section-kicker-danger">
+                    Kanban Flow Monitoring
+                </span>
+
+                <h2>Workflow Bottleneck(s)</h2>
+
+                <p>
+                    ستون‌هایی که به آستانه ظرفیت WIP رسیده‌اند یا ظرفیت آن‌ها تکمیل شده است.
+                </p>
+            </div>
+
+            <div class="bottleneck-summary">
+                <strong>@Model.BottleneckAlerts.Count</strong>
+                <span>ستون نیازمند توجه</span>
+            </div>
+
+        </div>
+
+        <div class="bottleneck-list">
+
+            @foreach (var alert in Model.BottleneckAlerts)
+            {
+                var isFull = alert.IsOverCapacity;
+                var progressWidth = Math.Min(alert.CapacityPercentage, 100);
+
+                <article class="bottleneck-item @(isFull ? "bottleneck-full" : "bottleneck-warning")">
+
+                    <div class="bottleneck-main">
+
+                        <div class="bottleneck-status-icon">
+
+                            @if (isFull)
+                            {
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 3 2.8 19h18.4L12 3Z" />
+                                    <path d="M12 9v4M12 16h.01" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M12 7v5l3 2" />
+                                </svg>
+                            }
+
+                        </div>
+
+                        <div class="bottleneck-information">
+
+                            <div class="bottleneck-title-row">
+
+                                <h3>@alert.ColumnName</h3>
+
+                                <span class="bottleneck-status-badge">
+                                    @(isFull ? "ظرفیت تکمیل شده" : "نزدیک به ظرفیت")
+                                </span>
+
+                            </div>
+
+                            <div class="bottleneck-context">
+
+                                <span>
+                                    <strong>پروژه:</strong>
+                                    @alert.ProjectName
+                                </span>
+
+                                <span>
+                                    <strong>Board:</strong>
+                                    @alert.BoardName
+                                </span>
+
+                            </div>
+
+                            <div class="bottleneck-capacity">
+
+                                <div class="bottleneck-capacity-labels">
+
+                                    <span>
+                                        استفاده از ظرفیت
+                                    </span>
+
+                                    <strong>
+                                        @alert.WorkItemCount از @alert.WipLimit
+                                    </strong>
+
+                                </div>
+
+                                <div class="bottleneck-progress-track">
+
+                                    <div class="bottleneck-progress-fill"
+                                         style="width: @(progressWidth)%">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="bottleneck-metrics">
+
+                        <div class="bottleneck-percentage">
+                            <strong>@alert.CapacityPercentage%</strong>
+                            <span>ظرفیت مصرف‌شده</span>
+                        </div>
+
+                        <a asp-area="Research"
+                           asp-controller="Boards"
+                           asp-action="Index"
+                           asp-route-projectId="@alert.ProjectId"
+                           asp-route-boardId="@alert.BoardId"
+                           class="bottleneck-view-link">
+
+                            مشاهده Board
+
+                            <span aria-hidden="true">←</span>
+
+                        </a>
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+
+    </section>
+}
+
+
 
     <!-- =========================
          PROJECT SCHEDULE

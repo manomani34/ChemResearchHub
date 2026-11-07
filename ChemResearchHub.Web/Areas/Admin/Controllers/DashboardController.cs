@@ -1,4 +1,6 @@
-﻿using ChemResearchHub.Application.Attachments.Interfaces;
+﻿
+using ChemResearchHub.Application.Attachments.Interfaces;
+using ChemResearchHub.Application.Boards.Interfaces;
 using ChemResearchHub.Application.DecisionLogs.Interfaces;
 using ChemResearchHub.Application.Experiments.Interfaces;
 using ChemResearchHub.Application.Projects.Interfaces;
@@ -7,11 +9,11 @@ using ChemResearchHub.Application.Results.Interfaces;
 using ChemResearchHub.Application.Samples.Interfaces;
 using ChemResearchHub.Application.Users.Interfaces;
 using ChemResearchHub.Application.WorkItems.Interfaces;
+using ChemResearchHub.Application.WorkItems.Dtos;
 using ChemResearchHub.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
-
 
 namespace ChemResearchHub.Web.Areas.Admin.Controllers;
 
@@ -28,6 +30,7 @@ public class DashboardController : Controller
     private readonly IAttachmentService _attachmentService;
     private readonly IDecisionLogService _decisionLogService;
     private readonly IResearchReviewService _researchReviewService;
+    private readonly IBoardService _boardService;
 
     public DashboardController(
         IProjectService projectService,
@@ -38,7 +41,8 @@ public class DashboardController : Controller
         IResultService resultService,
         IAttachmentService attachmentService,
         IDecisionLogService decisionLogService,
-        IResearchReviewService researchReviewService)
+        IResearchReviewService researchReviewService,
+        IBoardService boardService)
     {
         _projectService = projectService;
         _workItemService = workItemService;
@@ -49,13 +53,18 @@ public class DashboardController : Controller
         _attachmentService = attachmentService;
         _decisionLogService = decisionLogService;
         _researchReviewService = researchReviewService;
+        _boardService = boardService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(
+        CancellationToken cancellationToken)
     {
         var projects = await _projectService.GetAllAsync(cancellationToken);
-        var workItems = await _workItemService.GetAllAsync(cancellationToken: cancellationToken);
+
+        var workItems = await _workItemService.GetAllAsync(
+            cancellationToken: cancellationToken);
+
         var users = await _userService.GetAllAsync(cancellationToken);
         var activeUsers = await _userService.GetActiveUsersAsync(cancellationToken);
         var experiments = await _experimentService.GetAllAsync(cancellationToken);
@@ -68,16 +77,20 @@ public class DashboardController : Controller
         {
             UserCount = users.Count,
             ActiveUserCount = activeUsers.Count,
+
             AdminCount = users.Count(x =>
-    x.RoleNames.Contains("Admin",
-        StringComparer.OrdinalIgnoreCase)),
+                x.RoleNames.Contains(
+                    "Admin",
+                    StringComparer.OrdinalIgnoreCase)),
 
             ResearcherCount = users.Count(x =>
-                x.RoleNames.Contains("Researcher",
+                x.RoleNames.Contains(
+                    "Researcher",
                     StringComparer.OrdinalIgnoreCase)),
 
             ReviewerCount = users.Count(x =>
-                x.RoleNames.Contains("Reviewer",
+                x.RoleNames.Contains(
+                    "Reviewer",
                     StringComparer.OrdinalIgnoreCase)),
 
             ProjectCount = projects.Count,
@@ -88,11 +101,14 @@ public class DashboardController : Controller
             CompletedWorkItemCount = workItems.Count(x => x.IsCompleted),
             OpenWorkItemCount = workItems.Count(x => !x.IsCompleted),
             OverdueWorkItemCount = workItems.Count(IsOverdue),
+
             UnassignedWorkItemCount = workItems.Count(
                 x => string.IsNullOrWhiteSpace(x.AssignedToUserId)),
 
             ExperimentCount = experiments.Count,
-            CompletedExperimentCount = experiments.Count(x => x.CompletedAt.HasValue),
+            CompletedExperimentCount = experiments.Count(
+                x => x.CompletedAt.HasValue),
+
             ActiveExperimentCount = experiments.Count(
                 x => !x.CompletedAt.HasValue && x.StartedAt.HasValue),
 
@@ -104,36 +120,36 @@ public class DashboardController : Controller
 
         model.WorkItemStatusChart = new[]
         {
-        new DashboardChartItem
-        {
-            Label = "باز",
-            Value = model.OpenWorkItemCount
-        },
-        new DashboardChartItem
-        {
-            Label = "تکمیل شده",
-            Value = model.CompletedWorkItemCount
-        },
-        new DashboardChartItem
-        {
-            Label = "سررسید گذشته",
-            Value = model.OverdueWorkItemCount
-        }
-    };
+            new DashboardChartItem
+            {
+                Label = "باز",
+                Value = model.OpenWorkItemCount
+            },
+            new DashboardChartItem
+            {
+                Label = "تکمیل شده",
+                Value = model.CompletedWorkItemCount
+            },
+            new DashboardChartItem
+            {
+                Label = "سررسید گذشته",
+                Value = model.OverdueWorkItemCount
+            }
+        };
 
         model.ProjectStatusChart = new[]
         {
-        new DashboardChartItem
-        {
-            Label = "فعال",
-            Value = model.ActiveProjectCount
-        },
-        new DashboardChartItem
-        {
-            Label = "غیرفعال",
-            Value = model.InactiveProjectCount
-        }
-    };
+            new DashboardChartItem
+            {
+                Label = "فعال",
+                Value = model.ActiveProjectCount
+            },
+            new DashboardChartItem
+            {
+                Label = "غیرفعال",
+                Value = model.InactiveProjectCount
+            }
+        };
 
         model.WorkItemsByUserChart =
             workItems
@@ -176,6 +192,11 @@ public class DashboardController : Controller
                 })
                 .ToList();
 
+        model.BottleneckAlerts = await BuildBottleneckAlertsAsync(
+            projects,
+            workItems,
+            cancellationToken);
+
         model.Alerts = BuildAlerts(model);
 
         model.RecentActivities =
@@ -194,9 +215,70 @@ public class DashboardController : Controller
         return View(model);
     }
 
+    private async Task<IReadOnlyList<AdminBottleneckAlertItem>>
+        BuildBottleneckAlertsAsync(
+            IReadOnlyList<ChemResearchHub.Application.Projects.Dtos.ProjectDto> projects,
+            IReadOnlyList<WorkItemDto> workItems,
+            CancellationToken cancellationToken)
+    {
+        var alerts = new List<AdminBottleneckAlertItem>();
 
-    private static bool IsOverdue(
-        ChemResearchHub.Application.WorkItems.Dtos.WorkItemDto workItem)
+        foreach (var project in projects)
+        {
+            var boards = await _boardService.GetByProjectIdAsync(
+                project.Id,
+                cancellationToken);
+
+            foreach (var board in boards)
+            {
+                foreach (var column in board.Columns)
+                {
+                    if (!column.WipLimit.HasValue ||
+                        column.WipLimit.Value <= 0)
+                    {
+                        continue;
+                    }
+
+                    var actualCount = workItems.Count(
+                        x => x.BoardColumnId == column.Id);
+
+                    var capacityPercentage = (int)Math.Round(
+                        (double)actualCount / column.WipLimit.Value * 100,
+                        MidpointRounding.AwayFromZero);
+
+                    if (capacityPercentage < 80)
+                    {
+                        continue;
+                    }
+
+                    alerts.Add(new AdminBottleneckAlertItem
+                    {
+                        ProjectId = project.Id,
+                        ProjectName = project.Name,
+
+                        BoardId = board.Id,
+                        BoardName = board.Name,
+
+                        BoardColumnId = column.Id,
+                        ColumnName = column.Name,
+
+                        WorkItemCount = actualCount,
+                        WipLimit = column.WipLimit.Value,
+                        CapacityPercentage = capacityPercentage,
+
+                        IsOverCapacity = actualCount >= column.WipLimit.Value
+                    });
+                }
+            }
+        }
+
+        return alerts
+            .OrderByDescending(x => x.CapacityPercentage)
+            .ThenByDescending(x => x.WorkItemCount)
+            .ToList();
+    }
+
+    private static bool IsOverdue(WorkItemDto workItem)
     {
         return !workItem.IsCompleted &&
                workItem.DueDate.HasValue &&
@@ -210,49 +292,46 @@ public class DashboardController : Controller
 
         if (model.OverdueWorkItemCount > 0)
         {
-            alerts.Add(
-                new AdminAlertItem
-                {
-                    Title = "Work Item های سررسید گذشته",
-                    Description =
-                        "تعدادی Work Item از زمان تعیین شده عبور کرده اند.",
-                    Type = "danger",
-                    Count = model.OverdueWorkItemCount
-                });
+            alerts.Add(new AdminAlertItem
+            {
+                Title = "Work Item های سررسید گذشته",
+                Description =
+                    "تعدادی Work Item از زمان تعیین شده عبور کرده اند.",
+                Type = "danger",
+                Count = model.OverdueWorkItemCount
+            });
         }
 
         if (model.UnassignedWorkItemCount > 0)
         {
-            alerts.Add(
-                new AdminAlertItem
-                {
-                    Title = "Work Item بدون مسئول",
-                    Description =
-                        "این Work Item ها هنوز به کاربر مشخصی اختصاص داده نشده اند.",
-                    Type = "warning",
-                    Count = model.UnassignedWorkItemCount
-                });
+            alerts.Add(new AdminAlertItem
+            {
+                Title = "Work Item بدون مسئول",
+                Description =
+                    "این Work Item ها هنوز به کاربر مشخصی اختصاص داده نشده اند.",
+                Type = "warning",
+                Count = model.UnassignedWorkItemCount
+            });
         }
 
         if (model.InactiveProjectCount > 0)
         {
-            alerts.Add(
-                new AdminAlertItem
-                {
-                    Title = "پروژه غیرفعال",
-                    Description =
-                        "تعدادی پروژه در حال حاضر غیرفعال هستند.",
-                    Type = "info",
-                    Count = model.InactiveProjectCount
-                });
+            alerts.Add(new AdminAlertItem
+            {
+                Title = "پروژه غیرفعال",
+                Description =
+                    "تعدادی پروژه در حال حاضر غیرفعال هستند.",
+                Type = "info",
+                Count = model.InactiveProjectCount
+            });
         }
 
         return alerts;
     }
 
     private static string ToJalali(
-    DateTime date,
-    PersianCalendar calendar)
+        DateTime date,
+        PersianCalendar calendar)
     {
         return $"{calendar.GetYear(date):0000}/" +
                $"{calendar.GetMonth(date):00}/" +

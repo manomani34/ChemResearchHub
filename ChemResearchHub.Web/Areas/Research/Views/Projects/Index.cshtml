@@ -1,3 +1,4 @@
+
 @model IReadOnlyList<ChemResearchHub.Application.Projects.Dtos.ProjectDto>
 
 @{
@@ -65,12 +66,52 @@
                 <p>پروژه‌های ثبت‌شده در سامانه پژوهشی</p>
             </div>
 
-            <span class="projects-count">
-                @Model.Count پروژه
-            </span>
+            <div class="projects-section-tools">
+
+                <span class="projects-count">
+                    @Model.Count پروژه
+                </span>
+
+                <div class="projects-view-switch"
+                     role="group"
+                     aria-label="نحوه نمایش پروژه‌ها">
+
+                    <button type="button"
+                            class="projects-view-button"
+                            data-view-mode="grid"
+                            title="نمایش باکسی"
+                            aria-label="نمایش باکسی">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="3" width="8" height="8" rx="1.5" />
+                            <rect x="13" y="3" width="8" height="8" rx="1.5" />
+                            <rect x="3" y="13" width="8" height="8" rx="1.5" />
+                            <rect x="13" y="13" width="8" height="8" rx="1.5" />
+                        </svg>
+
+                    </button>
+
+                    <button type="button"
+                            class="projects-view-button"
+                            data-view-mode="list"
+                            title="نمایش لیستی"
+                            aria-label="نمایش لیستی">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8 6h13M8 12h13M8 18h13" />
+                            <circle cx="3.5" cy="6" r="1" />
+                            <circle cx="3.5" cy="12" r="1" />
+                            <circle cx="3.5" cy="18" r="1" />
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </div>
         </div>
 
-        <div class="projects-grid">
+        <div class="projects-grid" id="projectsContainer">
 
             @foreach (var project in Model)
             {
@@ -175,11 +216,249 @@
     <link rel="stylesheet"
           href="~/css/projects-index.css"
           asp-append-version="true" />
+
+    <style>
+        /* View switcher */
+
+        .projects-section-tools {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .projects-view-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid var(--crh-border, #e5e7eb);
+            border-radius: 10px;
+            background: var(--crh-surface, #fff);
+        }
+
+        .projects-view-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 7px;
+            border: none;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--crh-text-muted, #89909c);
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .projects-view-button svg {
+            width: 19px;
+            height: 19px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .projects-view-button:hover {
+            background: rgba(100, 116, 139, .09);
+            color: var(--crh-text, #334155);
+        }
+
+        .projects-view-button.active {
+            background: var(--crh-primary, #2563eb);
+            color: #fff;
+        }
+
+        /* List view */
+
+        .projects-grid.is-list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .projects-grid.is-list-view .project-card {
+            display: grid;
+            grid-template-columns: minmax(210px, 1.1fr) minmax(200px, 1fr) auto;
+            align-items: center;
+            gap: 22px;
+            width: 100%;
+            min-width: 0;
+            padding: 18px 22px;
+        }
+
+        .projects-grid.is-list-view .project-card-header {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            min-width: 0;
+            margin: 0;
+        }
+
+        .projects-grid.is-list-view .project-card-id {
+            min-width: 0;
+        }
+
+        .projects-grid.is-list-view .project-card-body {
+            min-width: 0;
+            margin: 0;
+        }
+
+        .projects-grid.is-list-view .project-card-title {
+            margin-top: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .projects-grid.is-list-view .project-card-description {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+
+        .projects-grid.is-list-view .project-card-footer {
+            margin: 0;
+        }
+
+        .projects-grid.is-list-view .project-card-actions {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .projects-grid.is-list-view .project-card-actions .crh-btn {
+            white-space: nowrap;
+        }
+
+        @@media (max-width: 1100px) {
+            .projects-grid.is-list-view .project-card {
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 14px;
+            }
+
+            .projects-grid.is-list-view .project-card-header {
+                grid-column: 1;
+            }
+
+            .projects-grid.is-list-view .project-card-body {
+                grid-column: 1;
+            }
+
+            .projects-grid.is-list-view .project-card-footer {
+                grid-column: 2;
+                grid-row: 1 / span 2;
+            }
+        }
+
+        @@media (max-width: 650px) {
+            .projects-section-tools {
+                gap: 8px;
+            }
+
+            .projects-section-heading {
+                flex-wrap: wrap;
+                gap: 14px;
+            }
+
+            .projects-grid.is-list-view .project-card {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 14px;
+                padding: 16px;
+            }
+
+            .projects-grid.is-list-view .project-card-header,
+            .projects-grid.is-list-view .project-card-body,
+            .projects-grid.is-list-view .project-card-footer {
+                grid-column: 1;
+                grid-row: auto;
+            }
+
+            .projects-grid.is-list-view .project-card-header {
+                flex-wrap: wrap;
+            }
+
+            .projects-grid.is-list-view .project-card-footer,
+            .projects-grid.is-list-view .project-card-actions {
+                width: 100%;
+            }
+
+            .projects-grid.is-list-view .project-card-actions {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .projects-grid.is-list-view .project-card-actions .crh-btn {
+                justify-content: center;
+                padding-inline: 8px;
+            }
+        }
+    </style>
 }
 
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+
+            // View mode management
+
+            const container = document.getElementById("projectsContainer");
+
+            if (!container)
+                return;
+
+            const buttons = document.querySelectorAll(".projects-view-button");
+            const storageKey = "crh-projects-view-mode";
+
+            function setViewMode(mode) {
+
+                const isList = mode === "list";
+
+                container.classList.toggle("is-list-view", isList);
+
+                buttons.forEach(function (button) {
+
+                    const isActive = button.dataset.viewMode === mode;
+
+                    button.classList.toggle("active", isActive);
+                    button.setAttribute("aria-pressed", isActive.toString());
+
+                });
+
+                try {
+                    localStorage.setItem(storageKey, mode);
+                } catch (error) {
+                    console.warn("Could not save projects view preference.", error);
+                }
+            }
+
+            let savedMode = "grid";
+
+            try {
+                const storedMode = localStorage.getItem(storageKey);
+
+                if (storedMode === "grid" || storedMode === "list") {
+                    savedMode = storedMode;
+                }
+            } catch (error) {
+                console.warn("Could not read projects view preference.", error);
+            }
+
+            buttons.forEach(function (button) {
+
+                button.addEventListener("click", function () {
+                    setViewMode(button.dataset.viewMode);
+                });
+
+            });
+
+            setViewMode(savedMode);
+
+
+            // Copy project reference
 
             document.querySelectorAll(".project-copy-button")
                 .forEach(function (button) {
@@ -198,6 +477,7 @@
                             await navigator.clipboard.writeText(referenceCode);
 
                             const originalContent = button.innerHTML;
+                            const originalTitle = button.title;
 
                             button.innerHTML = `
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -211,7 +491,7 @@
                             setTimeout(function () {
                                 button.innerHTML = originalContent;
                                 button.classList.remove("copied");
-                                button.title = "کپی شناسه";
+                                button.title = originalTitle;
                             }, 1200);
 
                         } catch (error) {

@@ -1,3 +1,4 @@
+
 @model ChemResearchHub.Web.Models.Boards.BoardsListViewModel
 
 @{
@@ -43,9 +44,7 @@
                asp-controller="Projects"
                asp-action="Index"
                class="crh-btn crh-btn-primary">
-
                 مشاهده پروژه‌ها
-
             </a>
 
         </div>
@@ -59,13 +58,53 @@
                 <p>فضاهای کاری Kanban پروژه‌های پژوهشی</p>
             </div>
 
-            <span class="boards-count">
-                @Model.Items.Count بورد
-            </span>
+            <div class="boards-section-tools">
+
+                <span class="boards-count">
+                    @Model.Items.Count بورد
+                </span>
+
+                <div class="boards-view-switch"
+                     role="group"
+                     aria-label="نحوه نمایش بوردها">
+
+                    <button type="button"
+                            class="boards-view-button"
+                            data-view-mode="grid"
+                            title="نمایش باکسی"
+                            aria-label="نمایش باکسی">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="3" width="8" height="8" rx="1.5" />
+                            <rect x="13" y="3" width="8" height="8" rx="1.5" />
+                            <rect x="3" y="13" width="8" height="8" rx="1.5" />
+                            <rect x="13" y="13" width="8" height="8" rx="1.5" />
+                        </svg>
+
+                    </button>
+
+                    <button type="button"
+                            class="boards-view-button"
+                            data-view-mode="list"
+                            title="نمایش لیستی"
+                            aria-label="نمایش لیستی">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8 6h13M8 12h13M8 18h13" />
+                            <circle cx="3.5" cy="6" r="1" />
+                            <circle cx="3.5" cy="12" r="1" />
+                            <circle cx="3.5" cy="18" r="1" />
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <div class="boards-grid">
+        <div class="boards-grid" id="boardsContainer">
 
             @foreach (var item in Model.Items)
             {
@@ -160,4 +199,233 @@
     <link rel="stylesheet"
           href="~/css/boards-index.css"
           asp-append-version="true" />
+
+    <style>
+        /* View switcher */
+
+        .boards-section-tools {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .boards-view-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid var(--crh-border, #e5e7eb);
+            border-radius: 10px;
+            background: var(--crh-surface, #fff);
+        }
+
+        .boards-view-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 7px;
+            border: none;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--crh-text-muted, #89909c);
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .boards-view-button svg {
+            width: 19px;
+            height: 19px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .boards-view-button:hover {
+            background: rgba(100, 116, 139, .09);
+            color: var(--crh-text, #334155);
+        }
+
+        .boards-view-button.active {
+            background: var(--crh-primary, #2563eb);
+            color: #fff;
+        }
+
+        /* List view */
+
+        .boards-grid.is-list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .boards-grid.is-list-view .board-card {
+            display: grid;
+            grid-template-columns: minmax(180px, 1.3fr) minmax(150px, 1fr) minmax(150px, .8fr) auto;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            min-width: 0;
+            padding: 18px 22px;
+        }
+
+        .boards-grid.is-list-view .board-card-top {
+            min-width: 0;
+            margin: 0;
+        }
+
+        .boards-grid.is-list-view .board-card-project {
+            min-width: 0;
+        }
+
+        .boards-grid.is-list-view .board-card-project-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .boards-grid.is-list-view .board-card-title {
+            min-width: 0;
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .boards-grid.is-list-view .board-card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 24px;
+            margin: 0;
+        }
+
+        .boards-grid.is-list-view .board-card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .boards-grid.is-list-view .board-card-actions {
+            margin: 0;
+            justify-content: flex-end;
+        }
+
+        .boards-grid.is-list-view .board-card-actions .crh-btn {
+            white-space: nowrap;
+        }
+
+        @@media (max-width: 900px) {
+            .boards-grid.is-list-view .board-card {
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 14px;
+            }
+
+            .boards-grid.is-list-view .board-card-title {
+                grid-column: 1;
+            }
+
+            .boards-grid.is-list-view .board-card-meta {
+                grid-column: 1;
+            }
+
+            .boards-grid.is-list-view .board-card-actions {
+                grid-column: 2;
+                grid-row: 1 / span 3;
+            }
+        }
+
+        @@media (max-width: 560px) {
+            .boards-section-tools {
+                gap: 8px;
+            }
+
+            .boards-section-heading {
+                flex-wrap: wrap;
+                gap: 14px;
+            }
+
+            .boards-grid.is-list-view .board-card {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 14px;
+                padding: 16px;
+            }
+
+            .boards-grid.is-list-view .board-card-title,
+            .boards-grid.is-list-view .board-card-meta,
+            .boards-grid.is-list-view .board-card-actions {
+                grid-column: 1;
+                grid-row: auto;
+            }
+
+            .boards-grid.is-list-view .board-card-actions {
+                justify-content: stretch;
+            }
+
+            .boards-grid.is-list-view .board-card-actions .crh-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const container = document.getElementById("boardsContainer");
+
+            if (!container)
+                return;
+
+            const buttons = document.querySelectorAll(".boards-view-button");
+            const storageKey = "crh-boards-view-mode";
+
+            function setViewMode(mode) {
+
+                const isList = mode === "list";
+
+                container.classList.toggle("is-list-view", isList);
+
+                buttons.forEach(function (button) {
+
+                    const isActive = button.dataset.viewMode === mode;
+
+                    button.classList.toggle("active", isActive);
+                    button.setAttribute("aria-pressed", isActive.toString());
+
+                });
+
+                try {
+                    localStorage.setItem(storageKey, mode);
+                } catch (error) {
+                    console.warn("Could not save boards view preference.", error);
+                }
+            }
+
+            let savedMode = "grid";
+
+            try {
+                const storedMode = localStorage.getItem(storageKey);
+
+                if (storedMode === "grid" || storedMode === "list") {
+                    savedMode = storedMode;
+                }
+            } catch (error) {
+                console.warn("Could not read boards view preference.", error);
+            }
+
+            buttons.forEach(function (button) {
+
+                button.addEventListener("click", function () {
+                    setViewMode(button.dataset.viewMode);
+                });
+
+            });
+
+            setViewMode(savedMode);
+        });
+    </script>
 }

@@ -1335,3 +1335,309 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+
+/* =========================================
+   KANBAN BOTTLENECK ALERTS
+   ========================================= */
+
+.bottleneck-section {
+    overflow: hidden;
+}
+
+.bottleneck-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 12px;
+    background: rgba(220, 53, 69, 0.07);
+    color: #b42332;
+    white-space: nowrap;
+}
+
+    .bottleneck-summary strong {
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .bottleneck-summary span {
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+.bottleneck-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.bottleneck-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-right: 4px solid;
+    border-radius: 14px;
+    background: var(--card-bg, #fff);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .bottleneck-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+.bottleneck-full {
+    border-right-color: #dc3545;
+}
+
+.bottleneck-warning {
+    border-right-color: #e5a000;
+}
+
+.bottleneck-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    flex: 1;
+    min-width: 0;
+}
+
+.bottleneck-status-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+    .bottleneck-status-icon svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.bottleneck-full .bottleneck-status-icon {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.10);
+}
+
+.bottleneck-warning .bottleneck-status-icon {
+    color: #b77900;
+    background: rgba(229, 160, 0, 0.12);
+}
+
+.bottleneck-information {
+    flex: 1;
+    min-width: 0;
+}
+
+.bottleneck-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 9px;
+}
+
+    .bottleneck-title-row h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--heading-color, #1f2937);
+    }
+
+.bottleneck-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.bottleneck-full .bottleneck-status-badge {
+    color: #b42332;
+    background: rgba(220, 53, 69, 0.09);
+}
+
+.bottleneck-warning .bottleneck-status-badge {
+    color: #946200;
+    background: rgba(229, 160, 0, 0.12);
+}
+
+.bottleneck-context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-bottom: 17px;
+    color: var(--text-muted, #6b7280);
+    font-size: 12px;
+}
+
+    .bottleneck-context strong {
+        color: var(--heading-color, #374151);
+        font-weight: 700;
+    }
+
+.bottleneck-capacity {
+    max-width: 560px;
+}
+
+.bottleneck-capacity-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    color: var(--text-muted, #6b7280);
+    font-size: 11px;
+}
+
+    .bottleneck-capacity-labels strong {
+        color: var(--heading-color, #374151);
+        font-size: 12px;
+    }
+
+.bottleneck-progress-track {
+    width: 100%;
+    height: 7px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #edf0f3;
+}
+
+.bottleneck-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 0.3s ease;
+}
+
+.bottleneck-full .bottleneck-progress-fill {
+    background: #dc3545;
+}
+
+.bottleneck-warning .bottleneck-progress-fill {
+    background: #e5a000;
+}
+
+.bottleneck-metrics {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-shrink: 0;
+}
+
+.bottleneck-percentage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 90px;
+}
+
+    .bottleneck-percentage strong {
+        font-size: 23px;
+        font-weight: 800;
+        direction: ltr;
+    }
+
+.bottleneck-full .bottleneck-percentage strong {
+    color: #dc3545;
+}
+
+.bottleneck-warning .bottleneck-percentage strong {
+    color: #b77900;
+}
+
+.bottleneck-percentage span {
+    color: var(--text-muted, #6b7280);
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.bottleneck-view-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 9px;
+    color: var(--primary-color, #2563eb);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+    .bottleneck-view-link:hover {
+        color: #fff;
+        background: var(--primary-color, #2563eb);
+        border-color: var(--primary-color, #2563eb);
+    }
+
+@media (max-width: 900px) {
+    .bottleneck-item {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .bottleneck-metrics {
+        justify-content: space-between;
+        padding-right: 57px;
+    }
+
+    .bottleneck-capacity {
+        max-width: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .bottleneck-main {
+        gap: 10px;
+    }
+
+    .bottleneck-status-icon {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .bottleneck-context {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .bottleneck-metrics {
+        padding-right: 46px;
+        gap: 10px;
+    }
+
+    .bottleneck-percentage {
+        min-width: auto;
+    }
+
+        .bottleneck-percentage strong {
+            font-size: 20px;
+        }
+
+    .bottleneck-view-link {
+        padding: 9px 10px;
+        font-size: 11px;
+    }
+}
+

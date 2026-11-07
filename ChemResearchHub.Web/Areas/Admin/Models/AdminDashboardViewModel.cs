@@ -121,11 +121,20 @@ public class AdminDashboardViewModel
 
 
     // =========================
+    // Kanban Bottlenecks
+    // =========================
+
+    public IReadOnlyList<AdminBottleneckAlertItem> BottleneckAlerts { get; set; }
+        = Array.Empty<AdminBottleneckAlertItem>();
+
+
+    // =========================
     // Recent Activity
     // =========================
 
     public IReadOnlyList<AdminActivityItem> RecentActivities { get; set; }
         = Array.Empty<AdminActivityItem>();
+
 
     // =========================
     // Project Schedule
@@ -156,6 +165,30 @@ public class AdminAlertItem
 }
 
 
+public class AdminBottleneckAlertItem
+{
+    public int ProjectId { get; set; }
+
+    public string ProjectName { get; set; } = string.Empty;
+
+    public int BoardId { get; set; }
+
+    public string BoardName { get; set; } = string.Empty;
+
+    public int BoardColumnId { get; set; }
+
+    public string ColumnName { get; set; } = string.Empty;
+
+    public int WorkItemCount { get; set; }
+
+    public int WipLimit { get; set; }
+
+    public int CapacityPercentage { get; set; }
+
+    public bool IsOverCapacity { get; set; }
+}
+
+
 public class AdminActivityItem
 {
     public string Title { get; set; } = string.Empty;
@@ -166,6 +199,7 @@ public class AdminActivityItem
 
     public string Type { get; set; } = "info";
 }
+
 
 public class AdminProjectScheduleItem
 {
